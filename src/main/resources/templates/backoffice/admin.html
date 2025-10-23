@@ -163,6 +163,9 @@
           <form class="d-flex justify-content-center backoffice-search" method="get" th:action="@{/backoffice/admin}">
             <div class="input-group" style="width:100%;">
               <input id="input-buscar-backoffice" type="search" name="q" class="form-control" placeholder="Buscar productos..." aria-label="Buscar" th:value="${param.q}">
+              <button id="btnLimpiarBusqueda" class="btn btn-outline-secondary" type="button" title="Limpiar búsqueda">
+                <i class="fas fa-times"></i>
+              </button>
               <button class="btn btn-outline-secondary" type="submit" title="Buscar">
                 <i class="fas fa-search"></i>
               </button>
@@ -653,6 +656,25 @@
           if (input){
             input.addEventListener('input', debounce(function(e){ performSearch(e.target.value); }, 350));
           }
+          // Clear button behavior
+          const btnLimpiar = document.getElementById('btnLimpiarBusqueda');
+          if (btnLimpiar && input){
+            btnLimpiar.addEventListener('click', function(e){
+              input.value = '';
+              performSearch('');
+              input.focus();
+            });
+          }
+          // Esc key clears the search
+          document.addEventListener('keydown', function(e){
+            if (e.key === 'Escape' || e.key === 'Esc'){
+              if (input && input.value !== ''){
+                input.value = '';
+                performSearch('');
+                input.focus();
+              }
+            }
+          });
           // ensure handlers bound on first load
           rebindRowActions();
         });
