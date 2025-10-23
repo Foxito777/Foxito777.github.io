@@ -225,7 +225,7 @@ body {
 .table-header .d-flex {
     display: flex;
     align-items: center;
-    gap: 0.5rem; /* consistent spacing between actions */
+    gap: 1rem; /* aumenta espacio entre contenedores de acciones */
 }
 
 .table-header .d-flex > form {
@@ -233,7 +233,16 @@ body {
     margin: 0;
 }
 
-    font-size: 20px;
+/* inner actions container: ensure sufficient gap between the New and Delete controls */
+.table-header .d-flex .d-flex {
+    gap: 1rem;
+}
+
+/* fallback spacing: a small right margin on primary button to guarantee separation */
+.table-header .btn-primary {
+    margin-right: 0.5rem;
+}
+
 @media (max-width: 576px) {
     .table-header {
         flex-direction: column;
