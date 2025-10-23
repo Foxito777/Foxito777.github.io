@@ -52,7 +52,10 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
 
-          <form th:action="@{/backoffice/admin/usuarios/guardar}" th:object="${usuario}" method="post">
+          <form th:action="@{/backoffice/admin/usuarios/guardar}" th:object="${usuario}" method="post" autocomplete="off">
+            <!-- Hidden dummy fields to reduce browser autofill interference -->
+            <input type="text" name="fakeusername" id="fakeusername" style="display:none" autocomplete="off" />
+            <input type="password" name="fakepassword" id="fakepassword" style="display:none" autocomplete="new-password" />
             <input type="hidden" th:field="*{id}" />
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             
@@ -62,7 +65,7 @@
               <!-- Username -->
               <div class="col-md-6 mb-3">
                 <label for="username" class="form-label">Nombre de Usuario <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="p. ej. juanperez" required th:classappend="${#fields.hasErrors('username')} ? ' is-invalid'">
+                <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="p. ej. juanperez" required th:classappend="${#fields.hasErrors('username')} ? ' is-invalid'" autocomplete="off">
                 <div class="form-text">Debe ser único; se usa para iniciar sesión.</div>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Error en username</div>
               </div>
@@ -70,7 +73,7 @@
               <!-- Email -->
               <div class="col-md-6 mb-3">
                 <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="p. ej. nombre@correo.com" required th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'">
+                <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="p. ej. nombre@correo.com" required th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'" autocomplete="email">
                 <div class="form-text">Usaremos este correo para notificaciones y recuperación.</div>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error en email</div>
               </div>
@@ -129,7 +132,7 @@
             <div class="row" th:if="${usuario.id == null}">
               <div class="col-md-6 mb-3">
                 <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" id="password" th:field="*{password}" minlength="6" placeholder="Define una contraseña segura" required th:classappend="${#fields.hasErrors('password')} ? ' is-invalid'">
+                <input type="password" class="form-control" id="password" th:field="*{password}" minlength="6" placeholder="Define una contraseña segura" required th:classappend="${#fields.hasErrors('password')} ? ' is-invalid'" autocomplete="new-password">
                 <div class="form-text">Mínimo 6 caracteres.</div>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Error</div>
               </div>
