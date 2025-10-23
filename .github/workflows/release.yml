@@ -22,6 +22,8 @@ jobs:
           distribution: 'temurin'
       - name: Build with Maven
         run: mvn -B -DskipTests clean package
+      - name: List target directory
+        run: ls -la target || dir target
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -33,6 +35,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/*.jar
+          # usar un patrón más específico para evitar ambigüedad con snapshots u otros nombres
+          asset_path: target/Juledtoys-*.jar
           asset_name: Juledtoys-${{ github.ref_name }}.jar
           asset_content_type: application/java-archive
