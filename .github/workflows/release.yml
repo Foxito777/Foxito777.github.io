@@ -24,6 +24,18 @@ jobs:
         run: mvn -B -DskipTests clean package
       - name: List target directory
         run: ls -la target || dir target
+      - name: Find built jar
+        id: find_jar
+        run: |
+          set -e
+          echo "Looking for Juledtoys jar in target/"
+          JAR=$(ls target/Juledtoys-*.jar 2>/dev/null | head -n 1 || true)
+          if [ -z "$JAR" ]; then
+            echo "No Juledtoys jar found in target/"
+            exit 1
+          fi
+          echo "Found jar: $JAR"
+          echo "jar=$JAR" >> $GITHUB_OUTPUT
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -35,7 +47,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          # usar un patrón más específico para evitar ambigüedad con snapshots u otros nombres
-          asset_path: target/Juledtoys-*.jar
+          asset_path: ${{ steps.find_jar.outputs.jar }}
           asset_name: Juledtoys-${{ github.ref_name }}.jar
           asset_content_type: application/java-archive
