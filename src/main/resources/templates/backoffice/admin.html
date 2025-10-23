@@ -158,6 +158,18 @@
         </div>
 
         <!-- Products Table -->
+        <!-- Search bar moved to top for better UX -->
+        <div class="mb-3">
+          <form class="d-flex justify-content-center" method="get" th:action="@{/backoffice/admin}">
+            <div class="input-group" style="max-width:800px; width:100%;">
+              <input type="search" name="q" class="form-control" placeholder="Buscar productos..." aria-label="Buscar" th:value="${param.q}">
+              <button class="btn btn-outline-secondary" type="submit" title="Buscar">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
         <div class="table-container">
           <div class="table-header d-flex align-items-center justify-content-between gap-3">
             <h3 class="table-title">
@@ -165,15 +177,6 @@
               Lista de Productos
             </h3>
             <div class="d-flex gap-2 align-items-center">
-              <form class="d-flex" method="get" th:action="@{/backoffice/admin}">
-                <div class="input-group input-group-sm">
-                  <input type="search" name="q" class="form-control" placeholder="Buscar productos..." aria-label="Buscar" th:value="${param.q}">
-                  <button class="btn btn-outline-secondary" type="submit" title="Buscar">
-                    <i class="fas fa-search"></i>
-                  </button>
-                </div>
-              </form>
-              
               <div class="d-flex">
               <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
                 <i class="fas fa-plus"></i> Nuevo Producto
