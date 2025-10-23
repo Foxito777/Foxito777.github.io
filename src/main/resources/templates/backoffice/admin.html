@@ -162,7 +162,7 @@
         <div class="mb-3">
           <form class="d-flex justify-content-center backoffice-search" method="get" th:action="@{/backoffice/admin}">
             <div class="input-group" style="width:100%;">
-              <input type="search" name="q" class="form-control" placeholder="Buscar productos..." aria-label="Buscar" th:value="${param.q}">
+              <input id="input-buscar-backoffice" type="search" name="q" class="form-control" placeholder="Buscar productos..." aria-label="Buscar" th:value="${param.q}">
               <button class="btn btn-outline-secondary" type="submit" title="Buscar">
                 <i class="fas fa-search"></i>
               </button>
@@ -508,7 +508,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+  <script>
       // Función para editar producto
       function editarProducto(id) {
         fetch(`/backoffice/admin/productos/${id}`)
@@ -575,6 +575,88 @@
           });
         });
       });
+      
+      // Live search (AJAX) with debounce - replaces table rows without full page reload
+      (function(){
+        function debounce(fn, wait){
+          let t;
+          return function(...args){
+            clearTimeout(t);
+            t = setTimeout(()=>fn.apply(this,args), wait);
+          };
+        }
+
+        function rebindRowActions(){
+          // Rebind edit buttons
+          document.querySelectorAll('.btn-editar').forEach(btn=>{
+            if (btn._editHandler) btn.removeEventListener('click', btn._editHandler);
+            const handler = function(){ const productoId = this.getAttribute('data-producto-id'); editarProducto(productoId); };
+            btn._editHandler = handler;
+            btn.addEventListener('click', handler);
+          });
+
+          // Rebind delete buttons
+          document.querySelectorAll('.btn-eliminar').forEach(btn=>{
+            if (btn._delHandler) btn.removeEventListener('click', btn._delHandler);
+            const handler = function(){ const productoId = this.getAttribute('data-producto-id'); const productoNombre = this.getAttribute('data-producto-nombre'); eliminarProducto(productoId, productoNombre); };
+            btn._delHandler = handler;
+            btn.addEventListener('click', handler);
+          });
+
+          // Rebind selectAll and item checkboxes
+          const selectAll = document.getElementById('selectAll');
+          const btnEliminar = document.getElementById('btnEliminarMultiple');
+
+          function updateButton(){
+            const anyChecked = Array.from(document.querySelectorAll('.selectItem')).some(i => i.checked);
+            if (btnEliminar) btnEliminar.disabled = !anyChecked;
+          }
+
+          if (selectAll){
+            if (selectAll._handler) selectAll.removeEventListener('change', selectAll._handler);
+            const sHandler = function(){ document.querySelectorAll('.selectItem').forEach(i => i.checked = this.checked); updateButton(); };
+            selectAll._handler = sHandler;
+            selectAll.addEventListener('change', sHandler);
+          }
+
+          document.querySelectorAll('.selectItem').forEach(i=>{
+            if (i._handler) i.removeEventListener('change', i._handler);
+            const it = function(){ updateButton(); };
+            i._handler = it;
+            i.addEventListener('change', it);
+          });
+        }
+
+        async function performSearch(q){
+          try{
+            const url = new URL(window.location.href);
+            if (q) url.searchParams.set('q', q); else url.searchParams.delete('q');
+            // fetch the page and extract table body
+            const res = await fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            if (!res.ok) throw new Error('Error en búsqueda');
+            const text = await res.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const newTbody = doc.querySelector('.table tbody');
+            if (newTbody){
+              const tbody = document.querySelector('.table tbody');
+              tbody.innerHTML = newTbody.innerHTML;
+              rebindRowActions();
+            }
+          }catch(err){
+            console.error('Live search error:', err);
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+          const input = document.getElementById('input-buscar-backoffice');
+          if (input){
+            input.addEventListener('input', debounce(function(e){ performSearch(e.target.value); }, 350));
+          }
+          // ensure handlers bound on first load
+          rebindRowActions();
+        });
+      })();
     </script>
   </body>
 </html>
