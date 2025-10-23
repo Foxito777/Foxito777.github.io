@@ -221,8 +221,16 @@ body {
     font-size: 0.95rem;
 }
 
-.table-header .d-flex > form, .table-header .d-flex > button {
-    margin-left: 0.5rem;
+/* Use gap on the actions container so only sibling elements are spaced */
+.table-header .d-flex {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* consistent spacing between actions */
+}
+
+.table-header .d-flex > form {
+    display: inline-flex;
+    margin: 0;
 }
 
     font-size: 20px;
