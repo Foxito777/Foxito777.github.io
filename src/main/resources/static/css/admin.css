@@ -225,7 +225,7 @@ body {
 .table-header .d-flex {
     display: flex;
     align-items: center;
-    gap: 1rem; /* aumenta espacio entre contenedores de acciones */
+    gap: 2rem; /* mucho más espacio entre contenedores de acciones */
 }
 
 .table-header .d-flex > form {
@@ -235,13 +235,21 @@ body {
 
 /* inner actions container: ensure sufficient gap between the New and Delete controls */
 .table-header .d-flex .d-flex {
-    gap: 1rem;
+    gap: 1.8rem; /* mayor separación entre controles internos */
 }
 
 /* fallback spacing: a small right margin on primary button to guarantee separation */
 .table-header .btn-primary {
-    margin-right: 0.5rem;
+    margin-right: 1rem;
 }
+
+/* Ensure delete button has spacing if other rules interfere */
+#btnEliminarMultiple, .table-header .btn-danger {
+    margin-left: 0.6rem;
+}
+
+/* Guarantee no collapsing margins inside actions */
+.table-header .d-flex .d-flex > * { margin: 0; }
 
 @media (max-width: 576px) {
     .table-header {
