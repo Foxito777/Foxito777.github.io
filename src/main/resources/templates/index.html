@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Juled TOYS</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Dancing+Script:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+  </head>
+  <body class="bg-light">
+    <!-- Header superior -->
+    <header class="bg-dark py-2">
+      <div class="container-fluid">
+        <div
+          class="d-flex align-items-center justify-content-between flex-wrap header-actions"
+        >
+          <!-- Redes -->
+          <div class="d-flex align-items-center gap-2">
+            <a
+              href="https://www.facebook.com/profile.php?id=100065383692894"
+              class="btn btn-outline-light btn-sm"
+              title="Facebook"
+              target="_blank"
+              rel="noopener"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="#" class="btn btn-outline-light btn-sm" title="Instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a href="#" class="btn btn-outline-light btn-sm" title="TikTok"
+              ><i class="fab fa-tiktok"></i
+            ></a>
+          </div>
+
+          <!-- Mensaje slider centrado -->
+          <div class="flex-grow-1 d-flex justify-content-center">
+            <div
+              id="promoSlider"
+              class="carousel slide w-100"
+              data-bs-ride="carousel"
+            >
+              <div class="carousel-inner text-center">
+                <div class="carousel-item active">
+                  <span class="text-warning fw-bold fs-5">
+                    🦖 Doble Puntos en selección de sets Dinosaurios 🦖
+                  </span>
+                </div>
+                <div class="carousel-item">
+                  <span class="text-info fw-bold fs-5"
+                    >Envío gratis por compras mayores a S/. 99</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles de usuario (saludo / login) -->
+          <ul
+            class="navbar-nav ms-auto align-items-center"
+            th:replace="fragments/security :: userMenu"
+          ></ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navbar principal -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-warning sticky-top shadow"
+    >
+      <div class="container d-flex align-items-center">
+        <!-- Logo -->
+        <a href="/" class="me-2 d-flex align-items-center">
+          <img th:src="@{/Imagenes/logo.png}" alt="Juled Toys Logo" class="logo-img" />
+        </a>
+        <!-- Marca -->
+        <a class="navbar-brand fw-bold me-2" href="/">Juled TOYS</a>
+        <!-- Botón hamburguesa SIEMPRE visible -->
+        <button
+          class="btn btn-outline-dark ms-1 me-3"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasMenu"
+          aria-controls="offcanvasMenu"
+          aria-label="Menú"
+        >
+          <i class="fas fa-bars"></i>
+        </button>
+        <!-- Buscador horizontal (grande) -->
+        <form
+          class="d-none d-lg-flex navbar-search flex-grow-1 me-3"
+          role="search"
+        >
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Buscar"
+            aria-label="Buscar"
+          />
+          <button class="btn btn-outline-dark" type="submit">Buscar</button>
+        </form>
+        <!-- Menú horizontal clásico (grande) -->
+        <div
+          class="collapse navbar-collapse flex-grow-0 d-none d-lg-flex"
+          id="mainMenu"
+        >
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="/">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#productos">Productos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#explora">Explora</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#visita-tienda">Tienda</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contacto">Contacto</a>
+            </li>
+          </ul>
+          <a
+            href="/carrito"
+            class="btn btn-outline-dark position-relative cart-btn ms-3 my-2 my-lg-0"
+          >
+            <i class="fas fa-shopping-cart"></i>
+            <span
+              class="position-absolute badge rounded-pill bg-danger cart-badge"
+              th:text="${cantidadCarrito ?: 0}">0</span>
+          </a>
+        </div>
+
+        <!-- Buscador y carrito móviles -->
+        <div class="d-lg-none ms-auto w-100">
+          <form
+            class="d-flex align-items-center my-2 gap-2 w-100"
+            role="search"
+          >
+            <!-- Caja de texto -->
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Buscar"
+              aria-label="Buscar"
+            />
+            <!-- Botón buscar -->
+            <button class="btn btn-outline-dark square-btn" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+            <!-- Botón carrito -->
+            <a
+              href="/carrito"
+              class="btn btn-outline-dark square-btn position-relative"
+            >
+              <i class="fas fa-shopping-cart"></i>
+              <span
+                class="position-absolute badge rounded-pill bg-danger cart-badge"
+                th:text="${cantidadCarrito ?: 0}">0</span>
+            </a>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Offcanvas: Menú hamburguesa para móvil y tablet -->
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="offcanvasMenu"
+      aria-labelledby="offcanvasMenuLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menú Juled TOYS</h5>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <h6 class="fw-bold mb-2">Navegación principal</h6>
+        <ul class="list-group mb-3">
+          <li class="list-group-item">
+            <a href="/"><i class="fas fa-home me-2"></i>Inicio</a>
+          </li>
+          <li class="list-group-item">
+            <a href="/productos"><i class="fas fa-cube me-2"></i>Productos</a>
+          </li>
+          <li class="list-group-item">
+            <a href="/acerca"><i class="fas fa-compass me-2"></i>Acerca</a>
+          </li>
+          <li class="list-group-item">
+            <a href="/tienda"><i class="fas fa-store me-2"></i>Tienda</a>
+          </li>
+          <li class="list-group-item">
+            <a href="/contacto"><i class="fas fa-envelope me-2"></i>Contacto</a>
+          </li>
+        </ul>
+        <h6 class="fw-bold mb-2">Categorías</h6>
+        <ul class="list-group mb-3">
+          <li class="list-group-item">
+            <a href="categoria-mario.html"
+              ><i class="fas fa-gamepad me-2"></i> Mario</a
+            >
+          </li>
+          <li class="list-group-item">
+            <a href="categoria-minecraft.html"
+              ><i class="fas fa-cubes me-2"></i> Minecraft</a
+            >
+          </li>
+          <li class="list-group-item">
+            <a href="categoria-variedades.html"
+              ><i class="fas fa-gift me-2"></i> Variedades</a
+            >
+          </li>
+          <li class="list-group-item">
+            <a href="categoria-set-completos.html"
+              ><i class="fas fa-box-open me-2"></i> Set completos</a
+            >
+          </li>
+          <li class="list-group-item">
+            <a href="categoria-dinosaurios.html"
+              ><i class="fas fa-dragon me-2"></i> Dinosaurios</a
+            >
+          </li>
+        </ul>
+        <!-- 🔐 Acceso solo para STAFF (ADMIN, VENDEDOR, CAJERO, MARKETING) -->
+        <div class="mt-3" sec:authorize="hasAnyRole('ADMIN','VENDEDOR','CAJERO','MARKETING')">
+          <a class="btn btn-warning w-100" th:href="@{/backoffice/admin}"
+            >Acceso Backoffice</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra delivery -->
+    <div
+      class="bg-info text-dark py-2 text-center d-flex justify-content-center align-items-center gap-2"
+    >
+      <img
+        src="Imagenes/Delivery.png"
+        alt="Delivery"
+        style="width: 36px; height: 36px"
+      />
+      <span>DELIVERY GRATIS por compras mayores a <strong>S/. 99</strong></span>
+    </div>
+<!-- Slider principal  -->
+<div id="mainSlider" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="5000">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#mainSlider" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#mainSlider" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#mainSlider" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner shadow-lg rounded-4" style="overflow:hidden;">
+    <!-- Slide 1 -->
+    <div class="carousel-item active">
+      <div class="d-flex align-items-center justify-content-center w-100"
+      style="
+        min-height: 420px;
+        background: url('Imagenes/Fondolego.jpg') center center / cover no-repeat;
+        position: relative;">
+      <!-- Overlay con transparencia para mostrar fondo -->
+      <div style="background:rgba(254,246,220,0.6);position:absolute;inset:0;z-index:1;"></div>
+      <!-- Contenido -->
+      <div class="container position-relative" style="z-index:2;">
+        <div class="row align-items-center justify-content-center">
+          <div class="col-lg-6 col-md-8 text-center text-lg-start mb-3 mb-lg-0">
+            <span class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill mb-3 d-inline-block" style="font-family: 'Lilita One', cursive;">
+            ⚡ MEGA SALE: ¡Disfruta 30% OFF!
+            </span>
+            <h1 class="fw-bold display-5 mb-3" style="font-family: 'Lilita One', cursive; color: #000;">
+            JULED TOYS - ¡Ahorra en grande hoy!
+            </h1>
+            <p class="lead mb-4" style="color: #2962ff;">Nuevas ofertas de armables. Construye, crea y juega sin límites con Juled TOYS</p>
+            <a href="/productos" class="btn btn-warning btn-lg rounded-pill px-4 py-2">
+              <i class="fas fa-shopping-cart me-2"></i>Comprar ahora
+            </a>
+          </div>
+          <div class="col-lg-6 col-md-4 text-center">
+            <img src="Imagenes/Toadd.png" alt="Producto destacado" class="img-fluid" style="max-height:370px;">
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <!-- Slide 2 -->
+    <div class="carousel-item">
+      <div class="d-flex align-items-center justify-content-center w-100"
+        style="
+          min-height: 420px;
+          background: url('Imagenes/123.jpg') center center / cover no-repeat;
+          position: relative;">
+        <div style="background:rgba(30,20,10,0.40);position:absolute;inset:0;z-index:1;"></div>
+        <div class="container position-relative" style="z-index:2;">
+          <div class="row align-items-center justify-content-center">
+            <div class="col-lg-6 col-md-8 text-center text-lg-start mb-3 mb-lg-0">
+              <span class="badge bg-danger fs-6 px-3 py-2 rounded-pill mb-3 d-inline-block" style="font-family: 'Lilita One', cursive;">
+                ⚡ MEGA SALE: ¡Disfruta 50% OFF!
+              </span>
+              <h1 class="fw-bold display-5 mb-3 text-white" style="font-family: 'Lilita One', cursive;">
+                CONSTRUYE ADRENALINA!
+              </h1>
+              <p class="lead mb-4 text-white" style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">ELIJE TU PODER, CONQUISTA LA PISTA CON TODA LA PARRILLA</p>
+              <a href="/productos" class="btn btn-danger btn-lg rounded-pill px-4 py-2">
+                <i class="fas fa-car me-2"></i>Comprar ahora
+              </a>
+            </div>
+            <div class="col-lg-6 col-md-4 text-center">
+              <img src="Imagenes/Ferrari.png" alt="Producto destacado" class="img-fluid" style="max-height:400px;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Slide 3 -->
+    <div class="carousel-item">
+      <div class="d-flex align-items-center justify-content-center w-100"
+        style="
+          min-height: 420px;
+          background: url('Imagenes/fondostarwars.jpg') center center / cover no-repeat;
+          position: relative;">
+        <div style="background:rgba(0,90,130,0.40);position:absolute;inset:0;z-index:1;"></div>
+        <div class="container position-relative" style="z-index:2;">
+          <div class="row align-items-center justify-content-center">
+            <div class="col-lg-6 col-md-8 text-center text-lg-start mb-3 mb-lg-0">
+              <span class="badge bg-info text-dark fs-6 px-3 py-2 rounded-pill mb-3 d-inline-block" style="font-family: 'Lilita One', cursive;">
+                🧩 NUEVAS COLECCIONES DISPONIBLES
+              </span>
+              <h1 class="fw-bold display-5 mb-3 text-white" style="font-family: 'Lilita One', cursive;">
+                Crea Sin Limites - ¡TU IMAGINACIÓN NO TIENE TECHO!
+              </h1>
+              <p class="lead mb-4 text-white">Encuentra los mejores sets completos con descuentos exclusivos.</p>
+              <a href="/productos" class="btn btn-info btn-lg rounded-pill text-dark px-4 py-2">
+                <i class="fas fa-cubes me-2"></i>Ver productos
+              </a>
+            </div>
+            <div class="col-lg-6 col-md-4 text-center">
+              <img src="Imagenes/prueba.png" alt="Producto destacado" class="img-fluid" style="max-height:350px;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Flechas funcionales -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#mainSlider" data-bs-slide="prev" aria-label="Slide anterior">
+    <span class="carousel-control-prev-icon bg-white rounded-circle shadow" aria-hidden="true"></span>
+    <span class="visually-hidden">Anterior</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#mainSlider" data-bs-slide="next" aria-label="Slide siguiente">
+    <span class="carousel-control-next-icon bg-white rounded-circle shadow" aria-hidden="true"></span>
+    <span class="visually-hidden">Siguiente</span>
+  </button>
+  <script>
+    // Activar el slider automáticamente y permitir controles manuales
+    document.addEventListener('DOMContentLoaded', function () {
+      var mainSlider = document.getElementById('mainSlider');
+      if (mainSlider) {
+        // Inicializar carousel con configuración optimizada
+        var carousel = new bootstrap.Carousel(mainSlider, {
+          interval: 5000,        // 5 segundos por slide
+          ride: 'carousel',      // Auto-play
+          pause: 'hover',        // Pausar al hacer hover
+          wrap: true,            // Loop infinito
+          keyboard: true,        // Navegación por teclado
+          touch: true            // Soporte touch en móviles
+        });
+        
+        // Agregar eventos para mejorar la experiencia
+        mainSlider.addEventListener('slide.bs.carousel', function (event) {
+          // Animación suave entre slides
+          const activeItem = event.target.querySelector('.carousel-item.active');
+          const nextItem = event.relatedTarget;
+          
+          if (activeItem) {
+            activeItem.style.transition = 'transform 0.6s ease-in-out';
+          }
+          if (nextItem) {
+            nextItem.style.transition = 'transform 0.6s ease-in-out';
+          }
+        });
+        
+        // Precargar imágenes para mejor rendimiento
+        const slides = mainSlider.querySelectorAll('.carousel-item');
+        slides.forEach(slide => {
+          const bgImage = slide.querySelector('[style*="background"]');
+          if (bgImage) {
+            const imageUrl = bgImage.style.backgroundImage.match(/url\(['"]?([^'"]*)['"]?\)/);
+            if (imageUrl && imageUrl[1]) {
+              const img = new Image();
+              img.src = imageUrl[1];
+            }
+          }
+        });
+        
+        console.log('✅ Slider principal inicializado correctamente');
+      } else {
+        console.error('❌ No se encontró el elemento mainSlider');
+      }
+    });
+  </script>
+</div>
+    <!-- Carrusel dinámico de Promociones (consumiendo /api/promociones/activas) -->
+    <div id="promoCarouselContainer" class="container my-1"></div>
+
+    <!-- Productos más vendidos -->
+    <section class="container py-4" id="productos">
+      <h2 class="mb-4 text-center display-6">Lo más vendido</h2>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <div class="col">
+          <div class="card h-100 shadow">
+            <img
+              src="Imagenes/super-granja.png"
+              class="card-img-top"
+              alt="Granja"
+            />
+            <div class="card-body">
+              <h6 class="card-title">Super Granja Minecraft</h6>
+              <p class="card-text fw-bold">S/. 225</p>
+              <a href="set1.html" class="btn btn-outline-warning btn-sm w-100"
+                >Comprar</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow">
+            <img
+              src="Imagenes/Ferrari.png"
+              class="card-img-top"
+              alt="Auto Ferrari"
+            />
+            <div class="card-body">
+              <h6 class="card-title">Auto Ferrari</h6>
+              <p class="card-text fw-bold">S/. 100</p>
+              <a href="set9.html" class="btn btn-outline-warning btn-sm w-100"
+                >Comprar</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow">
+            <img
+              src="Imagenes/Caza.png"
+              class="card-img-top"
+              alt="Caza Estelar"
+            />
+            <div class="card-body">
+              <h6 class="card-title">Caza Estelar</h6>
+              <p class="card-text fw-bold">S/. 299</p>
+              <a href="set4.html" class="btn btn-outline-warning btn-sm w-100"
+                >Comprar</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100 shadow">
+            <img
+              src="Imagenes/Mansion.png"
+              class="card-img-top"
+              alt="Mansión Malfoy"
+            />
+            <div class="card-body">
+              <h6 class="card-title">Mansión Malfoy</h6>
+              <p class="card-text fw-bold">S/. 185</p>
+              <a href="set5.html" class="btn btn-outline-warning btn-sm w-100"
+                >Comprar</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container my-5">
+      <!-- Título y subtítulo -->
+      <div class="text-center mb-4">
+        <h2 class="fw-bold" style="font-size: 2.3rem">
+          Juguetes <span class="text-warning">Juled TOYS</span>
+        </h2>
+        <p class="text-secondary fs-5 mb-0">
+          Diversión y creatividad para tu mundo
+        </p>
+      </div>
+      <!-- Grid de productos principales -->
+      <div class="row g-4 mb-4">
+        <!-- Producto 1 -->
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="card h-100 shadow border-0 position-relative">
+            <span
+              class="position-absolute top-0 start-0 bg-warning text-dark fw-bold rounded-end px-2 py-1"
+              style="font-size: 0.95rem; z-index: 2"
+              >¡Nuevo!</span
+            >
+            <img
+              src="Imagenes/Set/aldea-minecraft-1622-piezas.png"
+              alt="Set Toads"
+              class="card-img-top bg-light p-3"
+              style="height: 180px; object-fit: contain"
+            />
+            <div class="card-body pb-2">
+              <h6 class="card-title mb-1 fw-bold">TOADS</h6>
+              <p class="card-text mb-2 small">
+                Set de figuras Toads - Edición limitada
+              </p>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <div class="d-flex flex-column align-items-start">
+                <span
+                  class="bg-danger text-white fw-bold px-2 py-1 rounded-pill mb-1"
+                  >S/ 69</span
+                >
+                <span class="text-dark small"
+                  >P. Oferta: S/69<br />P. Normal: S/79</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Producto 2 -->
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="card h-100 shadow border-0 position-relative">
+            <span
+              class="position-absolute top-0 start-0 bg-info text-dark fw-bold rounded-end px-2 py-1"
+              style="font-size: 0.95rem; z-index: 2"
+              >¡Creativo!</span
+            >
+            <img
+              src="Imagenes/acc6.png"
+              alt="Bloques Creatividad"
+              class="card-img-top bg-light p-3"
+              style="height: 180px; object-fit: contain"
+            />
+            <div class="card-body pb-2">
+              <h6 class="card-title mb-1 fw-bold">BLOQUES</h6>
+              <p class="card-text mb-2 small">
+                Bloques para construir y crear - 100 piezas
+              </p>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <div class="d-flex flex-column align-items-start">
+                <span
+                  class="bg-warning text-dark fw-bold px-2 py-1 rounded-pill mb-1"
+                  >S/ 39</span
+                >
+                <span class="text-dark small"
+                  >P. Oferta: S/39<br />P. Normal: S/49</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Producto 3 -->
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="card h-100 shadow border-0 position-relative">
+            <span
+              class="position-absolute top-0 start-0 bg-success text-white fw-bold rounded-end px-2 py-1"
+              style="font-size: 0.95rem; z-index: 2"
+              >¡Set especial!</span
+            >
+            <img
+              src="Imagenes/RedbullF1.png"
+              alt="Auto de carreras"
+              class="card-img-top bg-light p-3"
+              style="height: 180px; object-fit: contain"
+            />
+            <div class="card-body pb-2">
+              <h6 class="card-title mb-1 fw-bold">AUTO DE CARRERAS</h6>
+              <p class="card-text mb-2 small">
+                Set de auto y pista - Incluye accesorios
+              </p>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <div class="d-flex flex-column align-items-start">
+                <span
+                  class="bg-danger text-white fw-bold px-2 py-1 rounded-pill mb-1"
+                  >S/ 89</span
+                >
+                <span class="text-dark small"
+                  >P. Oferta: S/89<br />P. Normal: S/99</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Producto 4 -->
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="card h-100 shadow border-0 position-relative">
+            <span
+              class="position-absolute top-0 start-0 bg-primary text-white fw-bold rounded-end px-2 py-1"
+              style="font-size: 0.95rem; z-index: 2"
+              >¡Novedad!</span
+            >
+            <img
+              src="Imagenes/Set/Set3.png"
+              alt="Set Novedades"
+              class="card-img-top bg-light p-3"
+              style="height: 180px; object-fit: contain"
+            />
+            <div class="card-body pb-2">
+              <h6 class="card-title mb-1 fw-bold">NOVEDADES</h6>
+              <p class="card-text mb-2 small">
+                Set de piezas nuevas - Juled Toys
+              </p>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <div class="d-flex flex-column align-items-start">
+                <span
+                  class="bg-info text-dark fw-bold px-2 py-1 rounded-pill mb-1"
+                  >S/ 49</span
+                >
+                <span class="text-dark small"
+                  >>P. Oferta: S/49<br />P. Normal: S/59</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sets destacados abajo -->
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="row g-3 align-items-center">
+            <!-- Set destacado 1 -->
+            <div class="col-12 col-md-6">
+              <div class="card h-100 shadow border-0 position-relative">
+                <span
+                  class="position-absolute top-0 start-0 bg-warning text-dark fw-bold rounded-end px-2 py-1"
+                  style="font-size: 0.95rem; z-index: 2"
+                  >¡Pack familiar!</span
+                >
+                <img
+                  src="Imagenes/Set-completos.png"
+                  alt="Set Completo Juled"
+                  class="card-img-top bg-light p-3"
+                  style="height: 200px; object-fit: contain"
+                />
+                <div class="card-body pb-2">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span class="badge bg-danger">120 piezas</span>
+                    <span class="fw-bold text-dark"
+                      >Set Familiar Juled Toys</span
+                    >
+                  </div>
+                  <span
+                    class="bg-danger text-white fw-bold px-2 py-1 rounded-pill mb-1"
+                    >S/ 149</span
+                  >
+                  <span class="text-dark small"
+                    >P. Oferta: S/149<br />P. Normal: S/179</span
+                  >
+                </div>
+              </div>
+            </div>
+            <!-- Set destacado 2 -->
+            <div class="col-12 col-md-6">
+              <div class="card h-100 shadow border-0 position-relative">
+                <span
+                  class="position-absolute top-0 start-0 bg-info text-dark fw-bold rounded-end px-2 py-1"
+                  style="font-size: 0.95rem; z-index: 2"
+                  >¡Edición limitada!</span
+                >
+                <img
+                  src="Imagenes/Coleccion.png"
+                  alt="Colección Juled"
+                  class="card-img-top bg-light p-3"
+                  style="height: 200px; object-fit: contain"
+                />
+                <div class="card-body pb-2">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span class="badge bg-warning text-dark">60 piezas</span>
+                    <span class="fw-bold text-dark">Colección Juled Toys</span>
+                  </div>
+                  <span
+                    class="bg-info text-dark fw-bold px-2 py-1 rounded-pill mb-1"
+                    >S/ 99</span
+                  >
+                  <span class="text-dark small"
+                    >P. Oferta: S/99<br />P. Normal: S/119</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Promo Banner -->
+    <div class="container my-5" id="promo">
+      <div
+        class="row justify-content-center align-items-center bg-light rounded py-4 shadow"
+        style="
+          background: url('Imagenes/Fondo-prom.jpg') center center / cover
+            no-repeat;
+        "
+      >
+        <div class="col-md-5 text-center">
+          <h2
+            class="text-white fw-bold"
+            style="font-family: 'Lilita One', cursive"
+          >
+            ¡ÚLTIMA OPORTUNIDAD!
+          </h2>
+          <p class="lead text-warning">para completar tu colección</p>
+          <a href="accesorios.html" class="btn btn-danger btn-lg"
+            >Ver productos</a
+          >
+        </div>
+        <div class="col-md-3 text-center">
+          <img
+            src="Imagenes/porcentaje.png"
+            alt="50%"
+            class="img-fluid"
+            style="max-width: 380px"
+          />
+        </div>
+        <div class="col-md-4 text-center">
+          <img
+            src="Imagenes/Promo.png"
+            alt="Personajes"
+            class="img-fluid"
+            style="max-width: 380px"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Explora con video de fondo -->
+    <section
+      class="container-fluid position-relative py-5"
+      id="explora"
+      style="overflow: hidden; min-height: 480px"
+    >
+      <!-- Video de fondo -->
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
+        style="z-index: 0; opacity: 0.38"
+      >
+        <source src="Video/1.mp4" type="video/mp4" />
+        Tu navegador no soporta el video.
+      </video>
+      <div class="container position-relative" style="z-index: 1">
+        <div class="row align-items-center" style="min-height: 400px">
+          <div class="col-md-6 mb-3 mb-md-0">
+            <img
+              src="Imagenes/Titulo-explora.png"
+              alt="Título Juled Toys"
+              class="img-fluid rounded shadow"
+              style="max-width: 100%; height: auto; min-height: 320px"
+            />
+          </div>
+          <div class="col-md-6">
+            <p
+              class="fs-1 fw-bold animate__animated animate__fadeInDown"
+              style="font-family: 'Dancing Script', cursive; color: #020202"
+            >
+              Bienvenido a Juled Toys, donde la diversión y la creatividad se
+              unen para brindar a niños, niñas y familias momentos inolvidables.
+            </p>
+            <!-- Animaciones de Animate.css -->
+            <link
+              rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+            />
+            <a href="acerca.html" class="btn btn-warning btn-lg px-4 py-2"
+              >Ver más</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visita nuestra tienda (Carrusel con imagen principal al lado izquierdo) -->
+    <section class="container py-4" id="visita-tienda">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-lg-5 mb-3 mb-lg-0">
+          <!-- Imagen principal fuera del carrusel -->
+          <img
+            src="Imagenes/Ubicanos.jpg"
+            class="w-100 rounded shadow"
+            alt="Visita nuestra tienda"
+            style="height: 340px; object-fit: cover"
+          />
+        </div>
+        <div class="col-lg-7">
+          <!-- Carrusel con las demás imágenes y mapa -->
+          <div
+            id="tiendaCarousel"
+            class="carousel slide shadow rounded"
+            data-bs-ride="carousel"
+            style="height: 340px"
+          >
+            <div class="carousel-inner" style="height: 340px">
+              <!-- Slide 1: Estantería 1 -->
+              <div class="carousel-item active" style="height: 340px">
+                <img
+                  src="Imagenes/Estante1.jpeg"
+                  class="d-block w-100 rounded"
+                  alt="Estantería 1"
+                  style="height: 340px; object-fit: cover"
+                />
+              </div>
+              <!-- Slide 2: Estantería 2 -->
+              <div class="carousel-item" style="height: 340px">
+                <img
+                  src="Imagenes/Estante2.jpeg"
+                  class="d-block w-100 rounded"
+                  alt="Estantería 2"
+                  style="height: 340px; object-fit: cover"
+                />
+              </div>
+              <!-- Slide 3: Mapa -->
+              <div class="carousel-item" style="height: 340px">
+                <div
+                  class="ratio ratio-16x9 rounded overflow-hidden"
+                  style="height: 340px"
+                >
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4875.9999999999995!2d-74.216916!3d-13.164750!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91a5b0000000000001%3A0x0000000000000001!2s13%C2%B009'53.1%22S%2074%C2%B013'00.9%22W!5e0!3m2!1ses!2sco!4v1697040000000!5m2!1ses!2sco"
+                    allowfullscreen
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Ubicación tienda"
+                    style="width: 100%; height: 100%; border: 0"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+            <!-- Controles -->
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#tiendaCarousel"
+              data-bs-slide="prev"
+            >
+              <span
+                class="carousel-control-prev-icon bg-dark rounded-circle"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Anterior</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#tiendaCarousel"
+              data-bs-slide="next"
+            >
+              <span
+                class="carousel-control-next-icon bg-dark rounded-circle"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Siguiente</span>
+            </button>
+            <!-- Indicadores -->
+            <div class="carousel-indicators">
+              <button
+                type="button"
+                data-bs-target="#tiendaCarousel"
+                data-bs-slide-to="0"
+                class="active"
+                aria-label="Estantería 1"
+              ></button>
+              <button
+                type="button"
+                data-bs-target="#tiendaCarousel"
+                data-bs-slide-to="1"
+                aria-label="Estantería 2"
+              ></button>
+              <button
+                type="button"
+                data-bs-target="#tiendaCarousel"
+                data-bs-slide-to="2"
+                aria-label="Mapa"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección: Testimonios de clientes con foto y valoración de estrellas -->
+    <section class="container my-5" id="testimonios">
+      <h2 class="text-center mb-3 fw-bold" style="font-size: 2.1rem">
+        <span class="text-warning"><i class="bi bi-stars"></i></span>
+        Testimonios de Clientes
+      </h2>
+      <p class="text-center text-secondary mb-4" style="font-size: 1.1rem">
+        Descubre por qué <span class="text-warning fw-bold">Juled Toys</span> es
+        la mejor opción para diversión y creatividad.
+      </p>
+      <div class="row justify-content-center g-4">
+        <!-- Testimonio 1 -->
+        <div class="col-12 col-md-4">
+          <div
+            class="card h-100 shadow-lg border-0 text-center p-4 position-relative bg-light"
+            style="min-height: 280px; max-width: 340px; margin: 0 auto"
+          >
+            <img
+              src="Imagenes/Rostro/1.jpg"
+              alt="Cliente 1"
+              class="rounded-circle mx-auto shadow mb-3 border border-3 border-warning"
+              style="width: 80px; height: 80px; object-fit: cover"
+            />
+            <h5 class="mb-1 fw-bold">María López</h5>
+            <div class="mb-2">
+              <!-- Valoración: 4.5 estrellas -->
+              <span class="text-warning fs-5">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-half"></i>
+              </span>
+            </div>
+            <blockquote class="blockquote mb-2">
+              <p class="mb-0 fst-italic">
+                ¡Excelente calidad y atención! Mis hijos están felices con sus
+                nuevos juguetes.
+              </p>
+            </blockquote>
+            <span class="badge bg-warning-subtle text-dark px-3 py-1 mt-2"
+              >Set Creatividad</span
+            >
+          </div>
+        </div>
+        <!-- Testimonio 2 -->
+        <div class="col-12 col-md-4">
+          <div
+            class="card h-100 shadow-lg border-0 text-center p-4 position-relative bg-light"
+            style="min-height: 280px; max-width: 340px; margin: 0 auto"
+          >
+            <img
+              src="Imagenes/Rostro/2.jpg"
+              alt="Cliente 2"
+              class="rounded-circle mx-auto shadow mb-3 border border-3 border-warning"
+              style="width: 80px; height: 80px; object-fit: cover"
+            />
+            <h5 class="mb-1 fw-bold">Carlos Ramírez</h5>
+            <div class="mb-2">
+              <!-- Valoración: 5 estrellas -->
+              <span class="text-warning fs-5">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </span>
+            </div>
+            <blockquote class="blockquote mb-2">
+              <p class="mb-0 fst-italic">
+                La variedad de sets es increíble. ¡Recomiendo Juled Toys a
+                todos!
+              </p>
+            </blockquote>
+            <span class="badge bg-info-subtle text-dark px-3 py-1 mt-2"
+              >Set Familiar</span
+            >
+          </div>
+        </div>
+        <!-- Testimonio 3 -->
+        <div class="col-12 col-md-4">
+          <div
+            class="card h-100 shadow-lg border-0 text-center p-4 position-relative bg-light"
+            style="min-height: 280px; max-width: 340px; margin: 0 auto"
+          >
+            <img
+              src="Imagenes/Rostro/3.jpg"
+              alt="Cliente 3"
+              class="rounded-circle mx-auto shadow mb-3 border border-3 border-warning"
+              style="width: 80px; height: 80px; object-fit: cover"
+            />
+            <h5 class="mb-1 fw-bold">Ana Torres</h5>
+            <div class="mb-2">
+              <!-- Valoración: 4 estrellas -->
+              <span class="text-warning fs-5">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star"></i>
+              </span>
+            </div>
+            <blockquote class="blockquote mb-2">
+              <p class="mb-0 fst-italic">
+                Fue interesante. El envío fue rápido y el empaque muy seguro.
+                ¡Volveré a comprar!
+              </p>
+            </blockquote>
+            <span class="badge bg-success-subtle text-dark px-3 py-1 mt-2"
+              >Cliente frecuente</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <h5>CONTÁCTANOS</h5>
+            <p>
+              Sede Ayacucho<br />Av. El ejército Nº105<br />📞 935867730 /
+              967306892
+            </p>
+            <div>
+              <a href="#" class="text-light me-2"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a href="#" class="text-light me-2"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a href="#" class="text-light"><i class="fab fa-tiktok"></i></a>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <h5>ATENCIÓN AL CLIENTE</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-light">Sobre nosotros</a></li>
+              <li><a href="#" class="text-light">Tipos de entrega</a></li>
+              <li><a href="#" class="text-light">Términos y condiciones</a></li>
+              <li>
+                <a href="#" class="text-light">Políticas de privacidad</a>
+              </li>
+              <li><a href="#" class="text-light">Cambios y devoluciones</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4 mb-3 text-center">
+            <h5>LIBRO DE RECLAMACIONES</h5>
+            <img
+              src="Imagenes/Libro.png"
+              alt="Libro de reclamaciones"
+              style="max-width: 80px"
+            />
+          </div>
+        </div>
+        <div class="text-center mt-3">
+          © Todos los derechos reservados | 2025 by Juled Toys SRL.
+        </div>
+      </div>
+      <!-- WhatsApp flotante Bootstrap -->
+      <a
+        href="https://wa.me/51935867730"
+        class="btn btn-success position-fixed bottom-0 end-0 m-3 d-flex align-items-center"
+        style="z-index: 1050"
+      >
+        <img
+          src="Imagenes/Wsplogo.png"
+          alt="WhatsApp Logo"
+          style="width: 30px; height: 30px; margin-right: 10px"
+        />
+        ¿Necesitas ayuda? Contáctanos
+      </a>
+    </footer>
+
+    <!-- JS Bootstrap & personalizado -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main-bootstrap.js"></script>
+    <!-- Slider principal funcional -->
+    <script src="js/slider.js"></script>
+    <!-- Carrusel dinámico de promociones -->
+    <script src="js/home-promos.js"></script>
+    <!-- Funcionalidad del carrito -->
+    <script src="js/carrito.js"></script>
+    <!-- Herramientas de debug para promociones (solo desarrollo) -->
+    <script src="js/promo-debug.js"></script>
+  </body>
+</html>

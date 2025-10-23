@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contáctanos - Juled TOYS</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <!-- FontAwesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet"/>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/contacto.css" />
+</head>
+
+<body class="bg-light">
+    <!-- Header superior -->
+    <header class="bg-dark py-2">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between flex-wrap header-actions">
+                <!-- Redes -->
+                <div class="d-flex align-items-center gap-2">
+                    <a href="https://www.facebook.com/profile.php?id=100065383692894" class="btn btn-outline-light btn-sm" title="Facebook" target="_blank" rel="noopener">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-light btn-sm" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-light btn-sm" title="TikTok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+
+                <!-- Mensaje slider centrado -->
+                <div class="flex-grow-1 d-flex justify-content-center">
+                    <div id="promoSlider" class="carousel slide w-100" data-bs-ride="carousel">
+                        <div class="carousel-inner text-center">
+                            <div class="carousel-item active">
+                                <span class="text-warning fw-bold fs-5">🦖 Doble Puntos en selección de sets Dinosaurios 🦖</span>
+                            </div>
+                            <div class="carousel-item">
+                                <span class="text-info fw-bold fs-5">Envío gratis por compras mayores a S/. 99</span>
+                            </div>
+                            <div class="carousel-item">
+                                <span class="text-success fw-bold fs-5">🚚 Delivery el mismo día en Lima Metropolitana 🚚</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de contacto -->
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-light d-none d-md-inline" th:text="'📞 ' + ${telefono}">📞 935-867-730</span>
+                    <span class="text-light d-none d-lg-inline" th:text="'✉️ ' + ${email}">✉️ info@juledtoys.com</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navbar principal -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img th:src="@{/Imagenes/logo.png}" alt="Juled Toys" height="45" class="me-2">
+                <span class="fw-bold text-white">Juled Toys</span>
+            </a>
+
+            <!-- Botón móvil -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menú desktop -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/productos">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tienda">Tienda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/accesorios">Accesorios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/acerca">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold" href="/contacto">Contacto</a>
+                    </li>
+                </ul>
+
+                <!-- Carrito -->
+                <div class="d-flex align-items-center">
+                    <a href="/carrito" class="btn btn-outline-primary position-relative me-2">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                              th:text="${carritoCount}" th:if="${carritoCount > 0}">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Menú móvil offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="menuOffcanvas">
+        <div class="offcanvas-header bg-primary text-white">
+            <h5 class="offcanvas-title">
+                <img th:src="@{/Imagenes/logo.png}" alt="Logo" height="30" class="me-2">
+                Menú
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home me-2"></i>Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/productos"><i class="fas fa-box me-2"></i>Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tienda"><i class="fas fa-store me-2"></i>Tienda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/accesorios"><i class="fas fa-puzzle-piece me-2"></i>Accesorios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/acerca"><i class="fas fa-info-circle me-2"></i>Nosotros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active fw-bold" href="/contacto"><i class="fas fa-phone me-2"></i>Contacto</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Alertas de mensajes -->
+    <div th:if="${mensajeExito}" class="alert alert-dismissible fade show position-fixed" 
+         th:classappend="${tipoMensaje == 'success'} ? 'alert-success' : 'alert-danger'"
+         style="top: 100px; right: 20px; z-index: 9999; max-width: 400px;">
+        <i th:class="${tipoMensaje == 'success'} ? 'fas fa-check-circle me-2' : 'fas fa-exclamation-triangle me-2'"></i>
+        <span th:text="${mensajeExito}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <!-- Barra delivery -->
+    <div class="bg-info text-dark py-2 text-center d-flex justify-content-center align-items-center gap-2">
+        <img src="Imagenes/Delivery.png" alt="Delivery" style="width: 36px; height: 36px" />
+        <span>DELIVERY GRATIS por compras mayores a <strong>S/. 99</strong></span>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-contacto py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        <span class="text-primary">¡Contáctanos!</span>
+                    </h1>
+                    <p class="lead mb-4">
+                        Estamos aquí para ayudarte. Escríbenos y te responderemos lo más pronto posible.
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="contact-info-card">
+                                <i class="fas fa-phone fa-2x text-primary mb-3"></i>
+                                <h5>Teléfono</h5>
+                                <p th:text="${telefono}">935-867-730</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="contact-info-card">
+                                <i class="fas fa-envelope fa-2x text-primary mb-3"></i>
+                                <h5>Email</h5>
+                                <p th:text="${email}">info@juledtoys.com</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="contact-info-card">
+                                <i class="fas fa-map-marker-alt fa-2x text-primary mb-3"></i>
+                                <h5>Dirección</h5>
+                                <p th:text="${direccion}">Av. El Ejército Nº105, Ayacucho</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="contact-info-card">
+                                <i class="fas fa-clock fa-2x text-primary mb-3"></i>
+                                <h5>Horarios</h5>
+                                <p th:text="${horarios}">L-S: 9:00 AM - 8:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="contact-image">
+                        <img src="Imagenes/contacto1.png" alt="Contacto" class="img-fluid rounded shadow">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulario de Contacto -->
+    <section class="container py-5">
+        <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-primary mb-3">Formulario de Contacto</h2>
+                <p class="lead text-muted">
+                    ¿Tienes preguntas, dudas o sugerencias? ¡Estamos para ayudarte!
+                </p>
+            </div>
+
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4 p-md-5">
+                    <form id="contactForm" method="POST" th:action="@{/contacto/enviar}" novalidate>
+                        <div class="row">
+                            <!-- Campo Nombre -->
+                            <div class="col-md-6 mb-4">
+                                <label for="nombre" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-2"></i>Nombre completo
+                                </label>
+                                <input type="text" class="form-control form-control-lg" id="nombre" name="nombre" 
+                                       placeholder="Tu nombre completo" required />
+                                <div class="invalid-feedback">
+                                    Por favor, ingresa tu nombre completo.
+                                </div>
+                            </div>
+
+                            <!-- Campo Email -->
+                            <div class="col-md-6 mb-4">
+                                <label for="email" class="form-label fw-semibold">
+                                    <i class="fas fa-envelope me-2"></i>Correo electrónico
+                                </label>
+                                <input type="email" class="form-control form-control-lg" id="email" name="email" 
+                                       placeholder="tu@email.com" required />
+                                <div class="invalid-feedback">
+                                    Por favor, ingresa un correo electrónico válido.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Campo Teléfono -->
+                            <div class="col-md-6 mb-4">
+                                <label for="telefono" class="form-label fw-semibold">
+                                    <i class="fas fa-phone me-2"></i>Teléfono
+                                </label>
+                                <input type="tel" class="form-control form-control-lg" id="telefono" name="telefono" 
+                                       placeholder="999 999 999" />
+                                <div class="form-text">Opcional</div>
+                            </div>
+
+                            <!-- Campo Asunto -->
+                            <div class="col-md-6 mb-4">
+                                <label for="asunto" class="form-label fw-semibold">
+                                    <i class="fas fa-tag me-2"></i>Asunto
+                                </label>
+                                <select class="form-select form-select-lg" id="asunto" name="asunto" required>
+                                    <option value="">Selecciona un asunto</option>
+                                    <option value="consulta-general">Consulta General</option>
+                                    <option value="soporte-producto">Soporte de Producto</option>
+                                    <option value="informacion-envio">Información de Envío</option>
+                                    <option value="cambios-devoluciones">Cambios y Devoluciones</option>
+                                    <option value="sugerencias">Sugerencias</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor, selecciona un asunto.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campo Mensaje -->
+                        <div class="mb-4">
+                            <label for="mensaje" class="form-label fw-semibold">
+                                <i class="fas fa-comment me-2"></i>Mensaje
+                            </label>
+                            <textarea class="form-control" id="mensaje" name="mensaje" rows="6" 
+                                      placeholder="Escribe tu mensaje aquí..." style="resize: none" required></textarea>
+                            <div class="invalid-feedback">
+                    Por favor, escribe tu mensaje.
+                  </div>
+                </div>
+
+                <!-- Botón Enviar -->
+                                Por favor, escribe tu mensaje.
+                            </div>
+                        </div>
+
+                        <!-- Newsletter -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter" value="si">
+                                <label class="form-check-label" for="newsletter">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    Suscribirme al newsletter para recibir ofertas exclusivas
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Botón enviar -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="btnEnviar">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                <span class="btn-text">Enviar mensaje</span>
+                                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Información adicional -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h3 class="mb-4">Otras formas de contactarnos</h3>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="contact-method">
+                                <i class="fab fa-whatsapp fa-3x text-success mb-3"></i>
+                                <h5>WhatsApp</h5>
+                                <p>Chatea con nosotros</p>
+                                <a href="https://wa.me/51935867730" class="btn btn-success btn-sm" target="_blank">
+                                    <i class="fab fa-whatsapp me-2"></i>Enviar mensaje
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="contact-method">
+                                <i class="fas fa-store fa-3x text-warning mb-3"></i>
+                                <h5>Visítanos</h5>
+                                <p>Ven a nuestra tienda física</p>
+                                <button class="btn btn-warning btn-sm" onclick="abrirMapa()">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Ver ubicación
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="contact-method">
+                                <i class="fas fa-headset fa-3x text-info mb-3"></i>
+                                <h5>Soporte</h5>
+                                <p>Atención especializada</p>
+                                <a href="tel:+51935867730" class="btn btn-info btn-sm">
+                                    <i class="fas fa-phone me-2"></i>Llamar ahora
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mapa (opcional) -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3 class="text-center mb-4">Nuestra ubicación</h3>
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.635!2d-74.2236!3d-13.1631!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDA5JzQ3LjIiUyA3NMKwMTMnMjUuMCJX!5e0!3m2!1ses!2spe!4v1234567890"
+                            width="100%" 
+                            height="350" 
+                            style="border:0; border-radius: 10px;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+  <!-- Footer -->
+<footer class="mt-5 pt-5">
+    <div class="footer-section py-4" style="background: #6c6c6c; color: #fff;">
+        <div class="container text-center">
+            <div class="row g-4">
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-shop-window fs-2"></i></div>
+                    <div>Retiro en Tienda</div>
+                    <div class="small">Jr. Las Palmeras 298</div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-headset fs-2"></i></div>
+                    <div>Atención al Cliente</div>
+                    <div class="small">Escríbenos o llama <br> <strong>935 867 730</strong></div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-gift fs-2"></i></div>
+                    <div>Garantía Juled</div>
+                    <div class="small">Prolonga la diversión</div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-arrow-repeat fs-2"></i></div>
+                    <div>Devolución</div>
+                    <div class="small">Cambios y devoluciones</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom py-4">
+      <div class="container">
+        <div class="row g-3">
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Compra con Confianza</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">Guías de Compra</a></li>
+              <li><a href="#">Términos y condiciones</a></li>
+              <li><a href="#">Política de privacidad</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Sobre Juled Toys</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">¿Quiénes Somos?</a></li>
+              <li><a href="#">Nuestras Tiendas</a></li>
+              <li><a href="#">Trabaja con Nosotros</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Más de Juled</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">Extra Garantía</a></li>
+              <li><a href="#">Club Juled</a></li>
+              <li><a href="#">Cyber Wow</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Suscríbete</div>
+            <form class="d-flex mb-2">
+              <input type="email" class="form-control me-2" placeholder="Ingresa tu correo">
+              <button class="btn btn-warning">Suscribirse</button>
+            </form>
+            <div class="small mb-2"><input type="checkbox"> Acepto los <a href="#">Términos y condiciones</a></div>
+            <div class="mb-2">Medios de pago: 
+              <i class="bi bi-credit-card"></i>
+              <i class="bi bi-paypal"></i>
+            </div>
+            <div>Síguenos:
+              <a href="#"><i class="bi bi-facebook"></i></a>
+              <a href="#"><i class="bi bi-instagram"></i></a>
+              <a href="#"><i class="bi bi-tiktok"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="text-center small mt-4">
+          © 2025 Juled Toys. Todos los derechos reservados.
+        </div>
+      </div>
+    </div>
+  </footer>
+       
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main-bootstrap.js"></script>
+    <script>
+        // Validación del formulario
+        (function () {
+            "use strict";
+
+            const form = document.getElementById("contactForm");
+            const btnEnviar = document.getElementById("btnEnviar");
+
+            form.addEventListener("submit", function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    // Mostrar loading
+                    btnEnviar.disabled = true;
+                    btnEnviar.querySelector('.btn-text').textContent = 'Enviando...';
+                    btnEnviar.querySelector('.spinner-border').classList.remove('d-none');
+                }
+
+                form.classList.add("was-validated");
+            });
+        })();
+
+        // Función para abrir mapa
+        function abrirMapa() {
+            window.open('https://maps.google.com/?q=-13.1631,-74.2236', '_blank');
+        }
+
+        // Auto-ocultar alertas después de 5 segundos
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                if (alert.classList.contains('show')) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
+</body>
+</html>

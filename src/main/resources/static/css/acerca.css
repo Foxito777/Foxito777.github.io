@@ -1,0 +1,320 @@
+/* 
+ * Estilos específicos para la página "Acerca de"
+ * Juled Toys E-commerce
+ */
+
+/* Fuentes principales del sitio */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #fef6dc !important;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Títulos principales con fuente de marca */
+h1, h2, h3, .h1, .h2, .h3 {
+    font-family: 'Lilita One', cursive;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+/* Subtítulos y descripciones */
+h4, h5, h6, .h4, .h5, .h6 {
+    font-family: 'Dancing Script', cursive;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+}
+
+/* Texto de párrafos */
+p, .card-text, li {
+    font-family: 'Roboto', Arial, sans-serif;
+    line-height: 1.6;
+    color: #444;
+}
+
+/* Mejoras para botones */
+.btn {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+/* Navbar brand */
+.navbar-brand {
+    font-family: 'Lilita One', cursive !important;
+    font-size: 2rem !important;
+    letter-spacing: 2px;
+}
+
+/* Estilos generales para la página Acerca */
+.bg-light {
+    background-color: #fef6dc !important;
+}
+
+/* Estilo para las cards de la sección principal */
+.acerca-valores .card-body {
+    padding: 2rem;
+}
+
+.acerca-valores h2 {
+    font-family: 'Lilita One', cursive;
+    color: #ff6f00;
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos para la sección hero */
+.hero-section {
+    background: linear-gradient(135deg, #ff9800 0%, #ff6b35 100%);
+    color: white;
+    padding: 4rem 0;
+}
+
+.hero-section h1 {
+    font-family: 'Lilita One', cursive;
+    font-size: 3.5rem;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.hero-section p {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.4rem;
+    font-weight: 600;
+    opacity: 0.95;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Cards de misión, visión, valores */
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+    font-family: 'Lilita One', cursive;
+    color: #ff6f00;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Títulos específicos para misión, visión y valores */
+.card-title.mision {
+    color: #2196F3;
+}
+
+.card-title.vision {
+    color: #4CAF50;
+}
+
+.card-title.valores {
+    color: #FF5722;
+}
+
+/* Texto de las cards */
+.card-text {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #555;
+    text-align: justify;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+/* Estilos para la lista de valores */
+.acerca-valores ul li {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 1rem;
+}
+
+.acerca-valores ul li b {
+    color: #ff6f00;
+    font-weight: 700;
+    font-family: 'Lilita One', cursive;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.acerca-valores h2 {
+    font-family: 'Lilita One', cursive;
+    color: #ff6f00;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+/* Sidebar de "Por qué elegirnos" */
+.list-group-item {
+    border: none;
+    background: transparent;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.list-group-item:hover {
+    color: #ff6f00;
+    font-weight: 600;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+/* Estilos para testimonios */
+.testimonios h2, .testimonios h3 {
+    font-family: 'Lilita One', cursive;
+    color: #ff6f00;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.testimonios h5 {
+    font-family: 'Dancing Script', cursive;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.testimonios .card-text {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* Estilo para nombres en testimonios */
+.testimonios .fw-bold {
+    font-family: 'Lilita One', cursive;
+    color: #ff6f00;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+/* Estilo para el WhatsApp flotante */
+.btn-success {
+    background-color: #25d366;
+    border-color: #25d366;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.btn-success:hover {
+    background-color: #20c157;
+    border-color: #20c157;
+    transform: translateY(-2px);
+}
+
+/* Estilos para el footer */
+footer h5 {
+    font-family: 'Lilita One', cursive;
+    color: #ff6f00;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.2rem;
+}
+
+footer p, footer li {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+footer .small {
+    font-family: 'Dancing Script', cursive;
+    font-weight: 600;
+    font-size: 1.1rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 2.8rem;
+        letter-spacing: 1px;
+    }
+    
+    .hero-section p {
+        font-size: 1.2rem;
+    }
+    
+    .acerca-valores .card-body {
+        padding: 1.5rem;
+    }
+    
+    .card-img-top {
+        height: 150px;
+    }
+    
+    .card-title {
+        font-size: 1.5rem;
+    }
+    
+    .acerca-valores h2 {
+        font-size: 1.7rem;
+    }
+    
+    .acerca-valores ul li b {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 2.2rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .hero-section p {
+        font-size: 1.1rem;
+    }
+    
+    .acerca-valores .card-body {
+        padding: 1rem;
+    }
+    
+    .card-title {
+        font-size: 1.3rem;
+    }
+    
+    .acerca-valores h2 {
+        font-size: 1.5rem;
+    }
+    
+    .testimonios .fw-bold {
+        font-size: 1rem;
+    }
+    
+    .card-text {
+        font-size: 0.9rem;
+    }
+}

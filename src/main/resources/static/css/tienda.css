@@ -1,0 +1,892 @@
+/* ==================== TIENDA DEL FUTURO CSS ==================== */
+
+/* Variables CSS para temas */
+:root {
+    --primary-color: #ff9800;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #ff6f00;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    
+    /* Colores futuristas */
+    --neon-blue: #ff9800;
+    --neon-purple: #ff6f00;
+    --neon-pink: #ffa726;
+    --neon-green: #10b981;
+    --cyber-dark: #0a0e1a;
+    --cyber-gray: #1e293b;
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, #ff9800, #ff6f00);
+    --gradient-secondary: linear-gradient(135deg, #ffa726, #ff9800);
+    --gradient-dark: linear-gradient(135deg, var(--cyber-dark), var(--cyber-gray));
+    
+    /* Fuentes */
+    --font-futuristic: 'Orbitron', sans-serif;
+    --font-modern: 'Exo 2', sans-serif;
+}
+
+/* ==================== ESTILOS GLOBALES ==================== */
+body {
+    font-family: var(--font-modern);
+    overflow-x: hidden;
+}
+
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: var(--font-futuristic);
+    font-weight: 900;
+}
+
+/* ==================== HERO SECTION FUTURISTA ==================== */
+.hero-tienda {
+    position: relative;
+    background: var(--gradient-dark);
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+}
+
+.hero-text h1 {
+    font-size: 3.5rem;
+    line-height: 1.2;
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Botón futurista */
+.pixel-btn {
+    position: relative;
+    padding: 15px 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid transparent;
+    background: var(--gradient-primary);
+    border-radius: 0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.pixel-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.pixel-btn:hover::before {
+    left: 100%;
+}
+
+.pixel-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+}
+
+/* Contenedor 3D del producto */
+.hero-3d-container {
+    perspective: 1000px;
+}
+
+.floating-product {
+    position: relative;
+    animation: float 6s ease-in-out infinite;
+}
+
+.product-3d {
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 10px 30px rgba(0, 212, 255, 0.3));
+}
+
+.floating-product:hover .product-3d {
+    transform: rotateY(15deg) rotateX(5deg) scale(1.05);
+}
+
+.glow-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.2), transparent);
+    border-radius: 50%;
+    animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-20px) rotate(2deg); }
+    66% { transform: translateY(10px) rotate(-2deg); }
+}
+
+@keyframes glow {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+    100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+}
+
+/* Partículas de fondo */
+.hero-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, var(--neon-blue), transparent),
+        radial-gradient(2px 2px at 40px 70px, var(--neon-purple), transparent),
+        radial-gradient(1px 1px at 90px 40px, var(--neon-pink), transparent);
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    animation: particles 20s linear infinite;
+}
+
+@keyframes particles {
+    0% { background-position: 0 0, 0 0, 0 0; }
+    100% { background-position: 200px 200px, -200px 200px, 100px -200px; }
+}
+
+/* ==================== FILTROS INTELIGENTES ==================== */
+.filters-section {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.search-container {
+    position: relative;
+    min-width: 300px;
+}
+
+.search-input {
+    padding-left: 45px;
+    border-radius: 25px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 5;
+}
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f3f4;
+    transition: background-color 0.2s ease;
+}
+
+.suggestion-item:hover {
+    background-color: #f8f9fa;
+}
+
+.filter-select {
+    min-width: 150px;
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+/* ==================== ESTADÍSTICAS EN TIEMPO REAL ==================== */
+.stats-container {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa, white);
+    border-radius: 15px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: var(--gradient-primary);
+    color: white;
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+
+.stat-info h3 {
+    font-family: var(--font-futuristic);
+    font-size: 2rem;
+    font-weight: 900;
+    margin: 0;
+    color: var(--dark-color);
+}
+
+.stat-info p {
+    margin: 0;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+/* ==================== GRID DE PRODUCTOS ==================== */
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.producto-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.producto-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.producto-imagen {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.producto-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.producto-card:hover .producto-imagen img {
+    transform: scale(1.1);
+}
+
+/* Badges del producto */
+.producto-badges {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 5;
+}
+
+.badge-nuevo {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+    width: fit-content;
+}
+
+.badge-descuento {
+    background: var(--danger-color);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: block;
+    width: fit-content;
+}
+
+/* Acciones rápidas */
+.acciones-rapidas {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s ease;
+}
+
+.producto-card:hover .acciones-rapidas {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.accion-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--dark-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.accion-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Información del producto */
+.producto-info {
+    padding: 20px;
+}
+
+.producto-categoria {
+    color: var(--secondary-color);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.producto-nombre {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 10px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.producto-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 12px;
+}
+
+.rating-stars {
+    color: var(--warning-color);
+    font-size: 0.9rem;
+}
+
+.rating-text {
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+}
+
+.precio-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.precio-actual {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--success-color);
+    font-family: var(--font-futuristic);
+}
+
+.precio-anterior {
+    font-size: 1rem;
+    color: var(--secondary-color);
+    text-decoration: line-through;
+}
+
+.stock-info {
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+}
+
+.stock-disponible {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.stock-limitado {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+.stock-agotado {
+    color: var(--danger-color);
+    font-weight: 600;
+}
+
+/* Botones de acción */
+.acciones-producto {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-agregar-carrito {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-vista-rapida {
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 2px solid var(--primary-color);
+    background: transparent;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.btn-vista-rapida:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* ==================== VISTA DE LISTA ==================== */
+.productos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.producto-lista-item {
+    display: flex;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.producto-lista-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.producto-lista-imagen {
+    width: 200px;
+    height: 150px;
+    flex-shrink: 0;
+}
+
+.producto-lista-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.producto-lista-info {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* ==================== MODAL DE VISTA RÁPIDA ==================== */
+.producto-imagen-container {
+    position: relative;
+    background: #f8f9fa;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.imagen-overlay {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.producto-imagen-container:hover .imagen-overlay {
+    opacity: 1;
+}
+
+.cantidad-container .input-group {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.cantidad-container .form-control {
+    border: none;
+    background: #f8f9fa;
+}
+
+.cantidad-container .btn {
+    border: none;
+    background: #e9ecef;
+    color: var(--dark-color);
+}
+
+.cantidad-container .btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* ==================== MODAL AR ==================== */
+.ar-scanner {
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.scanner-frame {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border: 2px solid var(--neon-blue);
+    border-radius: 20px;
+}
+
+.corner {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--neon-blue);
+}
+
+.corner-tl {
+    top: -3px;
+    left: -3px;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 15px 0 0 0;
+}
+
+.corner-tr {
+    top: -3px;
+    right: -3px;
+    border-left: none;
+    border-bottom: none;
+    border-radius: 0 15px 0 0;
+}
+
+.corner-bl {
+    bottom: -3px;
+    left: -3px;
+    border-right: none;
+    border-top: none;
+    border-radius: 0 0 0 15px;
+}
+
+.corner-br {
+    bottom: -3px;
+    right: -3px;
+    border-left: none;
+    border-top: none;
+    border-radius: 0 0 15px 0;
+}
+
+.scanning-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--neon-blue);
+    animation: scan 2s linear infinite;
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: calc(100% - 2px); }
+}
+
+.ar-instructions {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ==================== ANIMACIONES AOS ==================== */
+[data-aos] {
+    pointer-events: none;
+}
+
+[data-aos].aos-animate {
+    pointer-events: auto;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    .hero-text h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-text p {
+        font-size: 1rem;
+    }
+    
+    .search-container {
+        min-width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .productos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .filters-section .row > div:first-child {
+        margin-bottom: 15px;
+    }
+    
+    .stats-container {
+        padding: 15px;
+    }
+    
+    .stat-card {
+        padding: 15px;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        margin-right: 10px;
+    }
+    
+    .stat-info h3 {
+        font-size: 1.5rem;
+    }
+    
+    .producto-lista-item {
+        flex-direction: column;
+    }
+    
+    .producto-lista-imagen {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .ar-scanner {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+    
+    .productos-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
+/* ==================== TEMA OSCURO (OPCIONAL) ==================== */
+@media (prefers-color-scheme: dark) {
+    .stats-container {
+        background: var(--cyber-gray);
+        color: white;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, var(--cyber-dark), var(--cyber-gray));
+        border-color: #334155;
+    }
+    
+    .producto-card {
+        background: var(--cyber-gray);
+        color: white;
+    }
+    
+    .filters-section {
+        background: rgba(30, 41, 59, 0.95);
+    }
+    
+    .search-input,
+    .filter-select {
+        background: var(--cyber-gray);
+        border-color: #334155;
+        color: white;
+    }
+}
+
+/* ==================== UTILIDADES ==================== */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+}
+
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.box-shadow-hover:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Efectos de carga */
+.loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ==================== NAVBAR PERSONALIZADO ==================== */
+.navbar {
+    background: linear-gradient(135deg, #ff9800 0%, #ff6f00 100%) !important;
+    box-shadow: 0 2px 10px rgba(255, 152, 0, 0.2);
+}
+
+.navbar-brand {
+    color: white !important;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #fff3e0 !important;
+    transform: translateY(-1px);
+}
+
+.navbar-nav .nav-link.active {
+    color: #fff3e0 !important;
+    font-weight: 600;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Estilos específicos para elementos del navbar */
+.navbar .navbar-brand,
+.navbar .navbar-brand:hover,
+.navbar .navbar-brand:focus {
+    color: white !important;
+    text-decoration: none;
+}
+
+/* Estilos para el carrito y otros iconos */
+.navbar .btn,
+.navbar .btn-outline-primary,
+.navbar a,
+.navbar a:hover,
+.navbar a:focus {
+    color: white !important;
+    border-color: white !important;
+}
+
+.navbar .btn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
+/* Sobrescribir cualquier enlace azul en el navbar */
+.navbar a[href],
+.navbar .nav-link,
+.navbar .navbar-nav .nav-link {
+    color: white !important;
+}
+
+/* Estilos para el icono del carrito específicamente */
+.navbar .fa-shopping-cart,
+.navbar .fas,
+.navbar .fa {
+    color: white !important;
+}

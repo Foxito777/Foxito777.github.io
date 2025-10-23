@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${accion + ' Cliente'} + ' | JuledToys Backoffice'">Formulario Cliente</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="d-flex align-items-center gap-2">
+        <img th:src="@{/Imagenes/logo.png}" alt="Juled Toys Logo" style="width:32px;height:32px;border-radius:6px;">
+        <h4 class="mb-0">JuledToys Admin</h4>
+      </div>
+    </div>
+    <nav class="nav-menu">
+      <div class="nav-item">
+        <a href="/" class="nav-link" target="_blank"><i class="fas fa-home"></i><span>Ir a la Tienda</span></a>
+      </div>
+      <div class="nav-item">
+        <a th:href="@{/backoffice/admin}" class="nav-link"><i class="fas fa-boxes"></i><span>Productos</span></a>
+      </div>
+      <div class="nav-item">
+        <a th:href="@{/backoffice/admin/promociones}" class="nav-link"><i class="fas fa-tags"></i><span>Promociones</span></a>
+      </div>
+      <div class="nav-item">
+        <a th:href="@{/backoffice/admin/usuarios}" class="nav-link"><i class="fas fa-users"></i><span>Usuarios</span></a>
+      </div>
+      <div class="nav-item">
+        <a th:href="@{/backoffice/admin/clientes}" class="nav-link active"><i class="fas fa-user-tie"></i><span>Clientes</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="main-content">
+    <header class="header">
+      <h2><i class="fas fa-user-edit"></i> <span th:text="${accion} + ' Cliente'">Formulario Cliente</span></h2>
+      <div class="breadcrumb">Dashboard / Clientes / <span th:text="${accion}">Formulario</span></div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="card shadow">
+        <div class="card-body">
+          
+          <!-- Mensajes de error -->
+          <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+
+          <!-- Alerta de solo lectura -->
+          <div th:if="${soloLectura}" class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> 
+            Estás visualizando este cliente en modo solo lectura. Solo los administradores pueden realizar cambios.
+          </div>
+
+          <form th:action="@{/backoffice/admin/clientes/guardar}" th:object="${cliente}" method="post">
+            <input type="hidden" th:field="*{id}" />
+            <!-- Render CSRF token only when available to avoid template errors when security is not providing it -->
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            
+            <fieldset th:disabled="${soloLectura}">
+              <!-- Sección: Datos de cuenta -->
+              <h6 class="text-uppercase text-muted mt-1 mb-3">Datos de cuenta</h6>
+              <div class="row">
+                <!-- Username -->
+                <div class="col-md-6 mb-3">
+                  <label for="username" class="form-label">Nombre de Usuario <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="p. ej. juanperez" required th:classappend="${#fields.hasErrors('username')} ? ' is-invalid'">
+                  <div class="form-text">Debe ser único; se usa para iniciar sesión.</div>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Error en username</div>
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-6 mb-3">
+                  <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                  <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="p. ej. nombre@correo.com" required th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'">
+                  <div class="form-text">Usaremos este correo para notificaciones y recuperación.</div>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error en email</div>
+                </div>
+              </div>
+
+              <!-- Sección: Información personal -->
+              <h6 class="text-uppercase text-muted mt-3 mb-3">Información personal</h6>
+              <div class="row">
+                <!-- Nombre Completo -->
+                <div class="col-md-6 mb-3">
+                  <label for="nombreCompleto" class="form-label">Nombre Completo</label>
+                  <input type="text" class="form-control" id="nombreCompleto" th:field="*{nombreCompleto}" placeholder="p. ej. Juan Pérez" th:classappend="${#fields.hasErrors('nombreCompleto')} ? ' is-invalid'">
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('nombreCompleto')}" th:errors="*{nombreCompleto}">Error</div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="col-md-6 mb-3">
+                  <label for="telefono" class="form-label">Teléfono</label>
+                  <input type="text" class="form-control" id="telefono" th:field="*{telefono}" inputmode="tel" placeholder="p. ej. 999 888 777" th:classappend="${#fields.hasErrors('telefono')} ? ' is-invalid'">
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}">Error</div>
+                </div>
+              </div>
+
+              <!-- Dirección -->
+              <div class="mb-3">
+                <label for="direccion" class="form-label">Dirección</label>
+                <textarea class="form-control" id="direccion" rows="2" th:field="*{direccion}" placeholder="Calle, número, distrito, ciudad" th:classappend="${#fields.hasErrors('direccion')} ? ' is-invalid'"></textarea>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}">Error</div>
+              </div>
+
+              <!-- Campo 'Estado' eliminado: la gestión de estado ya no se modifica desde este formulario -->
+
+              <!-- Contraseña (solo para nuevo cliente) -->
+              <div class="row" th:if="${cliente.id == null}">
+                <div class="col-md-6 mb-3">
+                  <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
+                  <input type="password" class="form-control" id="password" th:field="*{password}" minlength="6" placeholder="Define una contraseña segura" required th:classappend="${#fields.hasErrors('password')} ? ' is-invalid'">
+                  <div class="form-text">Mínimo 6 caracteres.</div>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Error</div>
+                </div>
+              </div>
+
+              <!-- Nueva contraseña (solo para editar y si no es solo lectura) -->
+              <div class="row" th:if="${cliente.id != null && !soloLectura}">
+                <div class="col-md-6 mb-3">
+                  <label for="nuevaPassword" class="form-label">Nueva Contraseña (opcional)</label>
+                  <input type="password" class="form-control" id="nuevaPassword" name="nuevaPassword" minlength="6" placeholder="Introduce nueva contraseña (opcional)">
+                  <div class="form-text">Déjalo en blanco si no deseas cambiar la contraseña.</div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Información adicional (solo para vista) -->
+            <div th:if="${cliente.id != null}" class="row mt-3">
+              <div class="col-md-6">
+                <div class="alert alert-light">
+                  <strong>Fecha de Registro:</strong> 
+                  <span th:text="${#temporals.format(cliente.fechaRegistro, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span>
+                </div>
+              </div>
+              <div class="col-md-6" th:if="${cliente.ultimoAcceso != null}">
+                <div class="alert alert-light">
+                  <strong>Último Acceso:</strong> 
+                  <span th:text="${#temporals.format(cliente.ultimoAcceso, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="btn btn-primary" th:if="${!soloLectura}">
+                <i class="fas fa-save"></i>
+                <span th:text="${cliente.id == null} ? 'Crear cliente' : 'Guardar cambios'">Guardar</span>
+              </button>
+              <a th:href="@{/backoffice/admin/clientes}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> <span th:text="${soloLectura ? 'Volver' : 'Cancelar'}">Volver</span>
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

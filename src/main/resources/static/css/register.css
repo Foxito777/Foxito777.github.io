@@ -1,0 +1,57 @@
+/* Fondo panel izquierdo */
+.left-panel {
+  background: linear-gradient(135deg, #ff7e5f, #feb47b);
+  color: white;
+}
+
+.brand-title {
+  font-family: 'Lilita One', cursive;
+}
+
+.brand-tagline {
+  font-family: 'Dancing Script', cursive;
+}
+
+/* Card del formulario */
+.login-card {
+  max-width: 420px;
+  margin: auto;
+  border-radius: 12px;
+  border: none;
+}
+
+/* Inputs */
+.form-control, .form-select {
+  border-radius: 8px;
+}
+
+/* Botones */
+.btn-warning {
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.btn-outline-secondary {
+  border-radius: 8px;
+}
+
+/* Checkbox */
+.form-check-label {
+  font-size: 0.9rem;
+}
+
+/* Textos pequeños */
+.small {
+  font-size: 0.85rem;
+}
+
+/* Validación Bootstrap */
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid {
+  border-color: #dc3545;
+}
+
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+  border-color: #198754;
+}

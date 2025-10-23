@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run JuledtoysApplication (8080)",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.proyectoweb.Juledtoys.JuledtoysApplication",
+      "projectName": "Juledtoys",
+      "env": {
+        "DATABASE_URL": "jdbc:mysql://45.79.40.132:3306/juledtoy_bds?sslMode=PREFERRED&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci",
+        "DATABASE_USERNAME": "juledtoy_adminbd",
+        "DATABASE_PASSWORD": "Juledbase2025"
+      },
+      "vmArgs": "-Dserver.port=8080"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-JuledtoysApplication<Juledtoys>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.proyectoweb.Juledtoys.JuledtoysApplication",
+      "projectName": "Juledtoys",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

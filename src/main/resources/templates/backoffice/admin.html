@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backoffice - Admin | JuledToys</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/admin.css?v=2.0" />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="d-flex align-items-center gap-2">
+          <img
+            src="/Imagenes/logo.png"
+            alt="Juled Toys Logo"
+            style="width: 32px; height: 32px; border-radius: 6px"
+          />
+          <h4 class="mb-0">JuledToys Admin</h4>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <!-- Enlace a página principal -->
+        <div class="nav-item">
+          <a
+            href="/"
+            class="nav-link"
+            target="_blank"
+            title="Ver página principal"
+          >
+            <i class="fas fa-home"></i>
+            <span>Ir a la Tienda</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="/backoffice/admin" class="nav-link active">
+            <i class="fas fa-boxes"></i>
+            <span>Productos</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a th:href="@{/backoffice/admin/promociones}" class="nav-link">
+            <i class="fas fa-tags"></i>
+            <span>Promociones</span>
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a th:href="@{/backoffice/admin/usuarios}" class="nav-link">
+            <i class="fas fa-users"></i>
+            <span>Usuarios</span>
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a th:href="@{/backoffice/admin/clientes}" class="nav-link">
+            <i class="fas fa-user-tie"></i>
+            <span>Clientes</span>
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reportes</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Pedidos</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-cog"></i>
+            <span>Configuración</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header class="header">
+        <h2>
+          <i class="fas fa-boxes"></i>
+          Gestión de Productos
+        </h2>
+        <div class="breadcrumb">Dashboard / Productos / Gestión</div>
+      </header>
+
+      <div class="content-wrapper">
+        <!-- Mensajes de notificación -->
+        <div
+          th:if="${mensaje}"
+          class="alert"
+          th:classappend="${tipoMensaje == 'success' ? 'alert-success' : 'alert-danger'}"
+          role="alert"
+        >
+          <i
+            th:class="${tipoMensaje == 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle'}"
+          ></i>
+          <span th:text="${mensaje}"></span>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon">
+                <i class="fas fa-box"></i>
+              </div>
+            </div>
+            <div class="stat-value" th:text="${totalProductos}">0</div>
+            <div class="stat-label">Total Productos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon">
+                <i class="fas fa-warehouse"></i>
+              </div>
+            </div>
+            <div class="stat-value" th:text="${stockTotal}">0</div>
+            <div class="stat-label">Stock Total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+            </div>
+            <div class="stat-value">
+              $<span
+                th:text="${#numbers.formatDecimal(valorTotalInventario, 0, 'COMMA', 2, 'POINT')}"
+                >0.00</span
+              >
+            </div>
+            <div class="stat-label">Valor Total Inventario</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+            </div>
+            <div class="stat-value" th:text="${stockBajo}">0</div>
+            <div class="stat-label">Stock Bajo</div>
+          </div>
+        </div>
+
+        <!-- Products Table -->
+        <div class="table-container">
+          <div class="table-header d-flex align-items-center justify-content-between gap-3">
+            <h3 class="table-title">
+              <i class="fas fa-list"></i>
+              Lista de Productos
+            </h3>
+            <div class="d-flex gap-2 align-items-center">
+              <form class="d-flex" method="get" th:action="@{/backoffice/admin}">
+                <div class="input-group input-group-sm">
+                  <input type="search" name="q" class="form-control" placeholder="Buscar productos..." aria-label="Buscar" th:value="${param.q}">
+                  <button class="btn btn-outline-secondary" type="submit" title="Buscar">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </form>
+              
+              <div class="d-flex">
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
+                <i class="fas fa-plus"></i> Nuevo Producto
+              </button>
+              <form id="formEliminarMultiple" th:action="@{/backoffice/admin/productos/eliminar-multiple}" method="post" onsubmit="return confirm('¿Eliminar los productos seleccionados? Esta acción es irreversible.')">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button id="btnEliminarMultiple" class="btn btn-danger" type="submit" disabled>
+                  <i class="fas fa-trash"></i> Eliminar seleccionados
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="selectAll" /></th>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="p : ${productos}">
+                  <td><input type="checkbox" name="productoIds" form="formEliminarMultiple" th:value="${p.id}" class="selectItem"/></td>
+                  <td>
+                    <strong th:text="${p.id}">#001</strong>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="me-3">
+                        <div class="product-icon">
+                          <span th:text="${#strings.substring(p.nombre, 0, 1)}"
+                            >T</span
+                          >
+                        </div>
+                      </div>
+                      <div>
+                        <div class="fw-bold" th:text="${p.nombre}">
+                          Producto
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span
+                      th:text="${#strings.length(p.descripcion) > 50 ? #strings.substring(p.descripcion, 0, 50) + '...' : p.descripcion}"
+                      >Descripción del producto...</span
+                    >
+                  </td>
+                  <td>
+                    <span class="fw-bold text-success"
+                      >$<span
+                        th:text="${#numbers.formatDecimal(p.precio, 0, 'COMMA', 2, 'POINT')}"
+                        >0.00</span
+                      ></span
+                    >
+                  </td>
+                  <td>
+                    <span class="fw-bold" th:text="${p.stock}">0</span>
+                  </td>
+                  <!-- lógica de estados! -->
+                  <td>
+                    <span
+                      th:class="${p.stock > 6 ? 'badge badge-success' : (p.stock > 0 ? 'badge badge-warning' : 'badge badge-danger')}"
+                      th:text="${p.stock > 6 ? 'En Stock' : (p.stock > 0 ? 'Stock Bajo' : 'Agotado')}"
+                    >
+                      En Stock
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button
+                        class="btn btn-outline-primary btn-sm btn-editar"
+                        title="Editar"
+                        th:data-producto-id="${p.id}"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button
+                        class="btn btn-outline-danger btn-sm btn-eliminar"
+                        title="Eliminar"
+                        th:data-producto-id="${p.id}"
+                        th:data-producto-nombre="${p.nombre}"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+              const selectAll = document.getElementById('selectAll');
+              const items = document.querySelectorAll('.selectItem');
+              const btnEliminar = document.getElementById('btnEliminarMultiple');
+
+              function updateButton() {
+                const anyChecked = Array.from(document.querySelectorAll('.selectItem')).some(i => i.checked);
+                btnEliminar.disabled = !anyChecked;
+              }
+
+              selectAll?.addEventListener('change', function () {
+                items.forEach(i => i.checked = selectAll.checked);
+                updateButton();
+              });
+
+              items.forEach(i => i.addEventListener('change', updateButton));
+            });
+          </script>
+      </div>
+    </div>
+
+    <!-- Modal Nuevo Producto -->
+    <div class="modal fade" id="modalNuevoProducto" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-plus"></i>
+              Nuevo Producto
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <form th:action="@{/backoffice/admin/productos}" method="post">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="nombre" class="form-label"
+                  >Nombre del Producto</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nombre"
+                  name="nombre"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea
+                  class="form-control"
+                  id="descripcion"
+                  name="descripcion"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="precio" class="form-label">Precio</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="precio"
+                    name="precio"
+                    step="0.01"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="stock" class="form-label">Stock</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="stock"
+                    name="stock"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                Guardar Producto
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Editar Producto -->
+    <div class="modal fade" id="modalEditarProducto" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-edit"></i>
+              Editar Producto
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <form id="formEditarProducto" method="post">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="editNombre" class="form-label"
+                  >Nombre del Producto</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editNombre"
+                  name="nombre"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editDescripcion" class="form-label"
+                  >Descripción</label
+                >
+                <textarea
+                  class="form-control"
+                  id="editDescripcion"
+                  name="descripcion"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="editPrecio" class="form-label">Precio</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="editPrecio"
+                    name="precio"
+                    step="0.01"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="editStock" class="form-label">Stock</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="editStock"
+                    name="stock"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                Actualizar Producto
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Confirmar Eliminación -->
+    <div class="modal fade" id="modalEliminarProducto" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-danger">
+              <i class="fas fa-exclamation-triangle"></i>
+              Confirmar Eliminación
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              ¿Estás seguro de que deseas eliminar el producto
+              <strong id="nombreProductoEliminar"></strong>?
+            </p>
+            <p class="text-muted">Esta acción no se puede deshacer.</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <form id="formEliminarProducto" method="post" class="form-inline">
+              <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i>
+                Eliminar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Función para editar producto
+      function editarProducto(id) {
+        fetch(`/backoffice/admin/productos/${id}`)
+          .then((response) => response.json())
+          .then((producto) => {
+            if (producto) {
+              document.getElementById("editNombre").value = producto.nombre;
+              document.getElementById("editDescripcion").value =
+                producto.descripcion;
+              document.getElementById("editPrecio").value = producto.precio;
+              document.getElementById("editStock").value = producto.stock;
+
+              document.getElementById(
+                "formEditarProducto"
+              ).action = `/backoffice/admin/productos/${id}/editar`;
+
+              new bootstrap.Modal(
+                document.getElementById("modalEditarProducto")
+              ).show();
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error al cargar los datos del producto");
+          });
+      }
+
+      // Función para eliminar producto
+      function eliminarProducto(id, nombre) {
+        document.getElementById("nombreProductoEliminar").textContent = nombre;
+        document.getElementById(
+          "formEliminarProducto"
+        ).action = `/backoffice/admin/productos/${id}/eliminar`;
+        new bootstrap.Modal(
+          document.getElementById("modalEliminarProducto")
+        ).show();
+      }
+
+      // Auto-hide alerts after 5 seconds
+      setTimeout(function () {
+        const alerts = document.querySelectorAll(".alert");
+        alerts.forEach((alert) => {
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        });
+      }, 5000);
+
+      // Event handlers for edit and delete buttons
+      document.addEventListener("DOMContentLoaded", function () {
+        // Handle edit buttons
+        document.querySelectorAll(".btn-editar").forEach((button) => {
+          button.addEventListener("click", function () {
+            const productoId = this.getAttribute("data-producto-id");
+            editarProducto(productoId);
+          });
+        });
+
+        // Handle delete buttons
+        document.querySelectorAll(".btn-eliminar").forEach((button) => {
+          button.addEventListener("click", function () {
+            const productoId = this.getAttribute("data-producto-id");
+            const productoNombre = this.getAttribute("data-producto-nombre");
+            eliminarProducto(productoId, productoNombre);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

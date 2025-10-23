@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tienda Virtual - Juled TOYS</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS global -->
+    <link rel="stylesheet" href="css/index.css">
+    
+    <!-- CSS específico de tienda -->
+    <link rel="stylesheet" href="css/tienda.css">
+</head>
+
+<body class="bg-light">
+    <!-- Header superior -->
+    <header class="bg-dark py-2">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between flex-wrap header-actions">
+                <!-- Redes -->
+                <div class="d-flex align-items-center gap-2">
+                    <a href="#" class="btn btn-outline-light btn-sm" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-light btn-sm" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-light btn-sm" title="TikTok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+
+                <!-- Información de contacto -->
+                <div class="d-none d-lg-flex align-items-center gap-3 text-light small">
+                    <span><i class="fas fa-phone me-1"></i> 935-867-730</span>
+                    <span><i class="fas fa-envelope me-1"></i> info@juledtoys.com</span>
+                    <span><i class="fas fa-map-marker-alt me-1"></i> Ayacucho, Perú</span>
+                </div>
+
+                <!-- Acciones de usuario -->
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/login" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-user me-1"></i> Ingresar
+                    </a>
+                    <a href="/register" class="btn btn-warning btn-sm">
+                        <i class="fas fa-user-plus me-1"></i> Registrarse
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegación principal -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img th:src="@{/Imagenes/logo.png}" alt="Juled Toys" height="45" class="me-2">
+                <span class="fw-bold text-white">Juled Toys</span>
+            </a>
+
+            <!-- Botón móvil -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menú desktop -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/productos">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold" href="/tienda">Tienda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/accesorios">Accesorios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/acerca">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contacto">Contacto</a>
+                    </li>
+                </ul>
+
+                <!-- Carrito -->
+                <div class="d-flex align-items-center">
+                    <a href="/carrito" class="btn btn-outline-primary position-relative me-2">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                              th:text="${carritoCount}" th:if="${carritoCount > 0}">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Menú móvil offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="menuOffcanvas">
+        <div class="offcanvas-header bg-primary text-white">
+            <h5 class="offcanvas-title">
+                <img th:src="@{/Imagenes/logo.png}" alt="Logo" height="30" class="me-2">
+                Menú
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home me-2"></i>Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/productos"><i class="fas fa-box me-2"></i>Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active fw-bold" href="/tienda"><i class="fas fa-store me-2"></i>Tienda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/accesorios"><i class="fas fa-puzzle-piece me-2"></i>Accesorios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/acerca"><i class="fas fa-info-circle me-2"></i>Nosotros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contacto"><i class="fas fa-phone me-2"></i>Contacto</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Hero Section futurista -->
+    <section class="hero-tienda">
+        <div class="hero-content">
+            <div class="container">
+                <div class="row align-items-center min-vh-50">
+                    <div class="col-lg-6">
+                        <div class="hero-text" data-aos="fade-right">
+                            <h1 class="display-4 fw-bold mb-4">
+                                <span class="text-gradient">Tienda del Futuro</span>
+                            </h1>
+                            <p class="lead mb-4">
+                                Explora nuestra colección con tecnología de última generación. 
+                                Vista 360°, realidad aumentada y experiencias inmersivas.
+                            </p>
+                            <div class="d-flex gap-3">
+                                <button class="btn btn-primary btn-lg pixel-btn" onclick="scrollToProductos()">
+                                    <i class="fas fa-rocket me-2"></i>Explorar Ahora
+                                </button>
+                                <button class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#arModal">
+                                    <i class="fas fa-cube me-2"></i>Modo AR
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 text-center">
+                        <div class="hero-3d-container" data-aos="fade-left">
+                            <div class="floating-product">
+                                <img src="Imagenes/Mansion.png" alt="Producto 3D" class="img-fluid product-3d">
+                                <div class="glow-effect"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-particles"></div>
+    </section>
+
+    <!-- Panel de filtros inteligente -->
+    <section class="filters-section py-4 bg-white shadow-sm sticky-top" style="top: 76px; z-index: 1040;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                        <!-- Búsqueda inteligente -->
+                        <div class="search-container">
+                            <input type="text" id="searchInput" class="form-control search-input" 
+                                   placeholder="Buscar productos..." autocomplete="off">
+                            <i class="fas fa-search search-icon"></i>
+                            <div id="searchSuggestions" class="search-suggestions"></div>
+                        </div>
+
+                        <!-- Filtro de categoría -->
+                        <select id="categoriaFilter" class="form-select filter-select">
+                            <option value="">Todas las categorías</option>
+                            <option th:each="categoria : ${categorias}" th:value="${categoria}" th:text="${categoria}"></option>
+                        </select>
+
+                        <!-- Filtro de precio -->
+                        <select id="precioFilter" class="form-select filter-select">
+                            <option value="">Cualquier precio</option>
+                            <option value="0-100">S/ 0 - S/ 100</option>
+                            <option value="100-300">S/ 100 - S/ 300</option>
+                            <option value="300-600">S/ 300 - S/ 600</option>
+                            <option value="600+">S/ 600+</option>
+                        </select>
+
+                        <!-- Botón de limpiar filtros -->
+                        <button id="clearFilters" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>Limpiar
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-end">
+                    <div class="d-flex align-items-center justify-content-end gap-3">
+                        <span class="text-muted small">Ordenar por:</span>
+                        <select id="ordenarSelect" class="form-select form-select-sm" style="width: auto;">
+                            <option value="relevancia">Relevancia</option>
+                            <option value="precio_asc">Precio: Menor a Mayor</option>
+                            <option value="precio_desc">Precio: Mayor a Menor</option>
+                            <option value="nombre">Nombre A-Z</option>
+                            <option value="calificacion">Mejor Calificación</option>
+                        </select>
+
+                        <!-- Botones de vista -->
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-primary active" id="vistaGrid">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="vistaLista">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Productos principales -->
+    <main class="py-5" id="productosSection">
+        <div class="container">
+            <!-- Estadísticas en tiempo real -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="stats-container">
+                        <div class="row g-3">
+                            <div class="col-6 col-md-3">
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3 id="totalProductos">0</h3>
+                                        <p>Productos</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-fire"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3 id="productosPopulares">0</h3>
+                                        <p>Populares</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-percentage"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3 id="ofertas">0</h3>
+                                        <p>Ofertas</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <h3>4.8</h3>
+                                        <p>Calificación</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid de productos -->
+            <div class="row">
+                <div class="col-12">
+                    <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2">Cargando productos increíbles...</p>
+                    </div>
+                    
+                    <div id="productosGrid" class="productos-grid">
+                        <!-- Los productos se cargarán aquí dinámicamente -->
+                    </div>
+
+                    <!-- Mensaje de no hay productos -->
+                    <div id="noProductos" class="text-center py-5" style="display: none;">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h4>No se encontraron productos</h4>
+                        <p class="text-muted">Intenta ajustar los filtros o buscar otro término</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paginación -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <nav id="paginacion" class="d-flex justify-content-center">
+                        <!-- La paginación se generará dinámicamente -->
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de vista rápida del producto -->
+    <div class="modal fade" id="vistaRapidaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Vista Rápida</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="producto-imagen-container">
+                                <img id="modalProductoImagen" src="" alt="" class="img-fluid rounded">
+                                <div class="imagen-overlay">
+                                    <button class="btn btn-light btn-sm" onclick="rotarProducto()">
+                                        <i class="fas fa-sync-alt"></i> Vista 360°
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="producto-info">
+                                <h4 id="modalProductoNombre"></h4>
+                                <div class="rating mb-2">
+                                    <span id="modalProductoCalificacion"></span>
+                                </div>
+                                <div class="precio-container mb-3">
+                                    <span class="precio-actual" id="modalProductoPrecio"></span>
+                                    <span class="precio-anterior" id="modalProductoPrecioAnterior"></span>
+                                    <span class="descuento-badge" id="modalProductoDescuento"></span>
+                                </div>
+                                <p id="modalProductoDescripcion" class="text-muted"></p>
+                                <div class="stock-info mb-3">
+                                    <span id="modalProductoStock"></span>
+                                </div>
+                                <div class="cantidad-container mb-3">
+                                    <label class="form-label">Cantidad:</label>
+                                    <div class="input-group" style="width: 130px;">
+                                        <button class="btn btn-outline-secondary" onclick="cambiarCantidad(-1)">-</button>
+                                        <input type="number" id="cantidadModal" class="form-control text-center" value="1" min="1">
+                                        <button class="btn btn-outline-secondary" onclick="cambiarCantidad(1)">+</button>
+                                    </div>
+                                </div>
+                                <div class="acciones-producto">
+                                    <button class="btn btn-primary btn-lg me-2" onclick="agregarAlCarritoModal()">
+                                        <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
+                                    </button>
+                                    <button class="btn btn-outline-danger" onclick="toggleWishlist()">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Realidad Aumentada (Simulado) -->
+    <div class="modal fade" id="arModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-white">
+                        <i class="fas fa-cube me-2"></i>Modo Realidad Aumentada
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center justify-content-center">
+                    <div class="text-center text-white">
+                        <div class="ar-scanner mb-4">
+                            <div class="scanner-frame">
+                                <div class="corner corner-tl"></div>
+                                <div class="corner corner-tr"></div>
+                                <div class="corner corner-bl"></div>
+                                <div class="corner corner-br"></div>
+                                <div class="scanning-line"></div>
+                            </div>
+                        </div>
+                        <h3>Escaneando superficie...</h3>
+                        <p class="lead">Mueve tu dispositivo lentamente para encontrar una superficie plana</p>
+                        <div class="ar-instructions mt-4">
+                            <div class="row justify-content-center">
+                                <div class="col-md-3 text-center mb-3">
+                                    <i class="fas fa-mobile-alt fa-2x mb-2"></i>
+                                    <p>Mantén estable</p>
+                                </div>
+                                <div class="col-md-3 text-center mb-3">
+                                    <i class="fas fa-eye fa-2x mb-2"></i>
+                                    <p>Busca superficie</p>
+                                </div>
+                                <div class="col-md-3 text-center mb-3">
+                                    <i class="fas fa-hand-point-up fa-2x mb-2"></i>
+                                    <p>Toca para colocar</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ <!-- Footer -->
+<footer class="mt-5 pt-5">
+    <div class="footer-section py-4" style="background: #6c6c6c; color: #fff;">
+        <div class="container text-center">
+            <div class="row g-4">
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-shop-window fs-2"></i></div>
+                    <div>Retiro en Tienda</div>
+                    <div class="small">Jr. Las Palmeras 298</div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-headset fs-2"></i></div>
+                    <div>Atención al Cliente</div>
+                    <div class="small">Escríbenos o llama <br> <strong>935 867 730</strong></div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-gift fs-2"></i></div>
+                    <div>Garantía Juled</div>
+                    <div class="small">Prolonga la diversión</div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-arrow-repeat fs-2"></i></div>
+                    <div>Devolución</div>
+                    <div class="small">Cambios y devoluciones</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom py-4">
+      <div class="container">
+        <div class="row g-3">
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Compra con Confianza</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">Guías de Compra</a></li>
+              <li><a href="#">Términos y condiciones</a></li>
+              <li><a href="#">Política de privacidad</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Sobre Juled Toys</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">¿Quiénes Somos?</a></li>
+              <li><a href="#">Nuestras Tiendas</a></li>
+              <li><a href="#">Trabaja con Nosotros</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Más de Juled</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">Extra Garantía</a></li>
+              <li><a href="#">Club Juled</a></li>
+              <li><a href="#">Cyber Wow</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Suscríbete</div>
+            <form class="d-flex mb-2">
+              <input type="email" class="form-control me-2" placeholder="Ingresa tu correo">
+              <button class="btn btn-warning">Suscribirse</button>
+            </form>
+            <div class="small mb-2"><input type="checkbox"> Acepto los <a href="#">Términos y condiciones</a></div>
+            <div class="mb-2">Medios de pago: 
+              <i class="bi bi-credit-card"></i>
+              <i class="bi bi-paypal"></i>
+            </div>
+            <div>Síguenos:
+              <a href="#"><i class="bi bi-facebook"></i></a>
+              <a href="#"><i class="bi bi-instagram"></i></a>
+              <a href="#"><i class="bi bi-tiktok"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="text-center small mt-4">
+          © 2025 Juled Toys. Todos los derechos reservados.
+        </div>
+      </div>
+    </div>
+  </footer>
+    
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/main-bootstrap.js"></script>
+    <script src="js/tienda.js"></script>
+</body>
+</html>

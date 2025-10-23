@@ -1,0 +1,47 @@
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f7931e, #ec1e79);
+      font-family: 'Lilita One', cursive;
+    }
+    .login-card {
+      max-width: 400px;
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+    .login-header {
+      background: #f7931e;
+      color: #fff;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .login-header h2 {
+      margin: 0;
+      font-weight: bold;
+    }
+    .form-control {
+      border-radius: 10px;
+    }
+    .btn-login {
+      border-radius: 10px;
+      background: #ec1e79;
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .btn-login:hover {
+      background: #a31564;
+    }
+    .extra-links {
+      font-size: 0.9rem;
+    }
+    .brand-logo {
+      max-width: 120px;
+      margin-bottom: 1rem;
+    }

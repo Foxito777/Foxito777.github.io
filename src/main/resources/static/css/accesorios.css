@@ -1,0 +1,135 @@
+/* Fondo general */
+body {
+  background: #f7f7f7;
+}
+
+/* Tarjetas de producto */
+.product-card {
+  transition: box-shadow 0.2s;
+}
+.product-card:hover {
+  box-shadow: 0 0 10px #cfcfcf;
+}
+
+/* Badges en las tarjetas */
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.brand-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+/* Carrusel de productos similares */
+.carousel-similar img {
+  max-height: 120px;
+  object-fit: contain;
+}
+
+/* Footer */
+.footer-section {
+  background: #6c4fa1;
+  color: #fff;
+}
+.footer-section .icon-box {
+  color: #fff;
+}
+.footer-bottom {
+  background: #262626;
+  color: #fff;
+  font-size: 0.95rem;
+}
+.footer-bottom a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Estrellas */
+.star-rating .bi-star-fill,
+.star-rating .bi-star-half {
+  color: #ffc107;
+}
+
+/* Filtros */
+.filter-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+.filter-list {
+  max-height: 140px;
+  overflow-y: auto;
+}
+.filter-box {
+  top: 90px;
+}
+
+/* Icono delivery */
+.delivery-icon {
+  width: 36px;
+  height: 36px;
+}
+
+/* Logo */
+.logo-img {
+  width: 40px;
+  height: auto;
+}
+
+/* Carrito */
+.cart-badge {
+  font-size: 0.8em;
+}
+
+/* Botones cuadrados */
+.square-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Select de orden */
+.select-order {
+  max-width: 180px;
+}
+
+/* Barra delivery */
+.delivery-icon {
+  width: 36px;
+  height: 36px;
+}
+
+/* Caja de filtros */
+.sticky-filtros {
+  top: 90px;
+}
+
+/* Select de ordenamiento */
+.select-filtros {
+  max-width: 180px;
+}
+
+/* Imagenes de productos */
+.product-img {
+  height: 180px;
+  object-fit: contain;
+}
+
+/* Imágenes dentro del carrusel de similares */
+.carousel-similar-img {
+  width: 100px;
+}
+
+
+
+/* Responsive */
+@media (max-width: 767px) {
+  .navbar-search {
+    display: none !important;
+  }
+}

@@ -1,0 +1,120 @@
+/* ------------------------------
+   Backoffice · Promociones (CSS)
+   Depende de Bootstrap 5
+---------------------------------*/
+
+/* Reset mínimo */
+:root {
+  --promo-bg: #ff6b35;
+  --promo-fg: #ffffff;
+}
+
+/* KPIs */
+.kpi-card {
+  border: 0;
+  border-radius: 1rem;
+}
+.kpi-card .card-body {
+  padding: 1rem 1.25rem;
+}
+.kpi-label {
+  font-size: .85rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.kpi-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+/* Tabla */
+.table > :not(caption) > * > * {
+  vertical-align: middle;
+}
+.table td .badge.rounded-pill {
+  font-weight: 600;
+}
+
+/* Botones compactos en acciones */
+.btn-group .btn {
+  min-width: 78px;
+}
+
+/* Preview en Crear/Editar */
+.preview-card {
+  background: #f8f9fa;
+  border: 1px dashed #dee2e6;
+  min-height: 120px;
+}
+.preview-card .badge {
+  background: var(--promo-fg);
+  color: var(--promo-bg);
+}
+.preview-card h3 {
+  margin: .25rem 0 .5rem;
+}
+.preview-card a.btn {
+  border-radius: .75rem;
+}
+
+/* Modal Vista previa */
+#previewSlide {
+  background: var(--promo-bg);
+  color: var(--promo-fg);
+}
+
+/* Reordenamiento */
+#ordenLista {
+  user-select: none;
+}
+#ordenLista .list-group-item {
+  border: 1px dashed #dee2e6;
+  border-radius: .75rem;
+  margin-bottom: .5rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.drag-handle {
+  cursor: grab;
+  font-size: 1.1rem;
+  color: #6c757d;
+}
+#ordenLista .list-group-item.dragging {
+  opacity: .6;
+  background: #f8f9fa;
+}
+
+/* Badges de estado (fallback cuando no hay clases dinámicas) */
+.badge.bg-success, .badge.bg-primary, .badge.bg-secondary {
+  font-weight: 600;
+}
+
+/* Utilidades pequeñas */
+.rounded-4 {
+  border-radius: 1rem !important;
+}
+.gap-4 {
+  gap: 1.5rem !important;
+}
+
+/* Control de imagen en tarjetas/preview */
+img.rounded-3 {
+  border-radius: .75rem !important;
+}
+
+/* Responsive tweaks */
+@media (max-width: 992px) {
+  .btn-group.btn-group-sm .btn {
+    padding: .25rem .5rem;
+  }
+}
+@media (max-width: 576px) {
+  .kpi-value {
+    font-size: 1.5rem;
+  }
+  .preview-card {
+    padding: 1rem !important;
+  }
+}

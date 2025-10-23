@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Acerca de Juled TOYS</title>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Iconos -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Fuentes del proyecto -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Dancing+Script:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- CSS global -->
+    <link rel="stylesheet" href="css/index.css" />
+
+    <!-- CSS de esta página -->
+    <link rel="stylesheet" href="css/acerca.css" />
+  </head>
+
+  <body class="bg-light">
+    <!-- Header superior -->
+    <header class="bg-dark py-2">
+      <div class="container-fluid">
+        <div
+          class="d-flex align-items-center justify-content-between flex-wrap header-actions"
+        >
+          <!-- Redes -->
+          <div class="d-flex align-items-center gap-2">
+            <a href="#" class="btn btn-outline-light btn-sm" title="Facebook"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="#" class="btn btn-outline-light btn-sm" title="Instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a href="#" class="btn btn-outline-light btn-sm" title="TikTok"
+              ><i class="fab fa-tiktok"></i
+            ></a>
+          </div>
+
+          <!-- Mensaje slider centrado -->
+          <div class="flex-grow-1 d-flex justify-content-center">
+            <div
+              id="promoSlider"
+              class="carousel slide w-100"
+              data-bs-ride="carousel"
+            >
+              <div class="carousel-inner text-center">
+                <div class="carousel-item active">
+                  <span class="text-warning fw-bold fs-5">
+                    🦖 Doble Puntos en selección de sets Dinosaurios 🦖
+                  </span>
+                </div>
+                <div class="carousel-item">
+                  <span class="text-info fw-bold fs-5"
+                    >Envío gratis por compras mayores a S/. 99</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Controles de usuario (saludo / login) -->
+          <ul class="navbar-nav ms-auto align-items-center"
+              th:replace="fragments/security :: userMenu">
+          </ul>
+
+      
+        </div>
+      </div>
+    </header>
+
+    <!-- Navbar principal -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-warning sticky-top shadow">
+    <div class="container d-flex align-items-center">
+      <!-- Logo -->
+      <a href="/" class="me-2 d-flex align-items-center">
+        <img th:src="@{/Imagenes/logo.png}" alt="Juled Toys Logo" class="logo-img" />
+      </a>
+      <!-- Marca -->
+      <a class="navbar-brand fw-bold me-2" href="/">Juled TOYS</a>
+      <!-- Botón hamburguesa SIEMPRE visible -->
+      <button class="btn btn-outline-dark ms-1 me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" aria-label="Menú">
+        <i class="fas fa-bars"></i>
+      </button>
+      <!-- Buscador horizontal (grande) -->
+      <form class="d-none d-lg-flex navbar-search flex-grow-1 me-3" role="search">
+        <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" />
+        <button class="btn btn-outline-dark" type="submit">Buscar</button>
+      </form>
+      <!-- Menú horizontal clásico (grande) -->
+      <div class="collapse navbar-collapse flex-grow-0 d-none d-lg-flex" id="mainMenu">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/acerca">Acerca</a></li>
+          <li class="nav-item"><a class="nav-link" href="/accesorios">Accesorios</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contacto">Contacto</a></li>
+        </ul>
+        <a href="/carrito" class="btn btn-outline-dark position-relative cart-btn ms-3 my-2 my-lg-0">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="position-absolute badge rounded-pill bg-danger cart-badge"
+                th:text="${cantidadCarrito ?: 0}">0</span>
+        </a>
+      </div>
+      
+      <!-- Buscador y carrito móviles -->
+        <div class="d-lg-none ms-auto w-100">
+          <form class="d-flex align-items-center my-2 gap-2 w-100" role="search">
+            <!-- Caja de texto -->
+            <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" />
+
+            <!-- Botón buscar -->
+            <button class="btn btn-outline-dark square-btn" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+
+            <!-- Botón carrito -->
+            <a href="/carrito" class="btn btn-outline-dark square-btn position-relative">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="position-absolute badge rounded-pill bg-danger cart-badge"
+                    th:text="${cantidadCarrito ?: 0}">0</span>
+            </a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Offcanvas: Menú hamburguesa para móvil y tablet -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menú Juled TOYS</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <h6 class="fw-bold mb-2">Navegación principal</h6>
+      <ul class="list-group mb-3">
+        <li class="list-group-item"><a href="/"><i class="fas fa-home me-2"></i>Inicio</a></li>
+        <li class="list-group-item"><a href="/productos"><i class="fas fa-cube me-2"></i>Productos</a></li>
+        <li class="list-group-item"><a href="/acerca"><i class="fas fa-compass me-2"></i>Acerca</a></li>
+        <li class="list-group-item"><a href="/accesorios"><i class="fas fa-store me-2"></i>Accesorios</a></li>
+        <li class="list-group-item"><a href="/contacto"><i class="fas fa-envelope me-2"></i>Contacto</a></li>
+      </ul>
+      <h6 class="fw-bold mb-2">Categorías</h6>
+      <ul class="list-group mb-3">
+        <li class="list-group-item"><a href="/productos?categoria=mario"><i class="fas fa-gamepad me-2"></i> Mario</a></li>
+        <li class="list-group-item"><a href="/productos?categoria=minecraft"><i class="fas fa-cubes me-2"></i> Minecraft</a></li>
+        <li class="list-group-item"><a href="/productos?categoria=variedades"><i class="fas fa-gift me-2"></i> Variedades</a></li>
+        <li class="list-group-item"><a href="/productos?categoria=sets"><i class="fas fa-box-open me-2"></i> Set completos</a></li>
+        <li class="list-group-item"><a href="/productos?categoria=dinosaurios"><i class="fas fa-dragon me-2"></i> Dinosaurios</a></li>
+      </ul>
+      <!-- 🔐 Acceso solo para STAFF (ADMIN, VENDEDOR, CAJERO, MARKETING) -->
+      <div class="mt-3" sec:authorize="hasAnyRole('ADMIN','VENDEDOR','CAJERO','MARKETING')">
+        <a class="btn btn-warning w-100" th:href="@{/backoffice/admin}">Acceso Backoffice</a>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Barra delivery -->
+    <div
+      class="bg-info text-dark py-2 text-center d-flex justify-content-center align-items-center gap-2"
+    >
+      <img
+        src="Imagenes/Delivery.png"
+        alt="Delivery"
+        style="width: 36px; height: 36px"
+      />
+      <span>DELIVERY GRATIS por compras mayores a <strong>S/. 99</strong></span>
+    </div>
+    <!-- HERO -->
+    <section class="acerca-hero bg-white border-bottom">
+      <div class="container py-5">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <h1 class="display-5 fw-bold mb-3">Acerca de Juled TOYS</h1>
+            <p class="lead text-muted mb-0">
+              Inspiramos alegría y creatividad con juguetes seguros, didácticos
+              y de gran calidad, acompañando cada etapa del crecimiento.
+            </p>
+          </div>
+          <div class="col-lg-5">
+            <div class="ratio ratio-16x9 rounded-3 overflow-hidden shadow-sm">
+              <img
+                src="Imagenes/Acerca de/about us.jpg"
+                alt="Familias felices con Juled Toys"
+                class="w-100 h-100 object-fit-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTENIDO (Misión/Visión/Valores + Sidebar) -->
+    <main class="py-5">
+      <div class="container">
+        <div class="row g-4">
+          <!-- Principal -->
+          <div class="col-lg-8">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+                  <img
+                    src="Imagenes/mision.png"
+                    class="card-img-top"
+                    alt="Nuestra misión en Juled Toys"
+                  />
+                  <div class="card-body">
+                    <h2 class="h4 card-title mb-2">Misión</h2>
+                    <p class="card-text">
+                      En <b>Juled TOYS SRL</b>, importamos y distribuimos juguetes tipo LEGO que fomentan la creatividad y el aprendizaje en niños y niñas, garantizando seguridad, innovación y un servicio logístico eficiente para conectar a las familias peruanas con experiencias de juego significativas. 
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+                  <img
+                    src="Imagenes/vision.png"
+                    class="card-img-top"
+                    alt="Nuestra visión en Juled Toys"
+                  />
+                  <div class="card-body">
+                    <h2 class="h4 card-title mb-2">Visión</h2>
+                    <p class="card-text">
+                      Ser la empresa líder en el mercado peruano en importación y distribución de juguetes tipo LEGO, reconocida por la calidad de sus productos, la puntualidad en las entregas y la satisfacción integral de sus clientes en todo el territorio nacional. 
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="card h-100 shadow-sm acerca-valores">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      <img
+                        src="Imagenes/Acerca de/valores.png"
+                        class="img-fluid rounded-start h-100 object-fit-cover"
+                        alt="Nuestros valores"
+                      />
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <h2 class="h4 card-title mb-3">Valores</h2>
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <ul class="list-unstyled mb-0">
+                              <li class="mb-2">
+                                <b>Innovación:</b> Buscamos novedades
+                                constantes.
+                              </li>
+                              <li class="mb-2">
+                                <b>Calidez:</b> Atención cercana y amable.
+                              </li>
+                            </ul>
+                          </div>
+                          <div class="col-sm-6">
+                            <ul class="list-unstyled mb-0">
+                              <li class="mb-2">
+                                <b>Seguridad:</b> Altos estándares de calidad.
+                              </li>
+                              <li class="mb-2">
+                                <b>Responsabilidad:</b> Compromiso con clientes
+                                y planeta.
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="col-lg-4">
+            <div class="card h-100 shadow-sm">
+              <img
+                src="Imagenes/pregunta.png"
+                class="card-img-top"
+                alt="¿Por qué elegir Juled Toys?"
+              />
+              <div class="card-body">
+                <h3 class="h5 card-title">¿Por qué elegirnos?</h3>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Gran variedad y marcas</li>
+                  <li class="list-group-item">Atención personalizada</li>
+                  <li class="list-group-item">Envíos rápidos y seguros</li>
+                  <li class="list-group-item">Precios competitivos</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Testimonios de clientes con foto y valoración de estrellas -->
+<section class="container my-5" id="testimonios">
+  <h2 class="text-center mb-3 fw-bold" style="font-size:2.1rem;">
+    <span class="text-warning"><i class="bi bi-stars"></i></span>
+    Testimonios de Clientes
+  </h2>
+  <p class="text-center text-secondary mb-4" style="font-size:1.1rem;">
+    Descubre por qué <span class="text-warning fw-bold">Juled Toys</span> es la mejor opción para diversión y creatividad.
+  </p>
+
+  <div class="row justify-content-center g-4">
+    <!-- Testimonio 1 -->
+    <div class="col-12 col-md-4">
+      <div class="card h-100 shadow-lg border-0 text-center p-4 position-relative bg-light" style="min-height: 280px; max-width: 340px; margin: 0 auto;">
+        <img src="Imagenes/Acerca de/testimonio1.PNG" alt="Cliente 1" class="rounded-circle mx-auto shadow mb-3 border border-3 border-warning" style="width:80px; height:80px; object-fit:cover;">
+        <h5 class="mb-1 fw-bold">Sofía Herrera</h5>
+        <div class="mb-2">
+          <!-- 5 estrellas -->
+          <span class="text-warning fs-5">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+          </span>
+        </div>
+        <blockquote class="blockquote mb-2">
+          <p class="mb-0 fst-italic">¡Mi hijo no deja de jugar! Los sets son muy completos y de gran calidad.</p>
+        </blockquote>
+        <span class="badge bg-warning-subtle text-dark px-3 py-1 mt-2">Set Exploración</span>
+      </div>
+    </div>
+
+    <!-- Testimonio 2 -->
+    <div class="col-12 col-md-4">
+      <div class="card h-100 shadow-lg border-0 text-center p-4 position-relative bg-light" style="min-height: 280px; max-width: 340px; margin: 0 auto;">
+        <img src="Imagenes/Acerca de/testimonio2.PNG" alt="Cliente 2" class="rounded-circle mx-auto shadow mb-3 border border-3 border-warning" style="width:80px; height:80px; object-fit:cover;">
+        <h5 class="mb-1 fw-bold">Diego Salazar</h5>
+        <div class="mb-2">
+          <!-- 4.5 estrellas -->
+          <span class="text-warning fs-5">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+          </span>
+        </div>
+        <blockquote class="blockquote mb-2">
+          <p class="mb-0 fst-italic">La entrega fue rápida y el empaque perfecto. ¡Muy recomendable!</p>
+        </blockquote>
+        <span class="badge bg-info-subtle text-dark px-3 py-1 mt-2">Set Aventuras</span>
+      </div>
+    </div>
+
+    <!-- Testimonio 3 -->
+    <div class="col-12 col-md-4">
+      <div class="card h-100 shadow-lg border-0 text-center p-4 position-relative bg-light" style="min-height: 280px; max-width: 340px; margin: 0 auto;">
+        <img src="Imagenes/Acerca de/testimonio3.PNG" alt="Cliente 3" class="rounded-circle mx-auto shadow mb-3 border border-3 border-warning" style="width:80px; height:80px; object-fit:cover;">
+        <h5 class="mb-1 fw-bold">Valentina Paredes</h5>
+        <div class="mb-2">
+          <!-- 4 estrellas -->
+          <span class="text-warning fs-5">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+          </span>
+        </div>
+        <blockquote class="blockquote mb-2">
+          <p class="mb-0 fst-italic">Me encantó la variedad y las opciones para todas las edades.</p>
+        </blockquote>
+        <span class="badge bg-success-subtle text-dark px-3 py-1 mt-2">Cliente fiel</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+<footer class="mt-5 pt-5">
+    <div class="footer-section py-4" style="background: #6c6c6c; color: #fff;">
+        <div class="container text-center">
+            <div class="row g-4">
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-shop-window fs-2"></i></div>
+                    <div>Retiro en Tienda</div>
+                    <div class="small">Jr. Las Palmeras 298</div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-headset fs-2"></i></div>
+                    <div>Atención al Cliente</div>
+                    <div class="small">Escríbenos o llama <br> <strong>935 867 730</strong></div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-gift fs-2"></i></div>
+                    <div>Garantía Juled</div>
+                    <div class="small">Prolonga la diversión</div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-arrow-repeat fs-2"></i></div>
+                    <div>Devolución</div>
+                    <div class="small">Cambios y devoluciones</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom py-4">
+      <div class="container">
+        <div class="row g-3">
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Compra con Confianza</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">Guías de Compra</a></li>
+              <li><a href="#">Términos y condiciones</a></li>
+              <li><a href="#">Política de privacidad</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Sobre Juled Toys</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">¿Quiénes Somos?</a></li>
+              <li><a href="#">Nuestras Tiendas</a></li>
+              <li><a href="#">Trabaja con Nosotros</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Más de Juled</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">Extra Garantía</a></li>
+              <li><a href="#">Club Juled</a></li>
+              <li><a href="#">Cyber Wow</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Suscríbete</div>
+            <form class="d-flex mb-2">
+              <input type="email" class="form-control me-2" placeholder="Ingresa tu correo">
+              <button class="btn btn-warning">Suscribirse</button>
+            </form>
+            <div class="small mb-2"><input type="checkbox"> Acepto los <a href="#">Términos y condiciones</a></div>
+            <div class="mb-2">Medios de pago: 
+              <i class="bi bi-credit-card"></i>
+              <i class="bi bi-paypal"></i>
+            </div>
+            <div>Síguenos:
+              <a href="#"><i class="bi bi-facebook"></i></a>
+              <a href="#"><i class="bi bi-instagram"></i></a>
+              <a href="#"><i class="bi bi-tiktok"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="text-center small mt-4">
+          © 2025 Juled Toys. Todos los derechos reservados.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main-bootstrap.js"></script>
+    <!-- JavaScript específico para la página Acerca -->
+    <script src="js/acerca.js"></script>
+  </body>
+</html>

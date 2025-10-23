@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Juled TOYS</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- FontAwesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet"/>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/accesorios.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body class="bg-light">
+  <!-- Header superior -->
+  <header class="bg-dark py-2">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center justify-content-between flex-wrap header-actions">
+        <!-- Redes -->
+        <div class="d-flex align-items-center gap-2">
+          <a href="#" class="btn btn-outline-light btn-sm" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="btn btn-outline-light btn-sm" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="btn btn-outline-light btn-sm" title="TikTok"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <!-- Mensaje slider centrado -->
+        <div class="flex-grow-1 d-flex justify-content-center">
+          <div id="promoSlider" class="carousel slide w-100" data-bs-ride="carousel">
+            <div class="carousel-inner text-center">
+              <div class="carousel-item active">
+                <span class="text-warning fw-bold fs-5">🦖 Doble Puntos en selección de sets Dinosaurios 🦖</span>
+              </div>
+              <div class="carousel-item">
+                <span class="text-info fw-bold fs-5">Envío gratis por compras mayores a S/. 99</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Controles de usuario (saludo / login) -->
+      <ul class="navbar-nav ms-auto align-items-center"
+          th:replace="fragments/security :: userMenu">
+      </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navbar principal -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-warning sticky-top shadow">
+    <div class="container d-flex align-items-center">
+      <!-- Logo -->
+      <a href="index.html" class="me-2 d-flex align-items-center">
+        <img th:src="@{/Imagenes/logo.png}" alt="Juled Toys Logo" class="logo-img" />
+      </a>
+      <!-- Marca -->
+      <a class="navbar-brand fw-bold me-2" href="index.html">Juled TOYS</a>
+      <!-- Botón hamburguesa SIEMPRE visible -->
+      <button class="btn btn-outline-dark ms-1 me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" aria-label="Menú">
+        <i class="fas fa-bars"></i>
+      </button>
+      <!-- Buscador horizontal (grande) -->
+      <form class="d-none d-lg-flex navbar-search flex-grow-1 me-3" role="search">
+        <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" />
+        <button class="btn btn-outline-dark" type="submit">Buscar</button>
+      </form>
+      <!-- Menú horizontal clásico (grande) -->
+      <div class="collapse navbar-collapse flex-grow-0 d-none d-lg-flex" id="mainMenu">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#productos">Productos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#explora">Explora</a></li>
+          <li class="nav-item"><a class="nav-link" href="#visita-tienda">Tienda</a></li>
+          <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+        </ul>
+        <a href="carrito.html" class="btn btn-outline-dark position-relative cart-btn ms-3 my-2 my-lg-0">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="position-absolute badge rounded-pill bg-danger cart-badge">0</span>
+        </a>
+      </div>
+      <!-- Buscador y carrito móviles -->
+      <div class="d-lg-none ms-auto w-100">
+        <form class="d-flex align-items-center my-2 gap-2 w-100" role="search">
+          <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" />
+          <button class="btn btn-outline-dark square-btn" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+          <a href="carrito.html" class="btn btn-outline-dark square-btn position-relative">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="position-absolute badge rounded-pill bg-danger cart-badge">0</span>
+          </a>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Offcanvas: Menú hamburguesa para móvil y tablet -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menú Juled TOYS</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <h6 class="fw-bold mb-2">Navegación principal</h6>
+      <ul class="list-group mb-3">
+        <li class="list-group-item"><a href="index.html"><i class="fas fa-home me-2"></i>Inicio</a></li>
+        <li class="list-group-item"><a href="productos.html"><i class="fas fa-cube me-2"></i>Productos</a></li>
+        <li class="list-group-item"><a href="acerca.html"><i class="fas fa-compass me-2"></i>Acerca</a></li>
+        <li class="list-group-item"><a href="tienda.html"><i class="fas fa-store me-2"></i>Tienda</a></li>
+        <li class="list-group-item"><a href="contacto.html"><i class="fas fa-envelope me-2"></i>Contacto</a></li>
+      </ul>
+      <h6 class="fw-bold mb-2">Categorías</h6>
+      <ul class="list-group mb-3">
+        <li class="list-group-item"><a href="categoria-mario.html"><i class="fas fa-gamepad me-2"></i> Mario</a></li>
+        <li class="list-group-item"><a href="categoria-minecraft.html"><i class="fas fa-cubes me-2"></i> Minecraft</a></li>
+        <li class="list-group-item"><a href="categoria-variedades.html"><i class="fas fa-gift me-2"></i> Variedades</a></li>
+        <li class="list-group-item"><a href="categoria-set-completos.html"><i class="fas fa-box-open me-2"></i> Set completos</a></li>
+        <li class="list-group-item"><a href="categoria-dinosaurios.html"><i class="fas fa-dragon me-2"></i> Dinosaurios</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Barra delivery -->
+  <div class="bg-info text-dark py-2 text-center d-flex justify-content-center align-items-center gap-2">
+    <img src="Imagenes/Delivery.png" alt="Delivery" class="delivery-icon" />
+    <span>DELIVERY GRATIS por compras mayores a <strong>S/. 99</strong></span>
+  </div>
+
+  <!-- Breadcrumb -->
+  <div class="container py-2">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a href="#">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="#">Catálogo</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Accesorios</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Filtros + Grid de productos -->
+  <div class="container">
+    <div class="row gx-4">
+      <!-- Filtros -->
+      <aside class="col-12 col-md-3 mb-4">
+        <div class="bg-white rounded shadow p-3 sticky-top">
+          <div class="filter-title">Marca</div>
+          <input type="text" class="form-control form-control-sm mb-2" placeholder="Buscar marca">
+          <div class="filter-list">
+            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="marca1"><label class="form-check-label" for="marca1">Juled Toys</label></div>
+            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="marca2"><label class="form-check-label" for="marca2">Creativa</label></div>
+            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="marca3"><label class="form-check-label" for="marca3">FunPlay</label></div>
+            <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="marca4"><label class="form-check-label" for="marca4">PequeStar</label></div>
+          </div>
+          <div class="filter-title mt-3">Precio</div>
+          <input type="range" class="form-range" min="10" max="500" id="precioRange">
+          <div class="d-flex justify-content-between small">
+            <span>S/10</span>
+            <span>S/500</span>
+          </div>
+          <button class="btn btn-sm btn-dark w-100 mt-4">Aplicar filtros</button>
+        </div>
+      </aside>
+      <!-- Productos -->
+      <main class="col-12 col-md-9">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div><span class="fw-bold">143 accesorios encontrados</span></div>
+          <select class="form-select form-select-sm">
+            <option>Recomendados</option>
+            <option>Precio: menor a mayor</option>
+            <option>Precio: mayor a menor</option>
+            <option>Más vendidos</option>
+          </select>
+        </div>
+        <div class="row g-4">
+          <!-- Producto 1 -->
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card product-card position-relative h-100">
+              <span class="badge bg-danger discount-badge">-30%</span>
+              <span class="badge bg-warning text-dark brand-badge">JULED</span>
+              <img src="Imagenes/accesorios/acc1.png" class="card-img-top p-3" alt="Accesorio 1">
+              <div class="card-body pb-2">
+                <h6 class="card-title mb-1 fw-bold">Set de Piezas Creativas</h6>
+                <p class="card-text small">Incluye 50 accesorios para construir.</p>
+                <div class="star-rating mb-2">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="text-secondary small ms-1">4.0</span>
+                </div>
+                <div class="fw-bold fs-5 text-danger">S/ 199.99</div>
+                <div class="text-secondary text-decoration-line-through small">S/ 289.99</div>
+              </div>
+            </div>
+          </div>
+          <!-- Producto 2 -->
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card product-card position-relative h-100">
+              <span class="badge bg-danger discount-badge">-20%</span>
+              <span class="badge bg-info text-dark brand-badge">FUNPLAY</span>
+              <img src="Imagenes/accesorios/acc2.png" class="card-img-top p-3" alt="Accesorio 2">
+              <div class="card-body pb-2">
+                <h6 class="card-title mb-1 fw-bold">Maletín de Herramientas Mini</h6>
+                <p class="card-text small">Ideal para pequeños constructores.</p>
+                <div class="star-rating mb-2">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="text-secondary small ms-1">3.5</span>
+                </div>
+                <div class="fw-bold fs-5 text-danger">S/ 89.99</div>
+                <div class="text-secondary text-decoration-line-through small">S/ 119.99</div>
+              </div>
+            </div>
+          </div>
+          <!-- Producto 3 -->
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card product-card position-relative h-100">
+              <span class="badge bg-danger discount-badge">-38%</span>
+              <span class="badge bg-success brand-badge">PEQUESTAR</span>
+              <img src="Imagenes/accesorios/acc3.png" class="card-img-top p-3" alt="Accesorio 3">
+              <div class="card-body pb-2">
+                <h6 class="card-title mb-1 fw-bold">Caja de Almacenamiento Divertida</h6>
+                <p class="card-text small">Guarda tus accesorios y juguetes.</p>
+                <div class="star-rating mb-2">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="text-secondary small ms-1">3.0</span>
+                </div>
+                <div class="fw-bold fs-5 text-danger">S/ 49.99</div>
+                <div class="text-secondary text-decoration-line-through small">S/ 79.99</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Producto 4 -->
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card product-card position-relative h-100">
+              <span class="badge bg-danger discount-badge">-30%</span>
+              <span class="badge bg-warning text-dark brand-badge">JULED</span>
+              <img src="Imagenes/accesorios/acc4.png" class="card-img-top p-3" alt="Accesorio 1">
+              <div class="card-body pb-2">
+                <h6 class="card-title mb-1 fw-bold">Set de Piezas Creativas</h6>
+                <p class="card-text small">Incluye 50 accesorios para construir.</p>
+                <div class="star-rating mb-2">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="text-secondary small ms-1">4.0</span>
+                </div>
+                <div class="fw-bold fs-5 text-danger">S/ 199.99</div>
+                <div class="text-secondary text-decoration-line-through small">S/ 289.99</div>
+              </div>
+            </div>
+          </div>
+          <!-- Producto 5 -->
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card product-card position-relative h-100">
+              <span class="badge bg-danger discount-badge">-20%</span>
+              <span class="badge bg-info text-dark brand-badge">FUNPLAY</span>
+              <img src="Imagenes/accesorios/acc5.png" class="card-img-top p-3" alt="Accesorio 2">
+              <div class="card-body pb-2">
+                <h6 class="card-title mb-1 fw-bold">Maletín de Herramientas Mini</h6>
+                <p class="card-text small">Ideal para pequeños constructores.</p>
+                <div class="star-rating mb-2">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="text-secondary small ms-1">3.5</span>
+                </div>
+                <div class="fw-bold fs-5 text-danger">S/ 89.99</div>
+                <div class="text-secondary text-decoration-line-through small">S/ 119.99</div>
+              </div>
+            </div>
+          </div>
+          <!-- Producto 6 -->
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card product-card position-relative h-100">
+              <span class="badge bg-danger discount-badge">-38%</span>
+              <span class="badge bg-success brand-badge">PEQUESTAR</span>
+              <img src="Imagenes/accesorios/acc6.png" class="card-img-top p-3" alt="Accesorio 3">
+              <div class="card-body pb-2">
+                <h6 class="card-title mb-1 fw-bold">Caja de Almacenamiento Divertida</h6>
+                <p class="card-text small">Guarda tus accesorios y juguetes.</p>
+                <div class="star-rating mb-2">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="text-secondary small ms-1">3.0</span>
+                </div>
+                <div class="fw-bold fs-5 text-danger">S/ 49.99</div>
+                <div class="text-secondary text-decoration-line-through small">S/ 79.99</div>
+              </div>
+            </div>
+          </div>  
+       </div>
+
+
+        <!-- Paginación -->
+        <nav class="mt-4">
+          <ul class="pagination justify-content-center">
+            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+            <li class="page-item active"><span class="page-link">1</span></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">5</a></li>
+            <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+          </ul>
+        </nav>
+        <!-- Carrusel productos similares -->
+        <div class="bg-white rounded shadow p-4 mt-5" style="overflow:hidden;">
+          <div class="fw-bold fs-5 mb-3 text-center">
+            <i class="bi bi-stars text-warning me-2"></i>
+            Compara accesorios similares
+          </div>
+          <div id="carouselSimilar" class="carousel slide carousel-similar" data-bs-ride="carousel" data-bs-interval="4000">
+            <div class="carousel-inner">
+              <!-- Slide 1 -->
+              <div class="carousel-item active">
+                <div class="row justify-content-center g-3">
+                  <!-- Producto 1 -->
+                  <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card border-2 border-warning text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc9.png" alt="Similar 1" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-warning mb-1">JULED</div>
+                        <span class="badge bg-danger mb-2">-30%</span>
+                        <div class="fw-bold text-danger">S/ 139.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 2 -->
+                  <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card border-2 border-info text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc8.png" alt="Similar 2" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-info mb-1">FUNPLAY</div>
+                        <span class="badge bg-danger mb-2">-20%</span>
+                        <div class="fw-bold text-danger">S/ 79.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 3 -->
+                  <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card border-2 border-success text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc7.png" alt="Similar 3" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-success mb-1">PEQUESTAR</div>
+                        <span class="badge bg-danger mb-2">-38%</span>
+                        <div class="fw-bold text-danger">S/ 49.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 4 -->
+                  <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card border-2 border-primary text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc10.png" alt="Similar 4" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-primary mb-1">CREATIVA</div>
+                        <span class="badge bg-danger mb-2">-25%</span>
+                        <div class="fw-bold text-danger">S/ 99.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 5 -->
+                  <div class="col-6 col-md-4 col-lg-2 d-none d-lg-block">
+                    <div class="card border-2 border-secondary text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc1.png" alt="Similar 5" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-secondary mb-1">VARIEDADES</div>
+                        <span class="badge bg-danger mb-2">-15%</span>
+                        <div class="fw-bold text-danger">S/ 59.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 6 -->
+                  <div class="col-6 col-md-4 col-lg-2 d-none d-lg-block">
+                    <div class="card border-2 border-dark text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc2.png" alt="Similar 6" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-dark mb-1">JULED</div>
+                        <span class="badge bg-danger mb-2">-10%</span>
+                        <div class="fw-bold text-danger">S/ 39.99</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Slide 2 (repite los productos para mostrar el efecto carrusel) -->
+              <div class="carousel-item">
+                <div class="row justify-content-center g-3">
+                  <!-- Producto 4 -->
+                  <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card border-2 border-primary text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc10.png" alt="Similar 4" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-primary mb-1">CREATIVA</div>
+                        <span class="badge bg-danger mb-2">-25%</span>
+                        <div class="fw-bold text-danger">S/ 99.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 5 -->
+                  <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card border-2 border-secondary text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc1.png" alt="Similar 5" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-secondary mb-1">VARIEDADES</div>
+                        <span class="badge bg-danger mb-2">-15%</span>
+                        <div class="fw-bold text-danger">S/ 59.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 6 -->
+                  <div class="col-6 col-md-4 col-lg-2">
+                    <div class="card border-2 border-dark text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc2.png" alt="Similar 6" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-dark mb-1">JULED</div>
+                        <span class="badge bg-danger mb-2">-10%</span>
+                        <div class="fw-bold text-danger">S/ 39.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 1 -->
+                  <div class="col-6 col-md-4 col-lg-2 d-none d-lg-block">
+                    <div class="card border-2 border-warning text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc9.png" alt="Similar 1" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-warning mb-1">JULED</div>
+                        <span class="badge bg-danger mb-2">-30%</span>
+                        <div class="fw-bold text-danger">S/ 139.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 2 -->
+                  <div class="col-6 col-md-4 col-lg-2 d-none d-lg-block">
+                    <div class="card border-2 border-info text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc8.png" alt="Similar 2" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-info mb-1">FUNPLAY</div>
+                        <span class="badge bg-danger mb-2">-20%</span>
+                        <div class="fw-bold text-danger">S/ 79.99</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Producto 3 -->
+                  <div class="col-6 col-md-4 col-lg-2 d-none d-lg-block">
+                    <div class="card border-2 border-success text-center h-100 shadow rounded p-3">
+                      <div class="d-flex flex-column align-items-center">
+                        <img src="Imagenes/accesorios/acc7.png" alt="Similar 3" class="rounded mb-2 bg-light p-2">
+                        <div class="small fw-bold text-success mb-1">PEQUESTAR</div>
+                        <span class="badge bg-danger mb-2">-38%</span>
+                        <div class="fw-bold text-danger">S/ 49.99</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Puedes agregar más carousel-item aquí si lo deseas -->
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselSimilar" data-bs-slide="prev" style="background:rgba(255,255,255,0.7);border-radius:50%;width:40px;height:40px;top:50%;transform:translateY(-50%);">
+              <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselSimilar" data-bs-slide="next" style="background:rgba(255,255,255,0.7);border-radius:50%;width:40px;height:40px;top:50%;transform:translateY(-50%);">
+              <span class="carousel-control-next-icon"></span>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+<footer class="mt-5 pt-5">
+    <div class="footer-section py-4" style="background: #6c6c6c; color: #fff;">
+        <div class="container text-center">
+            <div class="row g-4">
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-shop-window fs-2"></i></div>
+                    <div>Retiro en Tienda</div>
+                    <div class="small">Jr. Las Palmeras 298</div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-headset fs-2"></i></div>
+                    <div>Atención al Cliente</div>
+                    <div class="small">Escríbenos o llama <br> <strong>935 867 730</strong></div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-gift fs-2"></i></div>
+                    <div>Garantía Juled</div>
+                    <div class="small">Prolonga la diversión</div>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <div class="icon-box mb-2"><i class="bi bi-arrow-repeat fs-2"></i></div>
+                    <div>Devolución</div>
+                    <div class="small">Cambios y devoluciones</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom py-4">
+      <div class="container">
+        <div class="row g-3">
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Compra con Confianza</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">Guías de Compra</a></li>
+              <li><a href="#">Términos y condiciones</a></li>
+              <li><a href="#">Política de privacidad</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Sobre Juled Toys</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">¿Quiénes Somos?</a></li>
+              <li><a href="#">Nuestras Tiendas</a></li>
+              <li><a href="#">Trabaja con Nosotros</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Más de Juled</div>
+            <ul class="list-unstyled small">
+              <li><a href="#">Extra Garantía</a></li>
+              <li><a href="#">Club Juled</a></li>
+              <li><a href="#">Cyber Wow</a></li>
+            </ul>
+          </div>
+          <div class="col-12 col-md-3 mb-2">
+            <div class="fw-bold mb-1">Suscríbete</div>
+            <form class="d-flex mb-2">
+              <input type="email" class="form-control me-2" placeholder="Ingresa tu correo">
+              <button class="btn btn-warning">Suscribirse</button>
+            </form>
+            <div class="small mb-2"><input type="checkbox"> Acepto los <a href="#">Términos y condiciones</a></div>
+            <div class="mb-2">Medios de pago: 
+              <i class="bi bi-credit-card"></i>
+              <i class="bi bi-paypal"></i>
+            </div>
+            <div>Síguenos:
+              <a href="#"><i class="bi bi-facebook"></i></a>
+              <a href="#"><i class="bi bi-instagram"></i></a>
+              <a href="#"><i class="bi bi-tiktok"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="text-center small mt-4">
+          © 2025 Juled Toys. Todos los derechos reservados.
+        </div>
+      </div>
+    </div>
+  </footer>
+  </body>
+</html>

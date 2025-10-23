@@ -1,0 +1,25 @@
+<!-- templates/fragments/security.html -->
+<th:block th:fragment="userMenu"
+          xmlns:th="http://www.thymeleaf.org"
+          xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+  <!-- Si está logueado -->
+  <li class="nav-item d-flex align-items-center gap-2" sec:authorize="isAuthenticated()">
+    <span class="navbar-text text-white">
+      Hola, <strong><span sec:authentication="name"></span></strong>
+    </span>
+    <form th:action="@{/logout}" method="post" class="m-0">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+      <button type="submit" class="btn btn-sm btn-outline-light">Salir</button>
+    </form>
+  </li>
+
+  <!-- Si NO está logueado -->
+  <li class="nav-item" sec:authorize="isAnonymous()">
+    <a class="btn btn-warning ms-2" th:href="@{/login}">
+      <i class="fas fa-user"></i> Iniciar sesión
+    </a>
+  </li>
+
+</th:block>
+

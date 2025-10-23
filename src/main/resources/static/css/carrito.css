@@ -1,0 +1,126 @@
+/* Estilos personalizados para el carrito */
+
+.cart-btn {
+    border-radius: 25px !important;
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+}
+
+.cart-btn:hover {
+    background-color: #ff6b35;
+    border-color: #ff6b35;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+}
+
+.cart-badge {
+    top: -8px;
+    right: -8px;
+    min-width: 20px;
+    height: 20px;
+    font-size: 0.7em;
+    animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-3px);
+    }
+    60% {
+        transform: translateY(-1px);
+    }
+}
+
+.btn-add-cart {
+    transition: all 0.3s ease;
+    border-radius: 20px;
+}
+
+.btn-add-cart:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.add-to-cart-form {
+    margin: 0;
+}
+
+.add-to-cart-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Estilos para la página del carrito */
+.quantity-input {
+    width: 60px;
+}
+
+.btn-decrease, .btn-increase {
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-cart-img {
+    max-width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Animación de éxito al agregar al carrito */
+.cart-success-animation {
+    animation: cartPulse 0.6s ease-in-out;
+}
+
+@keyframes cartPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Toast notifications */
+.toast-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 9999;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cart-btn {
+        padding: 6px 12px;
+    }
+    
+    .cart-badge {
+        font-size: 0.6em;
+        min-width: 18px;
+        height: 18px;
+    }
+    
+    .quantity-input {
+        width: 50px;
+    }
+    
+    .btn-decrease, .btn-increase {
+        width: 30px;
+        height: 30px;
+    }
+}
