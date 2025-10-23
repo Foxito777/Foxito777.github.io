@@ -158,7 +158,7 @@
         </div>
 
         <!-- Products Table -->
-        <!-- Search bar moved to top for better UX -->
+        <!-- Search bar above header as requested -->
         <div class="mb-3">
           <form class="d-flex justify-content-center backoffice-search" method="get" th:action="@{/backoffice/admin}">
             <div class="input-group" style="width:100%;">
@@ -173,14 +173,14 @@
           </form>
         </div>
 
-        <div class="table-container">
-          <div class="table-header d-flex align-items-center justify-content-between gap-3">
-            <h3 class="table-title">
-              <i class="fas fa-list"></i>
-              Lista de Productos
-            </h3>
-            <div class="d-flex gap-2 align-items-center">
-              <div class="d-flex">
+        <!-- Header with title and actions (below search) -->
+        <div class="table-header d-flex align-items-center justify-content-between gap-3">
+          <h3 class="table-title">
+            <i class="fas fa-list"></i>
+            Lista de Productos
+          </h3>
+          <div class="d-flex gap-2 align-items-center">
+            <div class="d-flex">
               <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
                 <i class="fas fa-plus"></i> Nuevo Producto
               </button>
@@ -192,7 +192,9 @@
               </form>
             </div>
           </div>
+        </div>
 
+        <div class="table-container">
           <div class="table-responsive">
             <table class="table">
               <thead>
