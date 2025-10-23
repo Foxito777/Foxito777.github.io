@@ -160,8 +160,8 @@
         <!-- Products Table -->
         <!-- Search bar moved to top for better UX -->
         <div class="mb-3">
-          <form class="d-flex justify-content-center" method="get" th:action="@{/backoffice/admin}">
-            <div class="input-group" style="max-width:800px; width:100%;">
+          <form class="d-flex justify-content-center backoffice-search" method="get" th:action="@{/backoffice/admin}">
+            <div class="input-group" style="width:100%;">
               <input type="search" name="q" class="form-control" placeholder="Buscar productos..." aria-label="Buscar" th:value="${param.q}">
               <button class="btn btn-outline-secondary" type="submit" title="Buscar">
                 <i class="fas fa-search"></i>

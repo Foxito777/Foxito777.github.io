@@ -233,6 +233,40 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Backoffice search bar styles */
+.backoffice-search {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto 18px auto;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.backoffice-search .input-group {
+    border-radius: 12px;
+}
+.backoffice-search .form-control {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+.backoffice-search .btn-outline-secondary {
+    background: rgba(255,255,255,0.06);
+    border-left: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Tighter padding on small screens */
+@media (max-width: 768px) {
+    .table-container {
+        padding: 12px;
+    }
+    .backoffice-search {
+        margin-bottom: 12px;
+        max-width: 100%;
+        padding: 0 8px;
+    }
+}
+
 .table-header {
     display: flex;
     justify-content: space-between;
