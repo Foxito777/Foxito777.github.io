@@ -208,7 +208,39 @@ body {
     justify-content: center;
     background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
     color: white;
+.table-header .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 38px; /* uniform height */
+    padding: 0.35rem 0.75rem;
+    font-size: 0.95rem;
+}
+
+.table-header .btn i {
+    font-size: 0.95rem;
+}
+
+.table-header .d-flex > form, .table-header .d-flex > button {
+    margin-left: 0.5rem;
+}
+
     font-size: 20px;
+@media (max-width: 576px) {
+    .table-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    .table-header .d-flex {
+        justify-content: flex-start;
+        gap: 0.5rem;
+    }
+    .table-header .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
 }
 
 .stat-value {
