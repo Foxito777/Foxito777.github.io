@@ -6,7 +6,7 @@ Contenido y objetivo
 - Código fuente (carpeta `src/`).
 - El artefacto compilado (`target/Juledtoys-0.0.1-SNAPSHOT.jar`) no está versionado por defecto.
 
-Opciones para obtener un artefacto funcional y desplegarlo
+Opciones para obtener un artefacto funcional y desplegarlo:
 
 1) Release en GitHub (recomendado)
 - Compila localmente:
