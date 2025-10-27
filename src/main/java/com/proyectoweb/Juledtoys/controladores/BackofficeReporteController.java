@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 @Controller
 @RequestMapping("/backoffice/admin/reportes")
@@ -25,6 +29,27 @@ public class BackofficeReporteController {
         model.addAttribute("resumen", resumen);
         
         return "backoffice/reportes";
+    }
+
+    /**
+     * Exporta un archivo Excel con los pedidos entre fechaInicio y fechaFin.
+     * Los parámetros deben venir en formato: yyyy-MM-dd'T'HH:mm (por ejemplo: 2025-10-01T00:00)
+     */
+    @GetMapping(path = "/exportar-pedidos")
+    @ResponseBody
+    public ResponseEntity<byte[]> exportarPedidos(@RequestParam(name = "inicio") String inicio,
+                                                  @RequestParam(name = "fin") String fin) throws IOException {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        LocalDateTime fechaInicio = LocalDateTime.parse(inicio, df);
+        LocalDateTime fechaFin = LocalDateTime.parse(fin, df);
+
+        byte[] bytes = reporteService.exportarPedidosExcel(fechaInicio, fechaFin);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        String filename = String.format("pedidos_%s_a_%s.xlsx", inicio.replace(':', '-'), fin.replace(':', '-'));
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
+        return ResponseEntity.ok().headers(headers).body(bytes);
     }
 
     @GetMapping("/ventas")

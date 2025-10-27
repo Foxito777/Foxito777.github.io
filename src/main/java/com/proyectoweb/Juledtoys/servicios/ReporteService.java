@@ -10,6 +10,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class ReporteService {
@@ -116,5 +126,80 @@ public class ReporteService {
         resumen.put("ventasPorDia", obtenerVentasPorDia(hace30Dias, hoy));
 
         return resumen;
+    }
+
+    /**
+     * Genera un archivo Excel (XLSX) con los pedidos entre las fechas indicadas
+     * y lo devuelve como array de bytes listo para descargar.
+     */
+    public byte[] exportarPedidosExcel(LocalDateTime fechaInicio, LocalDateTime fechaFin) throws IOException {
+        var pedidos = pedidoRepository.findByFechaPedidoBetween(fechaInicio, fechaFin);
+
+        try (Workbook wb = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = wb.createSheet("Pedidos");
+
+            CreationHelper createHelper = wb.getCreationHelper();
+            CellStyle dateStyle = wb.createCellStyle();
+            dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-mm-dd hh:mm"));
+
+            // Header
+            Row header = sheet.createRow(0);
+            String[] cols = new String[] {"Número", "Fecha", "Cliente", "Subtotal", "IGV", "Total", "Estado", "Dirección"};
+            for (int i = 0; i < cols.length; i++) {
+                Cell c = header.createCell(i);
+                c.setCellValue(cols[i]);
+            }
+
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+            int rowIdx = 1;
+            for (var pedido : pedidos) {
+                Row row = sheet.createRow(rowIdx++);
+                Cell c0 = row.createCell(0);
+                c0.setCellValue(pedido.getNumeroPedido() != null ? pedido.getNumeroPedido() : "");
+
+                Cell c1 = row.createCell(1);
+                if (pedido.getFechaPedido() != null) {
+                    c1.setCellValue(pedido.getFechaPedido().format(df));
+                    c1.setCellStyle(dateStyle);
+                } else {
+                    c1.setCellValue("");
+                }
+
+                Cell c2 = row.createCell(2);
+                String clienteNombre = "";
+                try {
+                    if (pedido.getCliente() != null) {
+                        clienteNombre = pedido.getCliente().getNombreCompleto() != null ? pedido.getCliente().getNombreCompleto() : pedido.getCliente().getUsername();
+                    }
+                } catch (Exception e) {
+                    clienteNombre = "";
+                }
+                c2.setCellValue(clienteNombre);
+
+                Cell c3 = row.createCell(3);
+                c3.setCellValue(pedido.getSubtotal() != null ? pedido.getSubtotal().doubleValue() : 0.0);
+
+                Cell c4 = row.createCell(4);
+                c4.setCellValue(pedido.getIgv() != null ? pedido.getIgv().doubleValue() : 0.0);
+
+                Cell c5 = row.createCell(5);
+                c5.setCellValue(pedido.getTotal() != null ? pedido.getTotal().doubleValue() : 0.0);
+
+                Cell c6 = row.createCell(6);
+                c6.setCellValue(pedido.getEstado() != null ? pedido.getEstado().name() : "");
+
+                Cell c7 = row.createCell(7);
+                c7.setCellValue(pedido.getDireccionEnvio() != null ? pedido.getDireccionEnvio() : "");
+            }
+
+            // Autosize columns (costly but ok para reportes)
+            for (int i = 0; i < cols.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            wb.write(out);
+            return out.toByteArray();
+        }
     }
 }
