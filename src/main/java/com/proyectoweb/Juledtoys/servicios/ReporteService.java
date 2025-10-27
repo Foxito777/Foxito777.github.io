@@ -20,6 +20,9 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 
 @Service
 public class ReporteService {
@@ -135,6 +138,8 @@ public class ReporteService {
     public byte[] exportarPedidosExcel(LocalDateTime fechaInicio, LocalDateTime fechaFin) throws IOException {
         var pedidos = pedidoRepository.findByFechaPedidoBetween(fechaInicio, fechaFin);
 
+        logger.info("Generando exportación Excel de pedidos: {} pedidos entre {} y {}", pedidos.size(), fechaInicio, fechaFin);
+
         try (Workbook wb = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = wb.createSheet("Pedidos");
 
@@ -168,12 +173,8 @@ public class ReporteService {
 
                 Cell c2 = row.createCell(2);
                 String clienteNombre = "";
-                try {
-                    if (pedido.getCliente() != null) {
-                        clienteNombre = pedido.getCliente().getNombreCompleto() != null ? pedido.getCliente().getNombreCompleto() : pedido.getCliente().getUsername();
-                    }
-                } catch (Exception e) {
-                    clienteNombre = "";
+                if (pedido.getCliente() != null) {
+                    clienteNombre = StringUtils.defaultString(pedido.getCliente().getNombreCompleto(), pedido.getCliente().getUsername());
                 }
                 c2.setCellValue(clienteNombre);
 
@@ -199,7 +200,10 @@ public class ReporteService {
             }
 
             wb.write(out);
+            logger.info("Exportación generada: {} bytes", out.size());
             return out.toByteArray();
         }
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(ReporteService.class);
 }

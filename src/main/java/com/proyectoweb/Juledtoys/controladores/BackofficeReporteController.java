@@ -14,6 +14,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/backoffice/admin/reportes")
@@ -21,6 +23,8 @@ public class BackofficeReporteController {
 
     @Autowired
     private ReporteService reporteService;
+
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BackofficeReporteController.class);
 
     @GetMapping
     public String mostrarReportes(Model model) {
@@ -39,6 +43,7 @@ public class BackofficeReporteController {
     @ResponseBody
     public ResponseEntity<byte[]> exportarPedidos(@RequestParam(name = "inicio") String inicio,
                                                   @RequestParam(name = "fin") String fin) throws IOException {
+        logger.info("Petición exportar-pedidos recibida: inicio={}, fin={}", inicio, fin);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         LocalDateTime fechaInicio = LocalDateTime.parse(inicio, df);
         LocalDateTime fechaFin = LocalDateTime.parse(fin, df);
