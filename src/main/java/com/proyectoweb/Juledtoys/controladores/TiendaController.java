@@ -1,6 +1,8 @@
 package com.proyectoweb.Juledtoys.controladores;
 
 import com.proyectoweb.Juledtoys.servicios.CarritoServiceJPA;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,7 +65,7 @@ public class TiendaController {
 
     // Métodos auxiliares para simular datos
     private List<String> obtenerCategorias() {
-        return Arrays.asList(
+        return ImmutableList.of(
             "LEGO",
             "Star Wars",
             "Marvel",
@@ -141,7 +143,7 @@ public class TiendaController {
             productos.add(producto);
         }
 
-        return productos;
+        return ImmutableList.copyOf(productos);
     }
 
     private List<Map<String, Object>> obtenerProductosFiltrados(String categoria, String precio, String busqueda, String ordenar) {
@@ -175,24 +177,27 @@ public class TiendaController {
                 productosFiltrados.sort(Comparator.comparing((Map<String, Object> p) -> (Integer) p.get("vendidos")).reversed());
         }
 
-        return productosFiltrados;
+        return ImmutableList.copyOf(productosFiltrados);
     }
 
     private Map<String, Object> obtenerProductoPorId(Long id) {
-        return obtenerProductosDestacados().stream()
+        Optional<Map<String, Object>> encontrado = obtenerProductosDestacados().stream()
             .filter(p -> p.get("id").equals(id))
-            .findFirst()
-            .orElse(new HashMap<>());
+            .findFirst();
+
+        return encontrado.map(m -> ImmutableMap.copyOf(m)).orElse(ImmutableMap.of());
     }
 
     private List<Map<String, Object>> obtenerProductosRelacionadosPorId(Long id) {
         Map<String, Object> producto = obtenerProductoPorId(id);
         String categoria = (String) producto.get("categoria");
         
-        return obtenerProductosDestacados().stream()
-            .filter(p -> !p.get("id").equals(id))
-            .filter(p -> p.get("categoria").equals(categoria))
-            .limit(4)
-            .toList();
+        return ImmutableList.copyOf(
+            obtenerProductosDestacados().stream()
+                .filter(p -> !p.get("id").equals(id))
+                .filter(p -> p.get("categoria").equals(categoria))
+                .limit(4)
+                .toList()
+        );
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -40,10 +42,13 @@ public class CarritoServiceJPA {
      * Agregar producto al carrito
      */
     public void agregarProducto(Long productoId, Integer cantidad) {
+        Preconditions.checkNotNull(productoId, "productoId no puede ser null");
+        Preconditions.checkArgument(cantidad != null && cantidad > 0, "cantidad debe ser mayor que 0");
+
         Optional<Producto> productoOpt = productoRepository.findByIdAndDisponibleTrue(productoId);
         
-        if (productoOpt.isEmpty() || cantidad <= 0) {
-            throw new IllegalArgumentException("Producto no válido o cantidad incorrecta");
+        if (productoOpt.isEmpty()) {
+            throw new IllegalArgumentException("Producto no válido o no disponible");
         }
 
         Producto producto = productoOpt.get();
@@ -143,9 +148,9 @@ public class CarritoServiceJPA {
         Usuario usuario = obtenerUsuarioActual();
         
         if (usuario != null) {
-            return carritoItemRepository.findByUsuario(usuario);
+            return ImmutableList.copyOf(carritoItemRepository.findByUsuario(usuario));
         } else {
-            return carritoItemRepository.findBySessionId(session.getId());
+            return ImmutableList.copyOf(carritoItemRepository.findBySessionId(session.getId()));
         }
     }
 
