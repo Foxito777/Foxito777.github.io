@@ -119,10 +119,3 @@ Estas librerías se incorporaron al `pom.xml` y se añadió una configuración b
 
 ---
 
-Si quieres, puedo:
-
-- Crear tests unitarios iniciales para `PedidoService` y `CarritoServiceJPA`.
-- Añadir instrucciones rápidas y comandos para ejecutar los tests y el escaneo de dependencias en el README.
-- Generar un diagrama simple (texto/ASCII o archivo .png) que muestre paquetes y flujos (Controller -> Service -> Repository -> DB).
-
-Indícame cuál de las acciones prefieres y la implemento en la siguiente iteración.
