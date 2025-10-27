@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar productos - Juled Toys</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilos-bootstrap.css">
+</head>
+<body>
+    <!-- Top bar con logo y búsqueda (mobile-first y desktop) -->
+    <header class="bg-dark py-2">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <a href="index.html" class="d-flex align-items-center">
+                    <img th:src="@{/Imagenes/logo.png}" alt="Juled Toys Logo" style="width:48px;height:48px;">
+                </a>
+                <span class="fs-4 fw-bold text-warning ms-2">Menú</span>
+            </div>
+            <form id="form-buscar" class="d-flex flex-grow-1 mx-3" style="max-width:600px;">
+                <input type="text" class="form-control bg-warning bg-opacity-10 border-0 rounded-start-pill" id="input-buscar" placeholder="¿Qué estás buscando hoy?" />
+                <button type="submit" class="btn btn-warning rounded-end-pill px-4"><i class="fas fa-search"></i></button>
+            </form>
+            <div class="d-none d-md-flex align-items-center gap-3">
+                <a href="seguimiento.html" class="btn btn-warning fw-bold">Sigue tu pedido</a>
+                <div class="position-relative">
+                    <i class="fas fa-shopping-cart fa-lg"></i>
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">0</span>
+                </div>
+                <span class="text-light fw-bold">Hola, inicia sesión <img src="Imagenes/Icono1.png" alt="Usuario" style="width:34px;height:40px;margin-left:6px;"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Opcional: barra azul de delivery -->
+    <div class="bg-info text-dark py-2 text-center">
+        <img src="Imagenes/Delivery.png" alt="Delivery" style="width:36px;height:36px">
+        DELIVERY GRATIS por compras mayores a <b>S/. 99</b>
+    </div>
+
+    <!-- Resultados de búsqueda -->
+    <main class="container py-4">
+        <h1 class="mb-4 fs-3 text-center">Resultados de búsqueda</h1>
+        <div id="resultados-busqueda"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5>CONTÁCTANOS</h5>
+                    <p>Sede Ayacucho<br>Av. El ejército Nº105<br>📞 935867730 / 967306892</p>
+                    <div>
+                        <a href="#" class="text-light me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>ATENCIÓN AL CLIENTE</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">Sobre nosotros</a></li>
+                        <li><a href="#" class="text-light">Tipos de entrega</a></li>
+                        <li><a href="#" class="text-light">Términos y condiciones</a></li>
+                        <li><a href="#" class="text-light">Políticas de privacidad</a></li>
+                        <li><a href="#" class="text-light">Cambios y devoluciones</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3 text-center">
+                    <h5>LIBRO DE RECLAMACIONES</h5>
+                    <img src="Imagenes/Libro.png" alt="Libro de reclamaciones" style="max-width:80px;">
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                © Todos los derechos reservados | 2025 by Juled Toys SRL.
+            </div>
+        </div>
+        <a href="https://wa.me/51935867730" class="btn btn-success position-fixed bottom-0 end-0 m-3 d-flex align-items-center" style="z-index:1050;">
+            <img src="Imagenes/Wsplogo.png" alt="WhatsApp Logo" style="width:30px;height:30px;margin-right:10px;">
+            ¿Necesitas ayuda? Contáctanos
+        </a>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main-bootstrap.js"></script>
+</body>
+</html>
