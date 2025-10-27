@@ -39,6 +39,26 @@ public class Producto {
     @Column(name = "imagen_url", length = 255)
     private String imagenUrl;
 
+    @Size(max = 255)
+    @Column(name = "imagen_url_1", length = 255)
+    private String imagenUrl1;
+
+    @Size(max = 255)
+    @Column(name = "imagen_url_2", length = 255)
+    private String imagenUrl2;
+
+    @Size(max = 255)
+    @Column(name = "imagen_url_3", length = 255)
+    private String imagenUrl3;
+
+    @Min(value = 0)
+    @Max(value = 5)
+    @Column(name = "rating")
+    private Integer rating = 0;
+
+    @Column(name = "detalles", length = 2000)
+    private String detalles;
+
     @Column(nullable = false)
     private Boolean disponible = true;
 
@@ -129,6 +149,21 @@ public class Producto {
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
     }
+
+    public String getImagenUrl1() { return imagenUrl1; }
+    public void setImagenUrl1(String imagenUrl1) { this.imagenUrl1 = imagenUrl1; }
+
+    public String getImagenUrl2() { return imagenUrl2; }
+    public void setImagenUrl2(String imagenUrl2) { this.imagenUrl2 = imagenUrl2; }
+
+    public String getImagenUrl3() { return imagenUrl3; }
+    public void setImagenUrl3(String imagenUrl3) { this.imagenUrl3 = imagenUrl3; }
+
+    public Integer getRating() { return rating; }
+    public void setRating(Integer rating) { this.rating = rating; }
+
+    public String getDetalles() { return detalles; }
+    public void setDetalles(String detalles) { this.detalles = detalles; }
 
     // Método de conveniencia para compatibilidad
     public void setImagen(String imagen) {

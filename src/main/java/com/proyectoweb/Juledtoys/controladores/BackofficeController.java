@@ -27,6 +27,9 @@ public class BackofficeController {
         model.addAttribute("productos", productos);
         model.addAttribute("nuevoProducto", new Producto());
 
+    // Categorías únicas para poblar select en el modal de nuevo producto
+    model.addAttribute("categorias", productoRepository.findDistinctCategorias());
+
         // Calcular estadísticas
         long totalProductos = productos.size();
         int stockTotal = productos.stream().mapToInt(Producto::getStock).sum();
@@ -46,8 +49,23 @@ public class BackofficeController {
     // CREATE - Crear nuevo producto
     @PostMapping("/admin/productos")
     public String crearProducto(@ModelAttribute Producto producto,
+                                @RequestParam(required = false) String categoria,
+                                @RequestParam(required = false) String imagenUrl,
+                                @RequestParam(required = false) String imagenUrl1,
+                                @RequestParam(required = false) String imagenUrl2,
+                                @RequestParam(required = false) String imagenUrl3,
+                                @RequestParam(required = false) Integer rating,
+                                @RequestParam(required = false) String detalles,
                                 RedirectAttributes redirectAttributes) {
         try {
+            // Asegurar que se guarden categoria e imagen si vienen del formulario
+            if (categoria != null && !categoria.trim().isEmpty()) producto.setCategoria(categoria.trim());
+            if (imagenUrl != null && !imagenUrl.trim().isEmpty()) producto.setImagenUrl(imagenUrl.trim());
+            if (imagenUrl1 != null && !imagenUrl1.trim().isEmpty()) producto.setImagenUrl1(imagenUrl1.trim());
+            if (imagenUrl2 != null && !imagenUrl2.trim().isEmpty()) producto.setImagenUrl2(imagenUrl2.trim());
+            if (imagenUrl3 != null && !imagenUrl3.trim().isEmpty()) producto.setImagenUrl3(imagenUrl3.trim());
+            if (rating != null) producto.setRating(rating);
+            if (detalles != null && !detalles.trim().isEmpty()) producto.setDetalles(detalles.trim());
             productoRepository.save(producto);
             redirectAttributes.addFlashAttribute("mensaje", "Producto creado exitosamente");
             redirectAttributes.addFlashAttribute("tipoMensaje", "success");
@@ -61,16 +79,38 @@ public class BackofficeController {
     // UPDATE - Actualizar producto existente
     @PostMapping("/admin/productos/{id}/editar")
     public String actualizarProducto(@PathVariable Long id,
-                                     @ModelAttribute Producto producto,
+                                     @RequestParam(required = false) String nombre,
+                                     @RequestParam(required = false) String descripcion,
+                                     @RequestParam(required = false) java.math.BigDecimal precio,
+                                     @RequestParam(required = false) Integer stock,
+                                     @RequestParam(required = false) String categoria,
+                                     @RequestParam(required = false) String imagenUrl,
+                                     @RequestParam(required = false) String imagenUrl1,
+                                     @RequestParam(required = false) String imagenUrl2,
+                                     @RequestParam(required = false) String imagenUrl3,
+                                     @RequestParam(required = false) Integer rating,
+                                     @RequestParam(required = false) String detalles,
                                      RedirectAttributes redirectAttributes) {
         try {
             Optional<Producto> productoExistente = productoRepository.findById(id);
             if (productoExistente.isPresent()) {
                 Producto p = productoExistente.get();
-                p.setNombre(producto.getNombre());
-                p.setDescripcion(producto.getDescripcion());
-                p.setPrecio(producto.getPrecio());
-                p.setStock(producto.getStock());
+                // Registrar valores entrantes para facilitar debugging
+                System.out.println("[Backoffice] Actualizando producto id=" + id + ", nombre=" + nombre + ", precio=" + precio + ", stock=" + stock + ", categoria=" + categoria + ", imagenUrl=" + imagenUrl);
+
+                if (nombre != null) p.setNombre(nombre);
+                if (descripcion != null) p.setDescripcion(descripcion);
+                if (precio != null) p.setPrecio(precio);
+                if (stock != null) p.setStock(stock);
+
+                if (categoria != null) p.setCategoria(categoria);
+                if (imagenUrl != null) p.setImagenUrl(imagenUrl);
+                if (imagenUrl1 != null) p.setImagenUrl1(imagenUrl1);
+                if (imagenUrl2 != null) p.setImagenUrl2(imagenUrl2);
+                if (imagenUrl3 != null) p.setImagenUrl3(imagenUrl3);
+                if (rating != null) p.setRating(rating);
+                if (detalles != null) p.setDetalles(detalles);
+
                 productoRepository.save(p);
 
                 redirectAttributes.addFlashAttribute("mensaje", "Producto actualizado exitosamente");

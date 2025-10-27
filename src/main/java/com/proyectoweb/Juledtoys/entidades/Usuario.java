@@ -28,8 +28,7 @@ public class Usuario implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+    // La validación de contraseña se maneja a nivel de controlador (creación vs edición)
     @Column(nullable = false)
     private String password;
 
@@ -39,6 +38,8 @@ public class Usuario implements UserDetails {
 
     @Size(max = 15, message = "El teléfono no puede exceder 15 caracteres")
     @Column(length = 15)
+    // Validación: solo dígitos y exactamente 9 cuando se provee
+    @jakarta.validation.constraints.Pattern(regexp = "(^$|\\d{9})", message = "El teléfono debe contener exactamente 9 dígitos")
     private String telefono;
 
     @Size(max = 200, message = "La dirección no puede exceder 200 caracteres")

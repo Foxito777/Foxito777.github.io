@@ -117,9 +117,15 @@ public class BackofficeClienteController {
                                  Model model,
                                  RedirectAttributes redirectAttributes) {
         
+        // Si hay errores de validación del binding, mostrarlos en el formulario
         if (result.hasErrors()) {
+            // Información de depuración mínima
+            result.getFieldErrors().forEach(e -> System.err.println("Validation error field: " + e.getField() + " - " + e.getDefaultMessage()));
+            result.getGlobalErrors().forEach(e -> System.err.println("Global error: " + e.getDefaultMessage()));
             model.addAttribute("accion", cliente.getId() == null ? "Crear" : "Editar");
             model.addAttribute("soloLectura", false);
+            model.addAttribute("hasFieldErrors", result.hasFieldErrors());
+            model.addAttribute("error", "Por favor corrija los campos marcados en rojo");
             return "backoffice/cliente-form";
         }
 
@@ -127,16 +133,19 @@ public class BackofficeClienteController {
             // Si es nuevo cliente
             if (cliente.getId() == null) {
                 // Validar que el username y email no existan
+                // Validar unicidad de username/email y registrar errores por campo
                 if (clienteService.buscarPorUsername(cliente.getUsername()).isPresent()) {
-                    model.addAttribute("error", "El nombre de usuario ya existe");
-                    model.addAttribute("accion", "Crear");
-                    model.addAttribute("soloLectura", false);
-                    return "backoffice/cliente-form";
+                    result.rejectValue("username", "error.username", "El nombre de usuario ya existe");
                 }
                 if (clienteService.buscarPorEmail(cliente.getEmail()).isPresent()) {
-                    model.addAttribute("error", "El correo electrónico ya existe");
+                    result.rejectValue("email", "error.email", "El correo electrónico ya existe");
+                }
+                if (result.hasErrors()) {
                     model.addAttribute("accion", "Crear");
                     model.addAttribute("soloLectura", false);
+                    model.addAttribute("hasFieldErrors", result.hasFieldErrors());
+                    model.addAttribute("error", "Por favor corrija los campos marcados en rojo");
+                    model.addAttribute("cliente", cliente);
                     return "backoffice/cliente-form";
                 }
                 // Encriptar contraseña para nuevo cliente
@@ -160,10 +169,13 @@ public class BackofficeClienteController {
                 // Si se proporciona nueva contraseña, actualizarla
                 if (nuevaPassword != null && !nuevaPassword.trim().isEmpty()) {
                     if (nuevaPassword.length() < 6) {
-                        model.addAttribute("error", "La contraseña debe tener al menos 6 caracteres");
+                        // Registrar como error de campo para permitir que el formulario marque el campo
+                        result.rejectValue("password", "error.password", "La contraseña debe tener al menos 6 caracteres");
                         model.addAttribute("accion", "Editar");
                         model.addAttribute("soloLectura", false);
                         model.addAttribute("cliente", cliente);
+                        model.addAttribute("hasFieldErrors", result.hasFieldErrors());
+                        model.addAttribute("error", "Por favor corrija los campos marcados en rojo");
                         return "backoffice/cliente-form";
                     }
                     clienteExistente.setPassword(passwordEncoder.encode(nuevaPassword));
@@ -182,6 +194,7 @@ public class BackofficeClienteController {
             model.addAttribute("error", "Error al guardar cliente: " + e.getMessage());
             model.addAttribute("accion", cliente.getId() == null ? "Crear" : "Editar");
             model.addAttribute("soloLectura", false);
+            model.addAttribute("hasFieldErrors", result.hasFieldErrors());
             return "backoffice/cliente-form";
         }
     }

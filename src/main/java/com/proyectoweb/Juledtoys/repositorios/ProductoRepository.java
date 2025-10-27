@@ -27,6 +27,12 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     // Buscar por rango de precios
     List<Producto> findByPrecioBetweenAndDisponibleTrue(BigDecimal precioMin, BigDecimal precioMax);
 
+    @Query("SELECT MIN(p.precio) FROM Producto p WHERE p.disponible = true")
+    java.math.BigDecimal findMinPrecio();
+
+    @Query("SELECT MAX(p.precio) FROM Producto p WHERE p.disponible = true")
+    java.math.BigDecimal findMaxPrecio();
+
     // Buscar productos con stock
     List<Producto> findByStockGreaterThanAndDisponibleTrue(Integer stock);
 

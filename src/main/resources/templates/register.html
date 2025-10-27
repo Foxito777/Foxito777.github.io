@@ -47,7 +47,9 @@
 
             <!-- Volver al inicio -->
             <div class="text-center mb-3">
-              <a th:href="@{/}" class="btn btn-outline-secondary btn-sm">← Volver al inicio</a>
+              <!-- Si hay éxito, llamar al endpoint que realiza el login diferido; en caso contrario ir directo al inicio -->
+              <a th:if="${param.success}" th:href="@{/post-register}" class="btn btn-outline-secondary btn-sm">← Volver al inicio</a>
+              <a th:unless="${param.success}" th:href="@{/}" class="btn btn-outline-secondary btn-sm">← Volver al inicio</a>
             </div>
 
             <!-- Formulario -->

@@ -17,11 +17,14 @@ public class SecurityConfig {
     http
       .authorizeHttpRequests(auth -> auth
         // Páginas públicas (accesibles sin autenticación)
-        .requestMatchers("/", "/login", "/register", "/acerca", "/productos", "/detalle/**", "/contacto", "/buscador", "/buscar/**").permitAll()
+        
+  .requestMatchers("/", "/login", "/register", "/post-register", "/api/promociones/**", "/acerca", "/productos", "/detalle/**", "/contacto", "/buscador", "/buscar/**", "/checkout", "/checkout/**").permitAll()
         // Recursos estáticos públicos
         .requestMatchers("/css/**", "/js/**", "/Imagenes/**", "/Video/**", "/h2-console/**").permitAll()
         // Páginas que requieren autenticación
-        .requestMatchers("/carrito/**", "/perfil/**").authenticated()
+        .requestMatchers("/carrito", "/carrito/agregar", "/carrito/actualizar", "/carrito/eliminar", "/carrito/limpiar", "/carrito/eliminar-sin-stock", "/perfil/**").authenticated()
+        // API endpoints del carrito (permiten acceso para AJAX)
+        .requestMatchers("/carrito/api/**").permitAll()
   // Backoffice solo para staff (ADMIN, VENDEDOR, CAJERO, MARKETING)
   .requestMatchers("/backoffice/**").hasAnyRole("ADMIN","VENDEDOR","CAJERO","MARKETING")
         // Cualquier otra URL requiere autenticación
@@ -40,7 +43,8 @@ public class SecurityConfig {
         .permitAll()
       )
       .csrf(csrf -> csrf
-        .ignoringRequestMatchers("/h2-console/**")  // Deshabilitar CSRF para H2 console
+        // Deshabilitar CSRF para H2 console, endpoints AJAX del carrito y para el formulario que elimina productos sin stock
+        .ignoringRequestMatchers("/h2-console/**", "/carrito/api/**", "/carrito/eliminar-sin-stock")
       )
       .headers(headers -> headers
         .frameOptions(frame -> frame.sameOrigin())  // Permitir frames para H2 console

@@ -211,7 +211,7 @@
 
 /* Botón agregar al carro */
 .add-to-cart-btn {
-    background: #495057;
+    background: #ff6b35; /* color de marca igual que otras vistas */
     color: white;
     border: none;
     padding: 0.8rem 2rem;
@@ -220,11 +220,13 @@
     font-weight: 600;
     width: 100%;
     margin-bottom: 1.5rem;
-    transition: background 0.3s;
+    transition: background 0.2s, transform 0.12s;
+    box-shadow: 0 6px 18px rgba(255,107,53,0.15);
 }
 
 .add-to-cart-btn:hover {
-    background: #343a40;
+    background: #e05a2a;
+    transform: translateY(-2px);
 }
 
 /* Características de envío */

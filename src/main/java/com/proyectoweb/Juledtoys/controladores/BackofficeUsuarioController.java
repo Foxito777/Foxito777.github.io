@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.validation.Valid;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.List;
 @RequestMapping("/backoffice/admin/usuarios")
 @PreAuthorize("hasRole('ADMIN')")
 public class BackofficeUsuarioController {
+
+    private static final Logger logger = LoggerFactory.getLogger(BackofficeUsuarioController.class);
 
     @Autowired
     private UsuarioService usuarioService;
@@ -78,10 +82,19 @@ public class BackofficeUsuarioController {
     public String guardarUsuario(@Valid @ModelAttribute("usuario") Usuario usuario, 
                                  BindingResult result,
                                  @RequestParam(required = false) String nuevaPassword,
+                                 @RequestParam(required = false) String confirmarPassword,
+                                 @RequestParam(required = false) String confirmarNuevaPassword,
                                  Model model,
                                  RedirectAttributes redirectAttributes) {
         
         if (result.hasErrors()) {
+            // Log para depuración: listar errores de binding (campo -> mensaje)
+            if (logger.isDebugEnabled()) {
+                result.getFieldErrors().forEach(fe -> logger.debug("Binding error field='{}' - {}", fe.getField(), fe.getDefaultMessage()));
+                result.getGlobalErrors().forEach(ge -> logger.debug("Binding global error='{}' - {}", ge.getObjectName(), ge.getDefaultMessage()));
+            }
+            // Solo indicar hasFieldErrors si hay errores por campo (para mostrar el toast genérico)
+            model.addAttribute("hasFieldErrors", result.hasFieldErrors());
             model.addAttribute("roles", Usuario.Rol.values());
             model.addAttribute("accion", usuario.getId() == null ? "Crear" : "Editar");
             return "backoffice/usuario-form";
@@ -90,15 +103,33 @@ public class BackofficeUsuarioController {
         try {
             // Si es nuevo usuario o se proporciona nueva contraseña
             if (usuario.getId() == null) {
+                // Verificar que la contraseña fue proveída y confirmada al crear
+                if (usuario.getPassword() == null || usuario.getPassword().trim().isEmpty()) {
+                    result.rejectValue("password", "password.required", "La contraseña es obligatoria");
+                    model.addAttribute("hasFieldErrors", result.hasFieldErrors());
+                    model.addAttribute("roles", Usuario.Rol.values());
+                    model.addAttribute("accion", "Crear");
+                    return "backoffice/usuario-form";
+                }
+                if (confirmarPassword == null || !usuario.getPassword().equals(confirmarPassword)) {
+                    // Añadimos error de campo para que se marque el input de contraseña
+                    result.rejectValue("password", "password.mismatch", "Las contraseñas no coinciden");
+                    model.addAttribute("hasFieldErrors", result.hasFieldErrors());
+                    model.addAttribute("roles", Usuario.Rol.values());
+                    model.addAttribute("accion", "Crear");
+                    return "backoffice/usuario-form";
+                }
                 // Validar que el username y email no existan
                 if (usuarioService.existeUsername(usuario.getUsername())) {
-                    model.addAttribute("error", "El nombre de usuario ya existe");
+                    result.rejectValue("username", "username.exists", "El nombre de usuario ya existe");
+                    model.addAttribute("hasFieldErrors", result.hasFieldErrors());
                     model.addAttribute("roles", Usuario.Rol.values());
                     model.addAttribute("accion", "Crear");
                     return "backoffice/usuario-form";
                 }
                 if (usuarioService.existeEmail(usuario.getEmail())) {
-                    model.addAttribute("error", "El correo electrónico ya existe");
+                    result.rejectValue("email", "email.exists", "El correo electrónico ya existe");
+                    model.addAttribute("hasFieldErrors", result.hasFieldErrors());
                     model.addAttribute("roles", Usuario.Rol.values());
                     model.addAttribute("accion", "Crear");
                     return "backoffice/usuario-form";
@@ -122,8 +153,15 @@ public class BackofficeUsuarioController {
                 usuarioExistente.setRol(usuario.getRol());
                 usuarioExistente.setActivo(usuario.isActivo());
                 
-                // Si se proporciona nueva contraseña, actualizarla
+                // Si se proporciona nueva contraseña, validar confirmación y actualizarla
                 if (nuevaPassword != null && !nuevaPassword.trim().isEmpty()) {
+                    if (confirmarNuevaPassword == null || !nuevaPassword.equals(confirmarNuevaPassword)) {
+                        model.addAttribute("error", "La nueva contraseña y su confirmación no coinciden");
+                        model.addAttribute("roles", Usuario.Rol.values());
+                        model.addAttribute("accion", "Editar");
+                        model.addAttribute("usuario", usuario);
+                        return "backoffice/usuario-form";
+                    }
                     if (nuevaPassword.length() < 6) {
                         model.addAttribute("error", "La contraseña debe tener al menos 6 caracteres");
                         model.addAttribute("roles", Usuario.Rol.values());
@@ -138,6 +176,7 @@ public class BackofficeUsuarioController {
             }
 
             usuarioService.guardar(usuario);
+            logger.info("Usuario guardado: id={} username={}", usuario.getId(), usuario.getUsername());
             redirectAttributes.addFlashAttribute("success", 
                 usuario.getId() == null ? "Usuario creado exitosamente" : "Usuario actualizado exitosamente");
             return "redirect:/backoffice/admin/usuarios";

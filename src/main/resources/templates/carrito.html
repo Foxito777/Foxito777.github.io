@@ -131,7 +131,7 @@
                         <!-- Lista de productos -->
                         <div class="col-lg-8">
                             <div class="card shadow-sm">
-                                <div class="card-header bg-primary text-white">
+                                <div class="card-header text-white" style="background:#ff6b35;">
                                     <h5 class="mb-0"><i class="fas fa-list me-2"></i>Productos en tu carrito</h5>
                                 </div>
                                 <div class="card-body p-0">
@@ -139,8 +139,26 @@
                                         <div class="row align-items-center">
                                             <!-- Imagen del producto -->
                                             <div class="col-md-2 col-3">
-                                                <img th:src="${item.imagenUrl}" th:alt="${item.nombre}" 
-                                                     class="img-fluid rounded" style="max-height: 80px; object-fit: cover;">
+                                                <!-- Imagen: caso URL absoluta/protocol-relative -->
+                                                <th:block th:if="${item.imagenUrl != null and item.imagenUrl != ''} and (${#strings.startsWith(item.imagenUrl, '/')} or ${#strings.startsWith(item.imagenUrl, 'http')} or ${#strings.startsWith(item.imagenUrl, '//')})">
+                                                    <img th:src="${item.imagenUrl}"
+                                                         th:alt="${item.nombre}"
+                                                         class="img-fluid rounded" style="max-height: 80px; object-fit: cover;">
+                                                </th:block>
+
+                                                <!-- Imagen: caso nombre de archivo -->
+                                                <th:block th:if="${item.imagenUrl != null and item.imagenUrl != ''} and not( ${#strings.startsWith(item.imagenUrl, '/')} or ${#strings.startsWith(item.imagenUrl, 'http')} or ${#strings.startsWith(item.imagenUrl, '//')} )">
+                                                    <img th:src="@{/Imagenes/productos/{img}(img=${item.imagenUrl})}"
+                                                         th:alt="${item.nombre}"
+                                                         class="img-fluid rounded" style="max-height: 80px; object-fit: cover;">
+                                                </th:block>
+
+                                                <!-- Imagen: fallback por defecto -->
+                                                <th:block th:if="${item.imagenUrl == null or item.imagenUrl == ''}">
+                                                    <img th:src="@{/Imagenes/default.png}"
+                                                         th:alt="${item.nombre}"
+                                                         class="img-fluid rounded" style="max-height: 80px; object-fit: cover;">
+                                                </th:block>
                                             </div>
                                             
                                             <!-- Información del producto -->
@@ -194,7 +212,7 @@
                         <!-- Resumen del pedido -->
                         <div class="col-lg-4 mt-4 mt-lg-0">
                             <div class="card shadow-sm">
-                                <div class="card-header bg-success text-white">
+                                <div class="card-header text-white" style="background:#6c6c6c;">
                                     <h5 class="mb-0"><i class="fas fa-receipt me-2"></i>Resumen del Pedido</h5>
                                 </div>
                                 <div class="card-body">
@@ -214,15 +232,15 @@
                                         <span th:if="${total < 99}">S/ 15.00</span>
                                     </div>
                                     <hr>
-                                    <div class="d-flex justify-content-between fw-bold fs-5 text-success">
+                                    <div class="d-flex justify-content-between fw-bold fs-5" style="color:#ff6b35;">
                                         <span>Total:</span>
                                         <span>S/ <span th:text="${#numbers.formatDecimal(total + (total >= 99 ? 0 : 15), 0, 2)}"></span></span>
                                     </div>
                                     
                                     <div class="mt-4">
-                                        <button class="btn btn-success btn-lg w-100 mb-3">
-                                            <i class="fas fa-credit-card me-2"></i>Proceder al Pago
-                                        </button>
+                                        <a id="btn-continuar" href="#" class="btn btn-warning btn-lg w-100 mb-3">
+                                            <i class="fas fa-arrow-right me-2"></i>Continuar
+                                        </a>
                                         <a href="/productos" class="btn btn-outline-primary w-100 mb-2">
                                             <i class="fas fa-arrow-left me-2"></i>Continuar Comprando
                                         </a>
@@ -335,6 +353,7 @@
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/carrito.js"></script>
+    <div id="stockModalContainer"></div>
     
     <script>
         // Funciones para manejar cantidad

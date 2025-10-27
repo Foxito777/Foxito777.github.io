@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<div th:fragment="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <div class="d-flex align-items-center gap-2">
+            <img src="/Imagenes/logo.png" alt="Juled Toys Logo" style="width: 32px; height: 32px; border-radius: 6px" />
+            <h4 class="mb-0">JuledToys Admin</h4>
+        </div>
+    </div>
+    <nav class="nav-menu">
+        <div class="nav-item">
+            <a href="/" class="nav-link" target="_blank" title="Ver página principal">
+                <i class="fas fa-home"></i>
+                <span>Ir a la Tienda</span>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a th:href="@{/backoffice/admin}"
+               class="nav-link"
+               th:classappend="${#httpServletRequest != null and (#strings.contains(#httpServletRequest.requestURI, '/backoffice/admin') or #strings.contains(#httpServletRequest.requestURI, '/backoffice')) ? ' active' : ''}">
+                <i class="fas fa-boxes"></i>
+                <span>Productos</span>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a th:href="@{/backoffice/admin/promociones}"
+               class="nav-link"
+               th:classappend="${#httpServletRequest != null and #strings.contains(#httpServletRequest.requestURI, '/promociones') ? ' active' : ''}">
+                <i class="fas fa-tags"></i>
+                <span>Promociones</span>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a th:href="@{/backoffice/admin/usuarios}"
+               class="nav-link"
+               th:classappend="${#httpServletRequest != null and #strings.contains(#httpServletRequest.requestURI, '/usuarios') ? ' active' : ''}">
+                <i class="fas fa-users"></i>
+                <span>Usuarios</span>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a th:href="@{/backoffice/admin/clientes}"
+               class="nav-link"
+               th:classappend="${#httpServletRequest != null and #strings.contains(#httpServletRequest.requestURI, '/clientes') ? ' active' : ''}">
+                <i class="fas fa-user-tie"></i>
+                <span>Clientes</span>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a th:href="@{/backoffice/admin/proveedores}"
+               class="nav-link"
+               th:classappend="${#httpServletRequest != null and #strings.contains(#httpServletRequest.requestURI, '/proveedores') ? ' active' : ''}">
+                <i class="fas fa-truck"></i>
+                <span>Proveedores</span>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a th:href="@{/backoffice/admin/pedidos}"
+               class="nav-link"
+               th:classappend="${#httpServletRequest != null and #strings.contains(#httpServletRequest.requestURI, '/pedidos') ? ' active' : ''}">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Pedidos</span>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a th:href="@{/backoffice/admin/reportes}"
+               class="nav-link"
+               th:classappend="${#httpServletRequest != null and #strings.contains(#httpServletRequest.requestURI, '/reportes') ? ' active' : ''}">
+                <i class="fas fa-chart-bar"></i>
+                <span>Reportes</span>
+            </a>
+        </div>
+
+        <div class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span>Configuración</span>
+            </a>
+        </div>
+
+        <div class="nav-item mt-3" style="border-top: 1px solid rgba(0,0,0,0.08); padding-top:10px;">
+            <a th:href="@{/logout}" class="nav-link text-danger">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </nav>
+</div>

@@ -92,8 +92,11 @@
               <!-- Teléfono -->
               <div class="col-md-6 mb-3">
                 <label for="telefono" class="form-label">Teléfono</label>
-                <input type="text" class="form-control" id="telefono" th:field="*{telefono}" inputmode="tel" placeholder="p. ej. 999 888 777" th:classappend="${#fields.hasErrors('telefono')} ? ' is-invalid'">
+                <!-- Se fuerza input numérico y máximo 9 dígitos; pattern para validación HTML5 -->
+                <input type="text" class="form-control" id="telefono" th:field="*{telefono}" inputmode="numeric" pattern="\d{9}" maxlength="9" placeholder="p. ej. 999888777" th:classappend="${#fields.hasErrors('telefono')} ? ' is-invalid'">
+                <div class="form-text">Ingrese solo números (9 dígitos)</div>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}">Error</div>
+                <div id="telefonoHelp" class="form-text text-danger" style="display:none;">El teléfono debe contener exactamente 9 dígitos.</div>
               </div>
             </div>
 
@@ -132,9 +135,20 @@
             <div class="row" th:if="${usuario.id == null}">
               <div class="col-md-6 mb-3">
                 <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" id="password" th:field="*{password}" minlength="6" placeholder="Define una contraseña segura" required th:classappend="${#fields.hasErrors('password')} ? ' is-invalid'" autocomplete="new-password">
+                <div class="input-group">
+                  <input type="password" class="form-control" id="password" th:field="*{password}" minlength="6" placeholder="Define una contraseña segura" required th:classappend="${#fields.hasErrors('password')} ? ' is-invalid'" autocomplete="new-password">
+                  <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Mostrar / Ocultar contraseña"><i class="fas fa-eye"></i></button>
+                </div>
                 <div class="form-text">Mínimo 6 caracteres.</div>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Error</div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="confirmPassword" class="form-label">Confirmar Contraseña <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="confirmPassword" name="confirmarPassword" minlength="6" placeholder="Repite la contraseña" required>
+                  <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword" title="Mostrar / Ocultar contraseña"><i class="fas fa-eye"></i></button>
+                </div>
               </div>
             </div>
 
@@ -142,8 +156,19 @@
             <div class="row" th:if="${usuario.id != null}">
               <div class="col-md-6 mb-3">
                 <label for="nuevaPassword" class="form-label">Nueva Contraseña (opcional)</label>
-                <input type="password" class="form-control" id="nuevaPassword" name="nuevaPassword" minlength="6" placeholder="Introduce nueva contraseña (opcional)">
+                <div class="input-group">
+                  <input type="password" class="form-control" id="nuevaPassword" name="nuevaPassword" minlength="6" placeholder="Introduce nueva contraseña (opcional)">
+                  <button class="btn btn-outline-secondary" type="button" id="toggleNuevaPassword" title="Mostrar / Ocultar contraseña"><i class="fas fa-eye"></i></button>
+                </div>
                 <div class="form-text">Déjalo en blanco si no deseas cambiar la contraseña.</div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="confirmNuevaPassword" class="form-label">Confirmar Nueva Contraseña</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="confirmNuevaPassword" name="confirmarNuevaPassword" minlength="6" placeholder="Confirma la nueva contraseña">
+                  <button class="btn btn-outline-secondary" type="button" id="toggleConfirmNuevaPassword" title="Mostrar / Ocultar contraseña"><i class="fas fa-eye"></i></button>
+                </div>
               </div>
             </div>
 
@@ -164,5 +189,163 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Toggle visibility for password fields
+    function setupToggle(buttonId, inputId) {
+      const btn = document.getElementById(buttonId);
+      const input = document.getElementById(inputId);
+      if (!btn || !input) return;
+      btn.addEventListener('click', () => {
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.querySelector('i')?.classList.remove('fa-eye');
+          btn.querySelector('i')?.classList.add('fa-eye-slash');
+        } else {
+          input.type = 'password';
+          btn.querySelector('i')?.classList.remove('fa-eye-slash');
+          btn.querySelector('i')?.classList.add('fa-eye');
+        }
+      });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      setupToggle('togglePassword', 'password');
+      setupToggle('toggleConfirmPassword', 'confirmPassword');
+      setupToggle('toggleNuevaPassword', 'nuevaPassword');
+      setupToggle('toggleConfirmNuevaPassword', 'confirmNuevaPassword');
+      // Validación en tiempo real para teléfono: sólo dígitos y 9 caracteres
+      const telInput = document.getElementById('telefono');
+      const telHelp = document.getElementById('telefonoHelp');
+      if (telInput) {
+        telInput.addEventListener('input', (e) => {
+          // Eliminar cualquier carácter que no sea dígito
+          const onlyDigits = e.target.value.replace(/\D/g, '');
+          if (onlyDigits !== e.target.value) {
+            e.target.value = onlyDigits;
+          }
+          // Limitar a 9 caracteres
+          if (e.target.value.length > 9) e.target.value = e.target.value.slice(0,9);
+
+          // Mostrar mensaje si no tiene 9 dígitos
+          if (e.target.value.length !== 0 && e.target.value.length !== 9) {
+            telHelp.style.display = 'block';
+          } else {
+            telHelp.style.display = 'none';
+          }
+        });
+        // Evitar pegar texto no numérico
+        telInput.addEventListener('paste', (e) => {
+          const paste = (e.clipboardData || window.clipboardData).getData('text');
+          if (/\D/.test(paste)) {
+            e.preventDefault();
+            const digits = paste.replace(/\D/g, '');
+            const current = telInput.value || '';
+            telInput.value = (current + digits).slice(0,9);
+            telHelp.style.display = telInput.value.length === 9 || telInput.value.length === 0 ? 'none' : 'block';
+          }
+        });
+      }
+    });
+
+    // Mostrar toasts de servidor (errores o advertencias de validación)
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mostrar toasts ya presentes en el DOM (renderizados por Thymeleaf)
+      const toastEls = document.querySelectorAll('.toast');
+      toastEls.forEach(el => {
+        try {
+          const t = new bootstrap.Toast(el, { delay: 6000 });
+          t.show();
+        } catch (e) {
+          // ignore
+        }
+      });
+
+      // Interceptar submit para validaciones rápidas en cliente (contraseñas)
+      const form = document.querySelector('form[th\:action]') || document.querySelector('form');
+      if (form) {
+        form.addEventListener('submit', (ev) => {
+          // Si estamos en creación (existe campo password y confirmPassword)
+          const pw = document.getElementById('password');
+          const pwConfirm = document.getElementById('confirmPassword');
+          if (pw && pwConfirm) {
+            if (pw.value !== pwConfirm.value) {
+              ev.preventDefault();
+              showDynamicToast('Las contraseñas no coinciden', 'danger');
+              pw.classList.add('is-invalid');
+              pwConfirm.classList.add('is-invalid');
+              return false;
+            }
+          }
+
+          // Si estamos editando y hay nuevaPassword, validar confirmación
+          const newPw = document.getElementById('nuevaPassword');
+          const newPwConfirm = document.getElementById('confirmNuevaPassword');
+          if (newPw && newPwConfirm && newPw.value.trim() !== '') {
+            if (newPw.value !== newPwConfirm.value) {
+              ev.preventDefault();
+              showDynamicToast('La nueva contraseña y su confirmación no coinciden', 'warning');
+              newPw.classList.add('is-invalid');
+              newPwConfirm.classList.add('is-invalid');
+              return false;
+            }
+            if (newPw.value.length > 0 && newPw.value.length < 6) {
+              ev.preventDefault();
+              showDynamicToast('La contraseña debe tener al menos 6 caracteres', 'warning');
+              newPw.classList.add('is-invalid');
+              return false;
+            }
+          }
+        });
+      }
+
+      // Helper: crear y mostrar un toast dinámico
+      function showDynamicToast(message, type) {
+        const container = document.querySelector('.toast-container') || createToastContainer();
+        const toastEl = document.createElement('div');
+        toastEl.className = 'toast align-items-center text-bg-' + (type || 'primary') + ' border-0';
+        toastEl.setAttribute('role','alert');
+        toastEl.setAttribute('aria-live','assertive');
+        toastEl.setAttribute('aria-atomic','true');
+        toastEl.innerHTML = `
+          <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        `;
+        container.appendChild(toastEl);
+        try {
+          const t = new bootstrap.Toast(toastEl, { delay: 6000 });
+          t.show();
+        } catch(e) {}
+      }
+
+      function createToastContainer() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'toast-container position-fixed top-0 end-0 p-3';
+        document.body.appendChild(wrapper);
+        return wrapper;
+      }
+    });
+  </script>
+
+    <!-- Container para toasts renderizados por servidor (Thymeleaf) -->
+    <div aria-live="polite" aria-atomic="true" class="position-relative">
+      <div class="toast-container position-fixed top-0 end-0 p-3">
+        <!-- Mensaje de error del servidor -->
+        <div th:if="${error}" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body" th:text="${error}">Error al guardar</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+
+        <!-- Si existen errores de validación por campo, mostrar aviso genérico (usamos hasFieldErrors seteado por el controlador) -->
+        <div th:if="${hasFieldErrors}" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">Por favor corrija los campos marcados en rojo.</div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+    </div>
 </body>
 </html>

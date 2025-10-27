@@ -47,10 +47,8 @@ public class CarritoServiceJPA {
         }
 
         Producto producto = productoOpt.get();
-        
-        if (producto.getStock() < cantidad) {
-            throw new IllegalArgumentException("Stock insuficiente. Stock disponible: " + producto.getStock());
-        }
+        // NOTA: por requerimiento UX permitimos agregar productos incluso si el stock actual es 0.
+        // La validación de stock se realizará en la etapa de "Continuar" desde la vista del carrito.
 
         Usuario usuario = obtenerUsuarioActual();
         Optional<CarritoItem> itemExistente;
@@ -65,14 +63,9 @@ public class CarritoServiceJPA {
         }
 
         if (itemExistente.isPresent()) {
-            // Actualizar cantidad del item existente
+            // Actualizar cantidad del item existente (sin validar stock aquí)
             CarritoItem item = itemExistente.get();
             int nuevaCantidad = item.getCantidad() + cantidad;
-            
-            if (producto.getStock() < nuevaCantidad) {
-                throw new IllegalArgumentException("Stock insuficiente para la cantidad total solicitada");
-            }
-            
             item.setCantidad(nuevaCantidad);
             carritoItemRepository.save(item);
         } else {
@@ -102,9 +95,7 @@ public class CarritoServiceJPA {
         }
 
         Producto producto = productoOpt.get();
-        if (producto.getStock() < nuevaCantidad) {
-            throw new IllegalArgumentException("Stock insuficiente");
-        }
+        // No validamos stock aquí: la comprobación se hace en la fase de "Continuar".
 
         Usuario usuario = obtenerUsuarioActual();
         Optional<CarritoItem> itemOpt;

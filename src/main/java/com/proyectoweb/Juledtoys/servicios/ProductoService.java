@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.math.BigDecimal;
 
 @Service
 public class ProductoService {
@@ -48,6 +49,17 @@ public class ProductoService {
         return repo.findByNombreContainingIgnoreCaseAndDisponibleTrue(nombre);
     }
 
+    /**
+     * Buscar con filtros opcionales: categoría, rango de precio y nombre.
+     * Devuelve hasta 'limit' resultados (paginación simple en la capa service).
+     */
+    public List<Producto> buscarConFiltros(String categoria, java.math.BigDecimal precioMin, java.math.BigDecimal precioMax, String nombre, int limit) {
+        // Usar el query definido en el repositorio con paginación
+        org.springframework.data.domain.Pageable pageable = PageRequest.of(0, Math.max(1, limit));
+        org.springframework.data.domain.Page<Producto> page = repo.buscarConFiltros(categoria, precioMin, precioMax, nombre, pageable);
+        return page.getContent();
+    }
+
     public Producto crear(Producto producto) {
         return repo.save(producto);
     }
@@ -78,5 +90,22 @@ public class ProductoService {
     public List<Producto> obtenerProductosAleatorios(int limit) {
         Page<Producto> page = repo.findRandomProducts(PageRequest.of(0, limit));
         return page.getContent();
+    }
+
+    /**
+     * Listar categorías distintas de productos disponibles.
+     */
+    public List<String> listarCategorias() {
+        return repo.findDistinctCategorias();
+    }
+
+    public BigDecimal obtenerPrecioMinimo() {
+        BigDecimal v = repo.findMinPrecio();
+        return v != null ? v : BigDecimal.ZERO;
+    }
+
+    public BigDecimal obtenerPrecioMaximo() {
+        BigDecimal v = repo.findMaxPrecio();
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

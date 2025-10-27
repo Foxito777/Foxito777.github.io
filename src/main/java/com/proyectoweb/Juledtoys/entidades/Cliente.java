@@ -22,8 +22,8 @@ public class Cliente implements org.springframework.security.core.userdetails.Us
     @Column(unique = true, nullable = false)
     private String email;
 
-    @NotBlank
-    @Size(min = 6)
+    // La validación de la contraseña se gestiona en el controlador para permitir
+    // editar otros campos sin necesidad de reingresar la contraseña.
     @Column(nullable = false)
     private String password;
 
@@ -35,9 +35,12 @@ public class Cliente implements org.springframework.security.core.userdetails.Us
     @Column(length = 15)
     private String telefono;
 
-    @Size(max = 200)
-    @Column(length = 200)
-    private String direccion;
+    // Ahora guardamos las direcciones en una entidad separada `Direccion`.
+    // La relación es OneToMany: un cliente puede tener múltiples direcciones.
+    // CascadeType.ALL + orphanRemoval=true asegura que al eliminar el cliente
+    // o eliminar direcciones de la colección, JPA persista/elimine correctamente.
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Direccion> direcciones = new java.util.ArrayList<>();
 
     @Column(nullable = false)
     private Boolean activo = true;
@@ -73,8 +76,58 @@ public class Cliente implements org.springframework.security.core.userdetails.Us
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
 
-    public String getDireccion() { return direccion; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
+    // Compatibilidad: mantener métodos get/set que usan String para evitar cambios mayores
+    // en plantillas y controladores existentes. Internamente usamos la colección de Direcciones
+    // y asumimos la primera como 'dirección principal'.
+    public String getDireccion() {
+        if (direcciones != null && !direcciones.isEmpty() && direcciones.get(0) != null) {
+            return direcciones.get(0).getDireccionCompleta();
+        }
+        return null;
+    }
+
+    public void setDireccion(String direccionTexto) {
+        if (direccionTexto == null) {
+            if (this.direcciones != null) this.direcciones.clear();
+            return;
+        }
+        if (this.direcciones == null) this.direcciones = new java.util.ArrayList<>();
+        if (this.direcciones.isEmpty()) {
+            Direccion d = new Direccion();
+            d.setDireccionCompleta(direccionTexto);
+            d.setCliente(this);
+            this.direcciones.add(d);
+        } else {
+            Direccion d = this.direcciones.get(0);
+            d.setDireccionCompleta(direccionTexto);
+            d.setCliente(this);
+        }
+    }
+
+    // Acceso directo a la entidad Dirección (principal) cuando se necesite manipular campos separados
+    public Direccion getDireccionEntity() {
+        return (direcciones != null && !direcciones.isEmpty()) ? direcciones.get(0) : null;
+    }
+
+    public void setDireccionEntity(Direccion direccion) {
+        if (direccion == null) {
+            if (this.direcciones != null) this.direcciones.clear();
+            return;
+        }
+        direccion.setCliente(this);
+        if (this.direcciones == null) this.direcciones = new java.util.ArrayList<>();
+        if (this.direcciones.isEmpty()) this.direcciones.add(direccion);
+        else this.direcciones.set(0, direccion);
+    }
+
+    // Acceso a la colección completa
+    public java.util.List<Direccion> getDirecciones() { return direcciones; }
+    public void setDirecciones(java.util.List<Direccion> direcciones) {
+        this.direcciones = direcciones;
+        if (this.direcciones != null) {
+            for (Direccion d : this.direcciones) d.setCliente(this);
+        }
+    }
 
     public Boolean getActivo() { return activo; }
     public boolean isActivo() { return activo != null && activo; }

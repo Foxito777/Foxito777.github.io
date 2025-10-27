@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes y Estadísticas - Backoffice JuledToys</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/admin.css?v=2.0" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div th:replace="~{backoffice/fragments/sidebar :: sidebar}"></div>
+
+            <!-- Contenido Principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="bi bi-graph-up"></i> Reportes y Estadísticas</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-outline-primary me-2" onclick="exportarExcel()">
+                            <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="exportarPDF()">
+                            <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtros de Fecha -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form id="filtroForm" class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label for="fechaInicio" class="form-label fw-bold">Fecha Inicio</label>
+                            <input type="date" class="form-control" id="fechaInicio" name="fechaInicio">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fechaFin" class="form-label fw-bold">Fecha Fin</label>
+                            <input type="date" class="form-control" id="fechaFin" name="fechaFin">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                                <i class="bi bi-search"></i> Buscar
+                            </button>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary" onclick="filtrarRapido(7)">7 días</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="filtrarRapido(30)">30 días</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="filtrarRapido(90)">3 meses</button>
+                            </div>
+                        </div>
+                    </form>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tarjetas de Estadísticas -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card ventas h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="stat-label">Ventas Totales</p>
+                                        <p class="stat-value text-success" id="ventasTotales">S/ 0.00</p>
+                                        <small class="text-muted">Últimos 30 días</small>
+                                    </div>
+                                    <i class="bi bi-currency-dollar stat-icon text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card pedidos h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="stat-label">Pedidos</p>
+                                        <p class="stat-value text-primary" id="numeroPedidos">0</p>
+                                        <small class="text-muted">Pedidos realizados</small>
+                                    </div>
+                                    <i class="bi bi-box-seam stat-icon text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card ticket h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="stat-label">Ticket Promedio</p>
+                                        <p class="stat-value text-warning" id="ticketPromedio">S/ 0.00</p>
+                                        <small class="text-muted">Por pedido</small>
+                                    </div>
+                                    <i class="bi bi-receipt stat-icon text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card clientes h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="stat-label">Entregados</p>
+                                        <p class="stat-value text-purple" id="pedidosEntregados">0</p>
+                                        <small class="text-muted">Completados</small>
+                                    </div>
+                                    <i class="bi bi-check-circle stat-icon text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficas -->
+                <div class="row mb-4">
+                    <!-- Gráfica de Ventas por Día -->
+                    <div class="col-md-8 mb-3">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="bi bi-graph-up"></i> Ventas por Día</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="ventasPorDiaChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfica de Pedidos por Estado -->
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Estados de Pedidos</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="pedidosPorEstadoChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Productos Más Vendidos -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="bi bi-trophy"></i> Top 10 Productos Más Vendidos</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container" style="height: 400px;">
+                                    <canvas id="productosMasVendidosChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let ventasPorDiaChart, pedidosPorEstadoChart, productosMasVendidosChart;
+
+        // Cargar datos al inicio
+        document.addEventListener('DOMContentLoaded', function() {
+            filtrarRapido(30); // Cargar últimos 30 días por defecto
+        });
+
+        function filtrarRapido(dias) {
+            const fechaFin = new Date();
+            const fechaInicio = new Date();
+            fechaInicio.setDate(fechaFin.getDate() - dias);
+            
+            document.getElementById('fechaInicio').value = fechaInicio.toISOString().split('T')[0];
+            document.getElementById('fechaFin').value = fechaFin.toISOString().split('T')[0];
+            
+            aplicarFiltros();
+        }
+
+        function aplicarFiltros() {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            
+            if (!fechaInicio || !fechaFin) {
+                alert('Por favor seleccione ambas fechas');
+                return;
+            }
+
+            cargarEstadisticas(fechaInicio, fechaFin);
+            cargarVentasPorDia(fechaInicio, fechaFin);
+            cargarProductosMasVendidos(fechaInicio, fechaFin);
+        }
+
+        async function cargarEstadisticas(fechaInicio, fechaFin) {
+            try {
+                const response = await fetch(`/backoffice/admin/reportes/ventas?fechaInicio=${fechaInicio}T00:00:00&fechaFin=${fechaFin}T23:59:59`);
+                const data = await response.json();
+                
+                // Actualizar tarjetas
+                document.getElementById('ventasTotales').textContent = 'S/ ' + Number(data.ventasTotales || 0).toFixed(2);
+                document.getElementById('numeroPedidos').textContent = data.numeroPedidos || 0;
+                document.getElementById('ticketPromedio').textContent = 'S/ ' + Number(data.ticketPromedio || 0).toFixed(2);
+                
+                // Actualizar gráfica de estados
+                if (data.pedidosPorEstado) {
+                    const estados = data.pedidosPorEstado;
+                    document.getElementById('pedidosEntregados').textContent = estados.ENTREGADO || 0;
+                    actualizarGraficaEstados(estados);
+                }
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+            }
+        }
+
+        async function cargarVentasPorDia(fechaInicio, fechaFin) {
+            try {
+                const response = await fetch(`/backoffice/admin/reportes/ventas-por-dia?fechaInicio=${fechaInicio}T00:00:00&fechaFin=${fechaFin}T23:59:59`);
+                const data = await response.json();
+                
+                actualizarGraficaVentas(data.fechas, data.ventas);
+            } catch (error) {
+                console.error('Error al cargar ventas por día:', error);
+            }
+        }
+
+        async function cargarProductosMasVendidos(fechaInicio, fechaFin) {
+            try {
+                const response = await fetch(`/backoffice/admin/reportes/productos-mas-vendidos?fechaInicio=${fechaInicio}T00:00:00&fechaFin=${fechaFin}T23:59:59&limite=10`);
+                const data = await response.json();
+                
+                const nombres = data.map(p => p.nombre);
+                const cantidades = data.map(p => p.cantidadVendida);
+                
+                actualizarGraficaProductos(nombres, cantidades);
+            } catch (error) {
+                console.error('Error al cargar productos más vendidos:', error);
+            }
+        }
+
+        function actualizarGraficaVentas(fechas, ventas) {
+            const ctx = document.getElementById('ventasPorDiaChart').getContext('2d');
+            
+            if (ventasPorDiaChart) {
+                ventasPorDiaChart.destroy();
+            }
+            
+            ventasPorDiaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: fechas,
+                    datasets: [{
+                        label: 'Ventas (S/)',
+                        data: ventas,
+                        borderColor: 'rgb(25, 135, 84)',
+                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function actualizarGraficaEstados(estados) {
+            const ctx = document.getElementById('pedidosPorEstadoChart').getContext('2d');
+            
+            if (pedidosPorEstadoChart) {
+                pedidosPorEstadoChart.destroy();
+            }
+            
+            pedidosPorEstadoChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pendiente', 'Confirmado', 'En Preparación', 'En Camino', 'Entregado', 'Cancelado'],
+                    datasets: [{
+                        data: [
+                            estados.PENDIENTE || 0,
+                            estados.CONFIRMADO || 0,
+                            estados.EN_PREPARACION || 0,
+                            estados.EN_CAMINO || 0,
+                            estados.ENTREGADO || 0,
+                            estados.CANCELADO || 0
+                        ],
+                        backgroundColor: [
+                            'rgb(255, 193, 7)',
+                            'rgb(13, 110, 253)',
+                            'rgb(111, 66, 193)',
+                            'rgb(13, 202, 240)',
+                            'rgb(25, 135, 84)',
+                            'rgb(220, 53, 69)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function actualizarGraficaProductos(nombres, cantidades) {
+            const ctx = document.getElementById('productosMasVendidosChart').getContext('2d');
+            
+            if (productosMasVendidosChart) {
+                productosMasVendidosChart.destroy();
+            }
+            
+            productosMasVendidosChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: nombres,
+                    datasets: [{
+                        label: 'Cantidad Vendida',
+                        data: cantidades,
+                        backgroundColor: 'rgba(25, 135, 84, 0.8)',
+                        borderColor: 'rgb(25, 135, 84)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function exportarExcel() {
+            alert('Exportación a Excel en desarrollo');
+        }
+
+        function exportarPDF() {
+            alert('Exportación a PDF en desarrollo');
+        }
+    </script>
+</body>
+</html>

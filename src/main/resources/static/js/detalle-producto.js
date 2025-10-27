@@ -33,38 +33,88 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnAgregar) {
         btnAgregar.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
-            const cantidad = document.querySelector('.quantity-input').value;
-            console.log(`Agregar ${cantidad} unidades del producto ID: ${id}`);
-            
-            // Animación del botón
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-check me-2"></i>¡Agregado!';
-            this.style.background = '#28a745';
-            this.disabled = true;
-            
-            // Efecto de "volando al carrito"
-            const rect = this.getBoundingClientRect();
-            const flyingIcon = document.createElement('div');
-            flyingIcon.innerHTML = '<i class="fas fa-shopping-cart"></i>';
-            flyingIcon.style.cssText = `
-                position: fixed;
-                left: ${rect.left + rect.width/2}px;
-                top: ${rect.top + rect.height/2}px;
-                z-index: 9999;
-                color: #28a745;
-                font-size: 1.5rem;
-                pointer-events: none;
-                animation: flyToCart 1s ease-out forwards;
-            `;
-            document.body.appendChild(flyingIcon);
-            
-            setTimeout(() => {
-                flyingIcon.remove();
-                this.innerHTML = originalText;
-                this.style.background = '#495057';
-                this.disabled = false;
-            }, 2000);
+            const cantidad = document.querySelector('.quantity-input').value || 1;
+
+            // Enviar al servidor vía AJAX (reusar /carrito/api/agregar)
+            const formData = new FormData();
+            formData.append('productoId', id);
+            formData.append('cantidad', cantidad);
+
+            const btn = this;
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Agregando...';
+
+            fetch('/carrito/api/agregar', { method: 'POST', body: formData })
+                .then(resp => resp.text())
+                .then(text => {
+                    if (text === 'success') {
+                        // Animación de 'volar al carrito' y notificación
+                        crearAnimacionAgregar(btn);
+                        mostrarToast('Producto agregado al carrito', 'success');
+                        // Actualizar contador del carrito
+                        actualizarContadorCarritoAjax();
+                    } else {
+                        mostrarToast('No se pudo agregar el producto', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error al agregar al carrito:', err);
+                    mostrarToast('Error de conexión al agregar al carrito', 'error');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                });
         });
+    }
+
+    // Animación visual cuando se agrega al carrito
+    function crearAnimacionAgregar(button){
+        const rect = button.getBoundingClientRect();
+        const flyingIcon = document.createElement('div');
+        flyingIcon.innerHTML = '<i class="fas fa-shopping-cart"></i>';
+        flyingIcon.style.cssText = `
+            position: fixed;
+            left: ${rect.left + rect.width/2}px;
+            top: ${rect.top + rect.height/2}px;
+            z-index: 9999;
+            color: #ff6b35;
+            font-size: 1.6rem;
+            pointer-events: none;
+            transition: transform 0.9s ease-in-out, opacity 0.9s;
+        `;
+        document.body.appendChild(flyingIcon);
+        // Calcular destino (badge de carrito)
+        const badge = document.querySelector('.badge-cart') || document.querySelector('.cart-badge');
+        if (badge) {
+            const badgeRect = badge.getBoundingClientRect();
+            requestAnimationFrame(()=>{
+                flyingIcon.style.transform = `translate(${badgeRect.left - rect.left}px, ${badgeRect.top - rect.top}px) scale(0.2)`;
+                flyingIcon.style.opacity = '0.2';
+            });
+        } else {
+            // Si no hay badge, simplemente desaparecer
+            flyingIcon.style.transform = 'translateY(-40px) scale(0.6)';
+            flyingIcon.style.opacity = '0.2';
+        }
+        setTimeout(()=> flyingIcon.remove(), 900);
+    }
+
+    // Actualizar contador del carrito consultando API
+    function actualizarContadorCarritoAjax(){
+        fetch('/carrito/api/cantidad')
+            .then(r => r.json())
+            .then(c => {
+                const badge = document.querySelector('.badge-cart') || document.querySelector('.cart-badge');
+                if (badge) {
+                    badge.textContent = c;
+                    badge.style.display = c > 0 ? 'inline-flex' : 'none';
+                    badge.style.transform = 'scale(1.2)';
+                    setTimeout(()=> badge.style.transform = 'scale(1)', 300);
+                }
+            })
+            .catch(e=> console.debug('Error actualizando contador carrito', e));
     }
     
     // Control de cantidad con botones + y -

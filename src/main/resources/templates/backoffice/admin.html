@@ -68,15 +68,23 @@
         </div>
 
         <div class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="fas fa-chart-bar"></i>
-            <span>Reportes</span>
+          <a th:href="@{/backoffice/admin/proveedores}" class="nav-link">
+            <i class="fas fa-truck"></i>
+            <span>Proveedores</span>
           </a>
         </div>
+
         <div class="nav-item">
-          <a href="#" class="nav-link">
+          <a th:href="@{/backoffice/admin/pedidos}" class="nav-link">
             <i class="fas fa-shopping-cart"></i>
             <span>Pedidos</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a th:href="@{/backoffice/admin/reportes}" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reportes</span>
           </a>
         </div>
         <div class="nav-item">
@@ -139,10 +147,9 @@
               </div>
             </div>
             <div class="stat-value">
-              $<span
+              S/ <span
                 th:text="${#numbers.formatDecimal(valorTotalInventario, 0, 'COMMA', 2, 'POINT')}"
-                >0.00</span
-              >
+                >0.00</span>
             </div>
             <div class="stat-label">Valor Total Inventario</div>
           </div>
@@ -238,12 +245,9 @@
                     >
                   </td>
                   <td>
-                    <span class="fw-bold text-success"
-                      >$<span
+                    <span class="fw-bold text-success">S/ <span
                         th:text="${#numbers.formatDecimal(p.precio, 0, 'COMMA', 2, 'POINT')}"
-                        >0.00</span
-                      ></span
-                    >
+                        >0.00</span></span>
                   </td>
                   <td>
                     <span class="fw-bold" th:text="${p.stock}">0</span>
@@ -319,6 +323,7 @@
             ></button>
           </div>
           <form th:action="@{/backoffice/admin/productos}" method="post">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div class="modal-body">
               <div class="mb-3">
                 <label for="nombre" class="form-label"
@@ -333,6 +338,19 @@
                 />
               </div>
               <div class="mb-3">
+                <label for="categoria" class="form-label">Categoría</label>
+                <select id="categoria" class="form-select">
+                  <option value="">-- Seleccione --</option>
+                  <option value="__new__">+ Crear nueva categoría...</option>
+                  <th:block th:each="c : ${categorias}">
+                    <option th:value="${c}" th:text="${c}"></option>
+                  </th:block>
+                </select>
+                <input type="text" id="newCategoryInput" class="form-control mt-2" placeholder="Nombre de nueva categoría" style="display:none;" />
+                <!-- Hidden field that will be sent to the server. JS sets it before submit -->
+                <input type="hidden" name="categoria" id="hiddenCategoria" />
+              </div>
+              <div class="mb-3">
                 <label for="descripcion" class="form-label">Descripción</label>
                 <textarea
                   class="form-control"
@@ -341,6 +359,47 @@
                   rows="3"
                   required
                 ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="imagenUrl" class="form-label">URL de imagen</label>
+                <input type="text" id="imagenUrl" name="imagenUrl" class="form-control" placeholder="Imagen (ruta o nombre)" />
+              </div>
+              <div class="mb-3">
+                <label for="imagenUrl1" class="form-label">Imagen mini 1 (URL)</label>
+                <input type="text" id="imagenUrl1" name="imagenUrl1" class="form-control" placeholder="Imagen mini 1" />
+              </div>
+              <div class="mb-3">
+                <label for="imagenUrl2" class="form-label">Imagen mini 2 (URL)</label>
+                <input type="text" id="imagenUrl2" name="imagenUrl2" class="form-control" placeholder="Imagen mini 2" />
+              </div>
+              <div class="mb-3">
+                <label for="imagenUrl3" class="form-label">Imagen mini 3 (URL)</label>
+                <input type="text" id="imagenUrl3" name="imagenUrl3" class="form-control" placeholder="Imagen mini 3" />
+              </div>
+              <!-- Preview de imágenes (Nuevo) -->
+              <div class="mb-3">
+                <label class="form-label">Preview de imágenes</label>
+                <div class="d-flex gap-2">
+                  <img id="previewImagen" src="" alt="Preview principal" style="width:100px;height:100px;object-fit:cover;display:none;border:1px solid #ddd;border-radius:6px;" />
+                  <img id="previewImagen1" src="" alt="Preview mini 1" style="width:70px;height:70px;object-fit:cover;display:none;border:1px solid #ddd;border-radius:6px;" />
+                  <img id="previewImagen2" src="" alt="Preview mini 2" style="width:70px;height:70px;object-fit:cover;display:none;border:1px solid #ddd;border-radius:6px;" />
+                  <img id="previewImagen3" src="" alt="Preview mini 3" style="width:70px;height:70px;object-fit:cover;display:none;border:1px solid #ddd;border-radius:6px;" />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="rating" class="form-label">Rating (1-5)</label>
+                <select id="rating" name="rating" class="form-select">
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="detalles" class="form-label">Detalles (lista separada por saltos)</label>
+                <textarea id="detalles" name="detalles" class="form-control" rows="3" placeholder="Características, dimensiónes, material..."></textarea>
               </div>
               <div class="row">
                 <div class="col-md-6">
@@ -402,6 +461,7 @@
             ></button>
           </div>
           <form id="formEditarProducto" method="post">
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div class="modal-body">
               <div class="mb-3">
                 <label for="editNombre" class="form-label"
@@ -451,6 +511,59 @@
                     required
                   />
                 </div>
+              </div>
+              <div class="mb-3">
+                <label for="editCategoria" class="form-label">Categoría</label>
+                <select id="editCategoria" class="form-select">
+                  <option value="">-- Seleccione --</option>
+                  <option value="__new__">+ Crear nueva categoría...</option>
+                  <th:block th:each="c : ${categorias}">
+                    <option th:value="${c}" th:text="${c}"></option>
+                  </th:block>
+                </select>
+                <input type="text" id="editNewCategoryInput" class="form-control mt-2" placeholder="Nombre de nueva categoría" style="display:none;" />
+                <input type="hidden" name="categoria" id="hiddenEditCategoria" />
+              </div>
+              <div class="mb-3">
+                <label for="editImagenUrl" class="form-label">URL de imagen</label>
+                <input type="text" id="editImagenUrl" name="imagenUrl" class="form-control" placeholder="Imagen (ruta o nombre)" />
+              </div>
+              <div class="mb-3">
+                <label for="editImagenUrl1" class="form-label">Imagen mini 1 (URL)</label>
+                <input type="text" id="editImagenUrl1" name="imagenUrl1" class="form-control" placeholder="Imagen mini 1" />
+              </div>
+              <div class="mb-3">
+                <label for="editImagenUrl2" class="form-label">Imagen mini 2 (URL)</label>
+                <input type="text" id="editImagenUrl2" name="imagenUrl2" class="form-control" placeholder="Imagen mini 2" />
+              </div>
+              <div class="mb-3">
+                <label for="editImagenUrl3" class="form-label">Imagen mini 3 (URL)</label>
+                <input type="text" id="editImagenUrl3" name="imagenUrl3" class="form-control" placeholder="Imagen mini 3" />
+              </div>
+              <!-- Preview de imágenes (Editar) -->
+              <div class="mb-3">
+                <label class="form-label">Preview de imágenes</label>
+                <div class="d-flex gap-2">
+                  <img id="editPreviewImagen" src="" alt="Preview principal" style="width:100px;height:100px;object-fit:cover;display:none;border:1px solid #ddd;border-radius:6px;" />
+                  <img id="editPreviewImagen1" src="" alt="Preview mini 1" style="width:70px;height:70px;object-fit:cover;display:none;border:1px solid #ddd;border-radius:6px;" />
+                  <img id="editPreviewImagen2" src="" alt="Preview mini 2" style="width:70px;height:70px;object-fit:cover;display:none;border:1px solid #ddd;border-radius:6px;" />
+                  <img id="editPreviewImagen3" src="" alt="Preview mini 3" style="width:70px;height:70px;object-fit:cover;display:none;border:1px solid #ddd;border-radius:6px;" />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="editRating" class="form-label">Rating (1-5)</label>
+                <select id="editRating" name="rating" class="form-select">
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editDetalles" class="form-label">Detalles</label>
+                <textarea id="editDetalles" name="detalles" class="form-control" rows="3" placeholder="Características, dimensiones, material..."></textarea>
               </div>
             </div>
             <div class="modal-footer">
@@ -502,6 +615,7 @@
               Cancelar
             </button>
             <form id="formEliminarProducto" method="post" class="form-inline">
+              <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
               <button type="submit" class="btn btn-danger">
                 <i class="fas fa-trash"></i>
                 Eliminar
@@ -525,14 +639,52 @@
                 producto.descripcion;
               document.getElementById("editPrecio").value = producto.precio;
               document.getElementById("editStock").value = producto.stock;
+                  // set categoria and imagenUrl when available
+                  if (producto.categoria) {
+                    const sel = document.getElementById('editCategoria');
+                    if (sel) sel.value = producto.categoria;
+                  }
+                  if (producto.imagenUrl) {
+                    const imgIn = document.getElementById('editImagenUrl');
+                    if (imgIn) imgIn.value = producto.imagenUrl;
+                  }
+                  if (producto.imagenUrl1) {
+                    const i1 = document.getElementById('editImagenUrl1'); if (i1) i1.value = producto.imagenUrl1;
+                  }
+                  if (producto.imagenUrl2) {
+                    const i2 = document.getElementById('editImagenUrl2'); if (i2) i2.value = producto.imagenUrl2;
+                  }
+                  if (producto.imagenUrl3) {
+                    const i3 = document.getElementById('editImagenUrl3'); if (i3) i3.value = producto.imagenUrl3;
+                  }
+                  if (producto.rating != null) {
+                    const r = document.getElementById('editRating'); if (r) r.value = producto.rating;
+                  }
+                  if (producto.detalles) {
+                    const d = document.getElementById('editDetalles'); if (d) d.value = producto.detalles;
+                  }
+
+                  // actualizar previews con el id del producto como fallback
+                  try {
+                    updateEditPreviews(producto.id);
+                  } catch (e) {
+                    // ignore
+                  }
 
               document.getElementById(
                 "formEditarProducto"
               ).action = `/backoffice/admin/productos/${id}/editar`;
 
-              new bootstrap.Modal(
-                document.getElementById("modalEditarProducto")
-              ).show();
+              // Ensure any previous modal instance is hidden and disposed to avoid backdrop/stuck state
+              (function(){
+                const modalEl = document.getElementById("modalEditarProducto");
+                try{
+                  const existing = bootstrap.Modal.getInstance(modalEl);
+                  if (existing){ existing.hide(); existing.dispose(); }
+                } catch(e){ /* ignore */ }
+                const created = new bootstrap.Modal(modalEl);
+                created.show();
+              })();
             }
           })
           .catch((error) => {
@@ -547,9 +699,15 @@
         document.getElementById(
           "formEliminarProducto"
         ).action = `/backoffice/admin/productos/${id}/eliminar`;
-        new bootstrap.Modal(
-          document.getElementById("modalEliminarProducto")
-        ).show();
+        // Ensure previous instance disposed to avoid backdrop issues
+        (function(){
+          const modalEl = document.getElementById("modalEliminarProducto");
+          try{
+            const existing = bootstrap.Modal.getInstance(modalEl);
+            if (existing){ existing.hide(); existing.dispose(); }
+          } catch(e){ }
+          new bootstrap.Modal(modalEl).show();
+        })();
       }
 
       // Auto-hide alerts after 5 seconds
@@ -579,6 +737,134 @@
             eliminarProducto(productoId, productoNombre);
           });
         });
+
+        // Category new creation UX - Nuevo Producto modal
+        const categoriaSelect = document.getElementById('categoria');
+        const newCategoryInput = document.getElementById('newCategoryInput');
+        const hiddenCategoria = document.getElementById('hiddenCategoria');
+        if (categoriaSelect) {
+          categoriaSelect.addEventListener('change', function () {
+            if (this.value === '__new__') {
+              newCategoryInput.style.display = 'block';
+            } else {
+              newCategoryInput.style.display = 'none';
+            }
+          });
+        }
+
+        // Category new creation UX - Editar Producto modal
+        const editCategoriaSelect = document.getElementById('editCategoria');
+        const editNewCategoryInput = document.getElementById('editNewCategoryInput');
+        const hiddenEditCategoria = document.getElementById('hiddenEditCategoria');
+        if (editCategoriaSelect) {
+          editCategoriaSelect.addEventListener('change', function () {
+            if (this.value === '__new__') {
+              editNewCategoryInput.style.display = 'block';
+            } else {
+              editNewCategoryInput.style.display = 'none';
+            }
+          });
+        }
+
+        // Before submitting Nuevo Producto form: set hiddenCategoria accordingly
+        const modalNuevo = document.getElementById('modalNuevoProducto');
+        if (modalNuevo) {
+          const formNuevo = modalNuevo.querySelector('form');
+          if (formNuevo) {
+            formNuevo.addEventListener('submit', function () {
+              const sel = categoriaSelect ? categoriaSelect.value : '';
+              let toSend = sel;
+              if (sel === '__new__' && newCategoryInput) {
+                toSend = newCategoryInput.value || '';
+              }
+              if (hiddenCategoria) hiddenCategoria.value = toSend;
+            });
+          }
+        }
+
+        // Before submitting Editar Producto form: set hiddenEditCategoria accordingly
+        const modalEditar = document.getElementById('modalEditarProducto');
+        if (modalEditar) {
+          const formEditar = modalEditar.querySelector('#formEditarProducto');
+          if (formEditar) {
+            formEditar.addEventListener('submit', function () {
+              const sel = editCategoriaSelect ? editCategoriaSelect.value : '';
+              let toSend = sel;
+              if (sel === '__new__' && editNewCategoryInput) {
+                toSend = editNewCategoryInput.value || '';
+              }
+              if (hiddenEditCategoria) hiddenEditCategoria.value = toSend;
+            });
+          }
+        }
+
+        // Image preview helpers
+        function computeImageSrc(value, fallbackPath) {
+          if (!value) return null;
+          const v = value.trim();
+          if (v === '') return null;
+          // If starts with / or http(s) or protocol-relative //, return as-is
+          if (v.startsWith('/') || v.startsWith('http') || v.startsWith('//')) return v;
+          // treat as filename -> prefix folder
+          return '/Imagenes/productos/' + v;
+        }
+
+        function setPreview(imgElement, src) {
+          if (!imgElement) return;
+          if (src) {
+            imgElement.src = src;
+            imgElement.style.display = '';
+          } else {
+            imgElement.src = '';
+            imgElement.style.display = 'none';
+          }
+        }
+
+        // Nuevo modal: live preview when typing URLs
+        const inputImagen = document.getElementById('imagenUrl');
+        const inputImagen1 = document.getElementById('imagenUrl1');
+        const inputImagen2 = document.getElementById('imagenUrl2');
+        const inputImagen3 = document.getElementById('imagenUrl3');
+        const previewImagen = document.getElementById('previewImagen');
+        const previewImagen1 = document.getElementById('previewImagen1');
+        const previewImagen2 = document.getElementById('previewImagen2');
+        const previewImagen3 = document.getElementById('previewImagen3');
+
+        function updateCreatePreviews() {
+          setPreview(previewImagen, computeImageSrc(inputImagen?.value));
+          setPreview(previewImagen1, computeImageSrc(inputImagen1?.value));
+          setPreview(previewImagen2, computeImageSrc(inputImagen2?.value));
+          setPreview(previewImagen3, computeImageSrc(inputImagen3?.value));
+        }
+
+        if (inputImagen) inputImagen.addEventListener('input', updateCreatePreviews);
+        if (inputImagen1) inputImagen1.addEventListener('input', updateCreatePreviews);
+        if (inputImagen2) inputImagen2.addEventListener('input', updateCreatePreviews);
+        if (inputImagen3) inputImagen3.addEventListener('input', updateCreatePreviews);
+
+        // Editar modal: when producto loaded, set previews; also live update when editing values
+        const editInputImagen = document.getElementById('editImagenUrl');
+        const editInputImagen1 = document.getElementById('editImagenUrl1');
+        const editInputImagen2 = document.getElementById('editImagenUrl2');
+        const editInputImagen3 = document.getElementById('editImagenUrl3');
+        const editPreviewImagen = document.getElementById('editPreviewImagen');
+        const editPreviewImagen1 = document.getElementById('editPreviewImagen1');
+        const editPreviewImagen2 = document.getElementById('editPreviewImagen2');
+        const editPreviewImagen3 = document.getElementById('editPreviewImagen3');
+
+        function updateEditPreviews(productIdFallback) {
+          // For main image, if editInputImagen empty use Set fallback with productIdFallback
+          const mainSrc = computeImageSrc(editInputImagen?.value) || (productIdFallback ? ('/Imagenes/Set/Set' + productIdFallback + '.png') : null);
+          setPreview(editPreviewImagen, mainSrc);
+          setPreview(editPreviewImagen1, computeImageSrc(editInputImagen1?.value));
+          setPreview(editPreviewImagen2, computeImageSrc(editInputImagen2?.value));
+          setPreview(editPreviewImagen3, computeImageSrc(editInputImagen3?.value));
+        }
+
+        if (editInputImagen) editInputImagen.addEventListener('input', () => updateEditPreviews(null));
+        if (editInputImagen1) editInputImagen1.addEventListener('input', () => updateEditPreviews(null));
+        if (editInputImagen2) editInputImagen2.addEventListener('input', () => updateEditPreviews(null));
+        if (editInputImagen3) editInputImagen3.addEventListener('input', () => updateEditPreviews(null));
       });
       
       // Live search (AJAX) with debounce - replaces table rows without full page reload
@@ -679,6 +965,73 @@
           });
           // ensure handlers bound on first load
           rebindRowActions();
+        });
+      })();
+      // Global modal cleanup to avoid stuck backdrops / locked scrolling
+      (function(){
+        function cleanupModalBackdrops(){
+          try{
+            // Remove any backdrop elements
+            document.querySelectorAll('.modal-backdrop').forEach(function(el){ el.remove(); });
+          }catch(e){ /* ignore */ }
+          try{ document.body.classList.remove('modal-open'); }catch(e){ /* ignore */ }
+          try{ document.body.style.removeProperty('padding-right'); }catch(e){ /* ignore */ }
+          try{ document.body.style.removeProperty('overflow'); }catch(e){ /* ignore */ }
+          try{
+            // Remove show class and aria-hidden from modals that are not actually visible
+            document.querySelectorAll('.modal').forEach(function(m){
+              if (!m.classList.contains('show')){
+                m.style.display = 'none';
+                m.removeAttribute('aria-modal');
+                m.setAttribute('aria-hidden','true');
+              }
+            });
+          }catch(e){ /* ignore */ }
+        }
+
+        // When any modal is fully hidden, ensure cleanup
+        document.addEventListener('hidden.bs.modal', function(e){
+          try{
+            // Dispose the instance for the modal that was hidden
+            const inst = bootstrap.Modal.getInstance(e.target);
+            if (inst){ inst.dispose(); }
+          }catch(er){ /* ignore */ }
+          cleanupModalBackdrops();
+          // Also schedule cleanup a bit later to cover race conditions
+          setTimeout(cleanupModalBackdrops, 100);
+          setTimeout(cleanupModalBackdrops, 300);
+        });
+
+        // Before showing a modal, dispose other modal instances and cleanup any stray backdrops
+        document.addEventListener('show.bs.modal', function(e){
+          try{
+            document.querySelectorAll('.modal').forEach(function(m){
+              if (m !== e.target){
+                try{
+                  const inst = bootstrap.Modal.getInstance(m);
+                  if (inst){ inst.hide(); inst.dispose(); }
+                }catch(er){ /* ignore */ }
+              }
+            });
+          }catch(err){ /* ignore */ }
+          cleanupModalBackdrops();
+        });
+
+        // For buttons or links that dismiss modals, ensure cleanup after a short delay
+        document.addEventListener('click', function(e){
+          const target = e.target;
+          if (!target) return;
+          // match data-bs-dismiss attribute or btn-close
+          if (target.closest('[data-bs-dismiss="modal"]') || target.classList.contains('btn-close')){
+            setTimeout(cleanupModalBackdrops, 50);
+            setTimeout(cleanupModalBackdrops, 200);
+          }
+        });
+
+        // Also run a cleanup on initial load in case previous state left stray backdrops
+        document.addEventListener('DOMContentLoaded', function(){
+          setTimeout(cleanupModalBackdrops, 50);
+          setTimeout(cleanupModalBackdrops, 300);
         });
       })();
     </script>

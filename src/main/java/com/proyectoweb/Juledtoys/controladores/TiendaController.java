@@ -148,11 +148,14 @@ public class TiendaController {
         List<Map<String, Object>> todosLosProductos = obtenerProductosDestacados();
         
         // Aplicar filtros
-        List<Map<String, Object>> productosFiltrados = todosLosProductos.stream()
-            .filter(p -> categoria == null || categoria.isEmpty() || p.get("categoria").equals(categoria))
-            .filter(p -> busqueda == null || busqueda.isEmpty() || 
-                ((String) p.get("nombre")).toLowerCase().contains(busqueda.toLowerCase()))
-            .toList();
+        // Stream.toList() returns an unmodifiable list; necesitamos una lista modificable
+        List<Map<String, Object>> productosFiltrados = new ArrayList<>(
+            todosLosProductos.stream()
+                .filter(p -> categoria == null || categoria.isEmpty() || p.get("categoria").equals(categoria))
+                .filter(p -> busqueda == null || busqueda.isEmpty() || 
+                    ((String) p.get("nombre")).toLowerCase().contains(busqueda.toLowerCase()))
+                .toList()
+        );
 
         // Aplicar ordenamiento
         switch (ordenar) {

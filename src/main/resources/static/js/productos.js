@@ -168,6 +168,71 @@ document.addEventListener('click', e => {
 });
 
 
+// --- Slider de precio (sin dependencia externa) ---
+document.addEventListener('DOMContentLoaded', () => {
+    const minInput = document.getElementById('precioMinInput');
+    const maxInput = document.getElementById('precioMaxInput');
+    const minRange = document.getElementById('precioMinRange');
+    const maxRange = document.getElementById('precioMaxRange');
+    const minDisplay = document.getElementById('precioMinDisplay');
+    const maxDisplay = document.getElementById('precioMaxDisplay');
+
+    if (!minInput || !maxInput || !minRange || !maxRange) return;
+
+    // Determinar valores iniciales (si el servidor ya pasó precioMin/precioMax)
+    const initialMin = parseFloat(minInput.value) || 0;
+    const initialMax = parseFloat(maxInput.value) || 2000;
+
+    // Ajustar límites del slider según rango detectado (puedes cambiar el máximo global aquí)
+    const GLOBAL_MAX = 2000;
+    minRange.min = 0; minRange.max = GLOBAL_MAX; maxRange.min = 0; maxRange.max = GLOBAL_MAX;
+
+    minRange.value = Math.min(initialMin, GLOBAL_MAX);
+    maxRange.value = Math.max(Math.min(initialMax, GLOBAL_MAX), 1);
+
+    // Sincronizar displays e inputs numéricos
+    function syncFromRange() {
+        let minVal = parseInt(minRange.value);
+        let maxVal = parseInt(maxRange.value);
+        if (minVal > maxVal) {
+            // Evitar que min supere a max: ajustar el otro
+            if (this === minRange) {
+                maxVal = minVal;
+                maxRange.value = maxVal;
+            } else {
+                minVal = maxVal;
+                minRange.value = minVal;
+            }
+        }
+        minDisplay.textContent = minVal;
+        maxDisplay.textContent = maxVal;
+        minInput.value = minVal;
+        maxInput.value = maxVal;
+    }
+
+    // Sincronizar cuando cambian los inputs numéricos (usuario puede escribir manualmente)
+    function syncFromNumber() {
+        let minVal = parseFloat(minInput.value) || 0;
+        let maxVal = parseFloat(maxInput.value) || GLOBAL_MAX;
+        if (minVal < 0) minVal = 0;
+        if (maxVal > GLOBAL_MAX) maxVal = GLOBAL_MAX;
+        if (minVal > maxVal) minVal = maxVal;
+        minRange.value = Math.floor(minVal);
+        maxRange.value = Math.ceil(maxVal);
+        minDisplay.textContent = Math.floor(minVal);
+        maxDisplay.textContent = Math.ceil(maxVal);
+    }
+
+    minRange.addEventListener('input', syncFromRange);
+    maxRange.addEventListener('input', syncFromRange);
+    minInput.addEventListener('change', syncFromNumber);
+    maxInput.addEventListener('change', syncFromNumber);
+
+    // Inicializar displays
+    syncFromRange.call(minRange);
+});
+
+
 
 
 

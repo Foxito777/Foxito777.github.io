@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <!-- CSRF tokens for forms and AJAX -->
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pago - Juled TOYS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/index.css" />
+  <style>
+    /* Paleta de colores: naranja principal y grises */
+    .brand-orange { color: #ff6b35; }
+    .bg-brand { background: #ff6b35; color: #fff; }
+    .panel-gray { background: #f7f7f8; border: 1px solid #e6e6e6; }
+    .summary-card { background: #fff; border: 1px solid #e9e9ea; }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container my-5">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <h3 class="brand-orange mb-3">Entrega</h3>
+        <div class="card mb-4 panel-gray">
+          <div class="card-body">
+            <!-- VISTA: Dirección / Completar datos (visible por defecto) -->
+            <div id="entregaAddressView">
+              <div th:if="${usuarioDireccion != null}">
+                <p class="mb-1 fw-bold" th:text="${usuarioDireccion}">Jr. Las Palmeras 298, Casa, San Juan Bautista</p>
+                <p class="text-muted">Huamanga, Ayacucho</p>
+                <a href="#" class="float-end small" data-bs-toggle="modal" data-bs-target="#direccionModal">Modificar</a>
+              </div>
+              <div th:if="${usuarioDireccion == null}">
+                <p class="mb-1 fw-bold text-muted">Completar datos de entrega</p>
+                <a href="#" class="small" data-bs-toggle="modal" data-bs-target="#direccionModal">Agregar nueva dirección</a>
+              </div>
+              <div class="mt-3">
+                <button id="retirarBtn" class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#retirarModal">Quiero retirar mi compra en tienda</button>
+              </div>
+            </div>
+
+            <!-- VISTA: Retiro en tienda (oculta por defecto, se muestra al confirmar en el modal) -->
+            <div id="entregaPickupView" style="display:none;">
+              <div class="d-flex align-items-center">
+                <img src="/Imagenes/logo.png" alt="JULED TOYS" style="width:64px;height:64px;object-fit:contain;border-radius:8px;margin-right:12px;" />
+                <div class="flex-grow-1">
+                  <div class="fw-bold">Retiro en tienda - JULED TOYS</div>
+                  <div class="small text-muted">Jr. Las Palmeras 298</div>
+                  <div class="small text-muted" id="pickup_card_date">Retira el --</div>
+                  <div class="small text-muted" id="pickup_card_phone"></div>
+                </div>
+                <div class="text-end">
+                  <!-- Botón más visible para volver a despacho a domicilio -->
+                  <button id="volverDespachoBtn" class="btn btn-primary btn-sm" style="background:#ff6b35;border-color:#ff6b35;color:#fff;">
+                    <i class="fas fa-truck me-1"></i>
+                    Quiero despacho a domicilio
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal para agregar/editar dirección -->
+        <div class="modal fade" id="direccionModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Agregue nueva dirección</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form th:action="@{/checkout/direccion}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label class="form-label">Dirección*</label>
+                    <input name="direccion" type="text" class="form-control" placeholder="Dirección*" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Número*</label>
+                    <input name="numero" type="text" class="form-control" placeholder="Número*">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Depto/Casa/Oficina</label>
+                    <input name="depto" type="text" class="form-control" placeholder="Depto/Casa/Oficina">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Celular*</label>
+                    <input name="celular" type="tel" class="form-control" placeholder="Celular*">
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Departamento</label>
+                      <select id="departamentoSelect" name="departamento" class="form-select">
+                        <option value="">Seleccione un departamento</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Provincia</label>
+                      <select id="provinciaSelect" name="provincia" class="form-select">
+                        <option value="">Seleccione una provincia</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Distrito</label>
+                      <select id="distritoSelect" name="distrito" class="form-select">
+                        <option value="">Seleccione un distrito</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Instrucciones de entrega</label>
+                    <textarea name="instrucciones" class="form-control" rows="3" placeholder="Instrucciones de entrega"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Nombre de la dirección</label>
+                    <input name="nombreDireccion" type="text" class="form-control" placeholder="Nombre de la dirección*">
+                  </div>
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="guardarPreferente" name="guardarPreferente">
+                    <label class="form-check-label" for="guardarPreferente">Guardar como dirección preferente</label>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn" style="background:#ea6309;color:white">Guardar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="brand-orange mb-3">Envío</h3>
+        <div id="shippingCard" class="card panel-gray mb-4">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+              <div class="me-3">
+                <img src="/Imagenes/envio-rapido.jpg" alt="envio rapido" style="width:64px;height:64px;object-fit:cover;border-radius:8px;">
+                <span class="badge rounded-circle bg-dark text-white position-absolute" style="transform:translate(-30px,-20px);">2</span>
+              </div>
+              <div class="flex-grow-1">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="envio" id="envioStandard" checked>
+                  <label class="form-check-label fw-bold ms-2" for="envioStandard">Despacho estándar</label>
+                </div>
+                <div class="small text-muted ms-4">Recíbelo el <strong id="deliveryDate">--</strong></div>
+              </div>
+              <div class="text-end fw-bold">S/<span id="shippingCost">19.00</span></div>
+            </div>
+            <a href="#" class="small" data-bs-toggle="modal" data-bs-target="#envioModal">Modificar</a>
+          </div>
+        </div>
+
+        <!-- Modal para seleccionar fecha de envío -->
+        <div class="modal fade" id="envioModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Modificar despacho</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div id="envioOptions" style="max-height:420px;overflow:auto">
+                  <!-- Opciones generadas por JS -->
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="guardarEnvioBtn" class="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Sección: Elige cómo pagar -->
+        <h3 class="brand-orange mb-3">Elige cómo pagar</h3>
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+              <i class="bi bi-info-circle-fill me-2"></i>
+              <div>Recuerda activar tu tarjeta para compras por internet antes de realizar el pago.</div>
+            </div>
+
+            <p class="fw-bold mb-2">Medios de pago:</p>
+
+            <div class="list-group">
+              <!-- Yape -->
+              <label class="list-group-item list-group-item-action d-flex align-items-center">
+                <input class="form-check-input me-3" type="radio" name="medioPago" value="yape" checked>
+                <img src="/Imagenes/yape-logo.png" alt="Yape" style="width:48px;height:32px;object-fit:contain;">
+                <div class="ms-3">Yape</div>
+              </label>
+
+              <!-- PayPal -->
+              <label class="list-group-item list-group-item-action d-flex align-items-center">
+                <input class="form-check-input me-3" type="radio" name="medioPago" value="paypal">
+                <i class="fab fa-paypal fa-2x me-3" style="color:#003087"></i>
+                <div class="ms-3">PayPal</div>
+              </label>
+
+              <!-- Tarjeta Crédito/Débito (Visa) -->
+              <label class="list-group-item list-group-item-action d-flex align-items-center">
+                <input class="form-check-input me-3" type="radio" name="medioPago" value="visa">
+                <i class="fas fa-credit-card fa-2x me-3" style="color:#0a5f9e"></i>
+                <div class="ms-3">Tarjeta de Crédito / Débito (Visa)</div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Boleta -->
+        <div class="card panel-gray mb-4">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <h5 class="mb-0">Boleta</h5>
+              <a href="#" class="small">¿Necesitas factura?</a>
+            </div>
+            <p class="mt-2 mb-0">La boleta se enviará al siguiente correo
+              <strong th:text="${usuarioEmail != null ? usuarioEmail : (#authentication != null and #authentication.name != null ? #authentication.name : 'tu-correo@ejemplo.com')}">correo@ejemplo.com</strong>
+              .</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card summary-card shadow-sm">
+          <div class="card-body">
+            <h5 class="mb-3"><i class="fas fa-shopping-bag me-2"></i>Mi producto (<span th:text="${cantidadTotal}">0</span>)</h5>
+            <div th:each="item : ${carrito.items}" class="d-flex align-items-center mb-3">
+              <!-- Imagen producto: caso URL absoluta/protocol-relative -->
+              <th:block th:if="${item.imagenUrl != null and item.imagenUrl != ''} and (${#strings.startsWith(item.imagenUrl, '/')} or ${#strings.startsWith(item.imagenUrl, 'http')} or ${#strings.startsWith(item.imagenUrl, '//')})">
+                <img th:src="${item.imagenUrl}" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" class="me-3">
+              </th:block>
+              <!-- Imagen producto: caso nombre de archivo -->
+              <th:block th:if="${item.imagenUrl != null and item.imagenUrl != ''} and not( ${#strings.startsWith(item.imagenUrl, '/')} or ${#strings.startsWith(item.imagenUrl, 'http')} or ${#strings.startsWith(item.imagenUrl, '//')} )">
+                <img th:src="@{/Imagenes/productos/{img}(img=${item.imagenUrl})}" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" class="me-3">
+              </th:block>
+              <!-- Imagen producto: fallback -->
+              <th:block th:if="${item.imagenUrl == null or item.imagenUrl == ''}">
+                <img th:src="@{/Imagenes/default.png}" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" class="me-3">
+              </th:block>
+              <div class="flex-grow-1">
+                <div class="fw-bold" th:text="${item.nombre}">Nombre</div>
+                <div class="small text-muted">Precio unidad</div>
+              </div>
+              <div class="text-end">
+                <div>S/ <span th:text="${#numbers.formatDecimal(item.precio,0,2)}">0.00</span></div>
+                <div class="small text-muted">x <span th:text="${item.cantidad}">1</span></div>
+              </div>
+            </div>
+
+            <hr>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Subtotal</span>
+              <span>S/ <span id="subtotalAmount" th:text="${#numbers.formatDecimal(total,0,2)}">0.00</span></span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Despacho</span>
+              <span>S/ <span id="shippingCostSummary">19.00</span></span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between fw-bold fs-5" style="color:#ff6b35;">
+              <span>Total a pagar</span>
+              <span>S/ <span id="totalAmount">0.00</span></span>
+            </div>
+
+            <div class="mt-3">
+              <div class="fw-bold text-primary small mb-2">Tarjeta de Crédito</div>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>Tarjeta</div>
+                <div class="fw-bold" style="color:#6c6c6c;">S/ <span id="cardTotal">0.00</span></div>
+              </div>
+              <form th:action="@{/checkout/pagar}" method="post" id="pagarForm">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="medioPago" id="medioPagoInput" value="yape" />
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="terms">
+                  <label class="form-check-label small" for="terms">Acepto los <a href="#">términos y condiciones</a> y <a href="#">política de privacidad</a></label>
+                </div>
+                <button type="submit" id="pagarBtn" class="btn btn-warning w-100" disabled>Pagar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Modal: Retiro en tienda -->
+        <div class="modal fade" id="retirarModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Retiro en tienda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center">
+                <img src="/Imagenes/default.png" alt="JULED TOYS" style="width:72px;height:72px;object-fit:contain;margin-bottom:12px;" />
+                <h5 class="fw-bold">JULED TOYS</h5>
+                <div class="text-muted small mb-2">Jr. Las Palmeras 298</div>
+                <div class="mt-3 mb-3"><strong id="retiroDate">Retira el --</strong></div>
+                <a href="#" class="small d-block mb-2">Modificar tienda</a>
+
+                <div class="mb-3 text-start">
+                  <label class="form-label">¿Quién retirará tu compra?</label>
+                  <div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="quienRetira" id="retiraYo" checked>
+                      <label class="form-check-label" for="retiraYo">Yo</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="quienRetira" id="retiraTercero">
+                      <label class="form-check-label" for="retiraTercero">Un tercero</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Teléfono</label>
+                  <input type="tel" id="retiroTelefono" class="form-control" placeholder="Teléfono" />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="confirmRetiroBtn" class="btn btn-primary" data-bs-dismiss="modal" style="background:#6f2b8d;border-color:#6f2b8d">Continuar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Datos estáticos para departamento -> provincia -> distrito
+    const geo = {
+      "Lima": {
+        "Lima": ["Lima","San Juan de Miraflores"]
+      },
+      "Ayacucho": {
+        "Huamanga": ["Ayacucho","Carmen Alto","San Juan Bautista","Andres Avelino Caceres"],
+        "Huanta": ["Huanta"]
+      }
+    };
+
+    function populateSelect(selectEl, options, placeholder) {
+      selectEl.innerHTML = '';
+      const opt0 = document.createElement('option');
+      opt0.value = '';
+      opt0.textContent = placeholder;
+      selectEl.appendChild(opt0);
+      options.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o;
+        opt.textContent = o;
+        selectEl.appendChild(opt);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const dep = document.getElementById('departamentoSelect');
+      const prov = document.getElementById('provinciaSelect');
+      const dist = document.getElementById('distritoSelect');
+
+      // Poblar departamentos
+      populateSelect(dep, Object.keys(geo), 'Seleccione un departamento');
+
+      dep.addEventListener('change', () => {
+        const d = dep.value;
+        if (!d) {
+          populateSelect(prov, [], 'Seleccione una provincia');
+          populateSelect(dist, [], 'Seleccione un distrito');
+          return;
+        }
+        const provincias = Object.keys(geo[d]);
+        populateSelect(prov, provincias, 'Seleccione una provincia');
+        populateSelect(dist, [], 'Seleccione un distrito');
+      });
+
+      prov.addEventListener('change', () => {
+        const d = dep.value;
+        const p = prov.value;
+        if (!d || !p) {
+          populateSelect(dist, [], 'Seleccione un distrito');
+          return;
+        }
+        const distritos = geo[d][p] || [];
+        populateSelect(dist, distritos, 'Seleccione un distrito');
+      });
+
+      // Si hay valores preexistentes (p.ej. servidor los dejó en el model), seleccionarlos
+      // Intentamos leer atributos data- prefijados en selects
+      const preDep = dep.getAttribute('data-selected');
+      const preProv = prov.getAttribute('data-selected');
+      const preDist = dist.getAttribute('data-selected');
+      if (preDep) {
+        dep.value = preDep;
+        dep.dispatchEvent(new Event('change'));
+        if (preProv) {
+          prov.value = preProv;
+          prov.dispatchEvent(new Event('change'));
+          if (preDist) {
+            dist.value = preDist;
+          }
+        }
+      }
+    });
+
+      // Calcular fecha de retiro: 3 días después de hoy
+      const retirarModalEl = document.getElementById('retirarModal');
+      function calcularFechaRetiro() {
+        const d = new Date();
+        d.setDate(d.getDate() + 3);
+        const opciones = { day: 'numeric', month: 'long' };
+        return d.toLocaleDateString('es-PE', opciones);
+      }
+      if (retirarModalEl) {
+        retirarModalEl.addEventListener('show.bs.modal', function () {
+          const fecha = calcularFechaRetiro();
+          const el = document.getElementById('retiroDate');
+          if (el) el.textContent = 'Retira el ' + fecha;
+        });
+      }
+      // Cuando el usuario confirma el retiro en el modal, actualizar la tarjeta principal de Entrega
+      const confirmRetiroBtn = document.getElementById('confirmRetiroBtn');
+      if (confirmRetiroBtn) {
+        confirmRetiroBtn.addEventListener('click', () => {
+          const fechaText = document.getElementById('retiroDate')?.textContent || '';
+          const telefono = document.getElementById('retiroTelefono')?.value || '';
+          const pickupDateEl = document.getElementById('pickup_card_date');
+          const pickupPhoneEl = document.getElementById('pickup_card_phone');
+          if (pickupDateEl) pickupDateEl.textContent = fechaText;
+          if (pickupPhoneEl) pickupPhoneEl.textContent = telefono ? ('Tel: ' + telefono) : '';
+
+          const addrView = document.getElementById('entregaAddressView');
+          const pickView = document.getElementById('entregaPickupView');
+          if (addrView) addrView.style.display = 'none';
+          if (pickView) pickView.style.display = 'block';
+          // Ocultar el cuadro de Envío cuando el usuario elige retiro en tienda
+          (function(){
+            const shippingCard = document.getElementById('shippingCard');
+            if (shippingCard) shippingCard.style.display = 'none';
+            // Forzar costo de envío a 0 y recalcular totales
+            try{
+              if (shippingCostEl) shippingCostEl.textContent = '0.00';
+              if (shippingCostSummaryEl) shippingCostSummaryEl.textContent = '0.00';
+              let subtotal = 0.0;
+              if (subtotalEl) subtotal = parseFloat(subtotalEl.textContent.replace(/,/g, '')) || 0.0;
+              const total = subtotal + 0.0;
+              if (totalEl) totalEl.textContent = total.toFixed(2);
+              if (cardTotalEl) cardTotalEl.textContent = total.toFixed(2);
+            }catch(e){ /* ignore */ }
+          })();
+        });
+      }
+
+      // Volver a despacho a domicilio desde la tarjeta de Retiro
+      const volverDespachoBtn = document.getElementById('volverDespachoBtn');
+      if (volverDespachoBtn) {
+        volverDespachoBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const addrView = document.getElementById('entregaAddressView');
+          const pickView = document.getElementById('entregaPickupView');
+          if (pickView) pickView.style.display = 'none';
+          if (addrView) addrView.style.display = 'block';
+          // Restaurar cuadro de Envío y recalcular costo y totales
+          (function(){
+            const shippingCard = document.getElementById('shippingCard');
+            if (shippingCard) shippingCard.style.display = '';
+            try{
+              const costo = determinarCostoEnvio();
+              if (shippingCostEl) shippingCostEl.textContent = costo.toFixed(2);
+              if (shippingCostSummaryEl) shippingCostSummaryEl.textContent = costo.toFixed(2);
+              let subtotal = 0.0;
+              if (subtotalEl) subtotal = parseFloat(subtotalEl.textContent.replace(/,/g, '')) || 0.0;
+              const total = subtotal + costo;
+              if (totalEl) totalEl.textContent = total.toFixed(2);
+              if (cardTotalEl) cardTotalEl.textContent = total.toFixed(2);
+            }catch(e){ /* ignore */ }
+          })();
+        });
+      }
+
+      // --- Nuevas funciones: delivery modal, fechas y cálculo de envío ---
+      const deliveryDateEl = document.getElementById('deliveryDate');
+      const envioOptionsEl = document.getElementById('envioOptions');
+      const guardarEnvioBtn = document.getElementById('guardarEnvioBtn');
+      const shippingCostEl = document.getElementById('shippingCost');
+      const shippingCostSummaryEl = document.getElementById('shippingCostSummary');
+      const subtotalEl = document.getElementById('subtotalAmount');
+      const totalEl = document.getElementById('totalAmount');
+      const cardTotalEl = document.getElementById('cardTotal');
+
+      // Formatea fecha en español: 'Lunes 3 de noviembre'
+      function formatFullDate(d) {
+        const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
+        return d.toLocaleDateString('es-PE', opciones);
+      }
+
+      function formatShortDate(d) {
+        const opciones = { day: 'numeric', month: 'long' };
+        return d.toLocaleDateString('es-PE', opciones);
+      }
+
+      // Determina costo de envío según provincia/departamento
+      function determinarCostoEnvio() {
+        // Intentar obtener provincia/departamento desde la vista de dirección
+        const addrNode = document.querySelector('#entregaAddressView .text-muted');
+        let provincia = '';
+        let departamento = '';
+        if (addrNode) {
+          const txt = addrNode.textContent || '';
+          // Se espera formato 'Provincia, Departamento' como 'Huamanga, Ayacucho'
+          const parts = txt.split(',').map(s => s.trim());
+          provincia = parts[0] || '';
+          departamento = parts[1] || '';
+        }
+        // Reglas: Ayacucho => 7; Lima o Huanta => 19; default 19
+        if (provincia.toLowerCase() === 'ayacucho' || departamento.toLowerCase() === 'ayacucho') {
+          return 7.00;
+        }
+        if (provincia.toLowerCase() === 'huanta' || provincia.toLowerCase() === 'lima' || departamento.toLowerCase() === 'lima') {
+          return 19.00;
+        }
+        return 19.00;
+      }
+
+      // Genera opciones de envío: desde hoy+5, mostrar al menos 5 opciones
+      function generarOpcionesEnvio() {
+        envioOptionsEl.innerHTML = '';
+        const startOffset = 5; // empezar en hoy + 5
+        const count = 6; // al menos 5, ponemos 6
+        const today = new Date();
+        const costo = determinarCostoEnvio();
+        for (let i = 0; i < count; i++) {
+          const d = new Date();
+          d.setDate(today.getDate() + startOffset + i);
+          const optionId = 'envioOpt' + i;
+          const div = document.createElement('div');
+          div.className = 'mb-3 pb-3 border-bottom';
+          div.innerHTML = `
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="envioFecha" id="${optionId}" value="${d.toISOString()}" ${i===0? 'checked':''}>
+              <label class="form-check-label ms-2" for="${optionId}">
+                <div class="fw-bold">${formatFullDate(d)}</div>
+                <div class="small text-muted">de 7:00 a 22:00 hrs</div>
+                <div class="mt-1">S/${costo.toFixed(2)}</div>
+              </label>
+            </div>
+          `;
+          envioOptionsEl.appendChild(div);
+        }
+      }
+
+      // Actualiza la fecha mostrada en la tarjeta y actualiza totales
+      function aplicarFechaSeleccionada() {
+        const checked = document.querySelector('input[name="envioFecha"]:checked');
+        if (!checked) return;
+        const d = new Date(checked.value);
+        if (deliveryDateEl) deliveryDateEl.textContent = formatShortDate(d);
+        // actualizar costo y totales
+        const costo = determinarCostoEnvio();
+        if (shippingCostEl) shippingCostEl.textContent = costo.toFixed(2);
+        if (shippingCostSummaryEl) shippingCostSummaryEl.textContent = costo.toFixed(2);
+        // subtotal viene del servidor en texto; leer y parsear
+        let subtotal = 0.0;
+        if (subtotalEl) subtotal = parseFloat(subtotalEl.textContent.replace(/,/g, '')) || 0.0;
+        const total = subtotal + costo;
+        if (totalEl) totalEl.textContent = total.toFixed(2);
+        if (cardTotalEl) cardTotalEl.textContent = total.toFixed(2);
+      }
+
+      // Inicializar al cargar la página
+      (function initDelivery() {
+        // fecha por defecto: hoy + 5
+        const d = new Date();
+        d.setDate(d.getDate() + 5);
+        if (deliveryDateEl) deliveryDateEl.textContent = formatShortDate(d);
+        // generar opciones cuando se abra el modal
+        const envioModalEl = document.getElementById('envioModal');
+        if (envioModalEl) {
+          envioModalEl.addEventListener('show.bs.modal', function () {
+            generarOpcionesEnvio();
+          });
+        }
+        // cuando guarden, aplicar selección
+        if (guardarEnvioBtn) {
+          guardarEnvioBtn.addEventListener('click', function () {
+            aplicarFechaSeleccionada();
+          });
+        }
+        // aplicar costo inicial
+        const costoIni = determinarCostoEnvio();
+        if (shippingCostEl) shippingCostEl.textContent = costoIni.toFixed(2);
+        if (shippingCostSummaryEl) shippingCostSummaryEl.textContent = costoIni.toFixed(2);
+        // totales iniciales
+        let subtotal = 0.0;
+        if (subtotalEl) subtotal = parseFloat(subtotalEl.textContent.replace(/,/g, '')) || 0.0;
+        const totalIni = subtotal + costoIni;
+        if (totalEl) totalEl.textContent = totalIni.toFixed(2);
+        if (cardTotalEl) cardTotalEl.textContent = totalIni.toFixed(2);
+      })();
+
+      // --- Payment interaction: toast for payment method and purchase confirmation ---
+      (function(){
+        function createToastElement(){
+          const t = document.createElement('div');
+          t.id = 'paymentToast';
+          t.style.position = 'fixed';
+          t.style.right = '20px';
+          t.style.bottom = '20px';
+          t.style.background = 'rgba(0,0,0,0.85)';
+          t.style.color = '#fff';
+          t.style.padding = '12px 16px';
+          t.style.borderRadius = '8px';
+          t.style.boxShadow = '0 6px 18px rgba(0,0,0,0.2)';
+          t.style.zIndex = '2000';
+          t.style.display = 'none';
+          document.body.appendChild(t);
+          return t;
+        }
+
+        const toastEl = createToastElement();
+        let toastTimeout = null;
+
+        function showPaymentToast(message, timeout){
+          if (!toastEl) return;
+          toastEl.textContent = message;
+          toastEl.style.display = '';
+          if (toastTimeout) clearTimeout(toastTimeout);
+          toastTimeout = setTimeout(()=>{ toastEl.style.display = 'none'; }, timeout || 5000);
+        }
+
+        // Bind to payment method radios
+        document.querySelectorAll('input[name="medioPago"]').forEach(function(r){
+          r.addEventListener('change', function(){
+            const val = this.value;
+            if (val === 'yape'){
+              showPaymentToast('Pago seleccionado: Yape — por favor realiza el pago en los próximos 30 minutos y comparte el comprobante.', 8000);
+            } else if (val === 'paypal'){
+              showPaymentToast('Pago seleccionado: PayPal — serás redirigido a PayPal para completar el pago.', 6000);
+            } else if (val === 'visa'){
+              showPaymentToast('Pago seleccionado: Tarjeta de crédito/débito — prepara los datos de tu tarjeta.', 6000);
+            } else {
+              showPaymentToast('Método de pago seleccionado.', 5000);
+            }
+          });
+        });
+
+        // Enable Pagar button when terms checkbox is checked
+        const termsCheckbox = document.getElementById('terms');
+        const pagarBtn = document.getElementById('pagarBtn');
+        if (termsCheckbox && pagarBtn){
+          termsCheckbox.addEventListener('change', function(){
+            pagarBtn.disabled = !this.checked;
+          });
+        }
+
+        // Purchase confirmation UI
+        function showPurchaseConfirmation(){
+          // gather info
+          const emailEl = document.querySelector('p.mt-2.mb-0 strong');
+          const email = emailEl ? emailEl.textContent.trim() : '';
+          const totalTxt = (document.getElementById('totalAmount') || {}).textContent || '';
+          const orderId = 'J-' + (Date.now()).toString().slice(-8);
+
+          // create confirmation card
+          const conf = document.createElement('div');
+          conf.id = 'purchaseConfirmation';
+          conf.innerHTML = `
+            <div class="card shadow-sm mt-4">
+              <div class="card-body text-center">
+                <h3 class="mb-3" style="color:#28a745"><i class="fas fa-check-circle"></i> ¡Gracias por tu compra!</h3>
+                <p class="mb-1">Tu pedido ha sido registrado correctamente.</p>
+                <p class="small text-muted">Número de orden: <strong>${orderId}</strong></p>
+                <p class="small">Se enviará la boleta a: <strong>${email || 'tu-correo@ejemplo.com'}</strong></p>
+                <p class="fw-bold" style="color:#ff6b35;">Total pagado: S/ <span>${totalTxt}</span></p>
+                <div class="mt-3">
+                  <a href="/" class="btn btn-outline-primary">Seguir comprando</a>
+                  <a href="/carrito" class="btn btn-outline-secondary ms-2">Ver carrito</a>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // hide main content and show confirmation below summary
+          const mainContainer = document.querySelector('.container');
+          if (mainContainer) mainContainer.style.display = 'none';
+          document.body.appendChild(conf);
+          conf.scrollIntoView({behavior:'smooth'});
+        }
+
+        // Enviar el formulario de pago al servidor: antes de enviar, copiar el medioPago seleccionado
+        const pagarForm = document.getElementById('pagarForm');
+        if (pagarForm){
+          pagarForm.addEventListener('submit', function(e){
+            const medio = document.querySelector('input[name="medioPago"]:checked');
+            const medioInput = document.getElementById('medioPagoInput');
+            if (medio && medioInput) medioInput.value = medio.value;
+            // mostrar toast breve y dejar que el formulario se envíe al servidor
+            showPaymentToast('Procesando tu pago... serás redirigido a la confirmación.', 3000);
+            // el submit continúa; el servidor creará el pedido y redirigirá
+          });
+        }
+      })();
+  </script>
+</body>
+</html>

@@ -182,22 +182,117 @@
       <aside class="col-12 col-md-3 mb-4">
         <div class="card shadow-sm border-0 filter-box">
           <div class="card-body">
-            <h5 class="mb-3 fw-semibold">Marca</h5>
-            <input type="text" class="form-control form-control-sm mb-3" placeholder="Buscar marca">
-            <div class="mb-4 small" th:if="${categorias != null}">
-              <div class="form-check mb-2" th:each="cat : ${categorias}">
-                <input class="form-check-input" type="checkbox" th:id="${'cat_'+cat}" th:value="${cat}">
-                <label class="form-check-label" th:for="${'cat_'+cat}" th:text="${cat}">Minecraft</label>
-              </div>
-            </div>
+              <h5 class="mb-3 fw-semibold">Filtros</h5>
+              <form id="filterForm" method="get" th:action="@{/productos}">
+                <!-- Mantener la búsqueda q si existe -->
+                <input type="hidden" name="q" th:value="${q}">
 
-            <h5 class="mb-2 fw-semibold">Precio</h5>
-            <input type="range" class="form-range mb-2" min="10" max="800" step="10" id="rangoPrecio">
-            <div class="d-flex justify-content-between small text-muted mb-3">
-              <span>S/10</span><span>S/800</span>
+                <div class="mb-3">
+                  <label for="categoriaSelect" class="form-label small mb-1">Categoría</label>
+                  <select id="categoriaSelect" name="categoria" class="form-select form-select-sm">
+                    <option value="" th:text="'Todas'" th:selected="${selectedCategoria} == null or selectedCategoria == ''">Todas</option>
+                    <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}" th:selected="${cat} == ${selectedCategoria}">Cat</option>
+                  </select>
+                </div>
+
+                <!-- Inputs ocultos para envío del formulario; el control visible es el deslizador -->
+                <input id="precioMinInput" type="hidden" name="precioMin" th:value="${precioMin}">
+                <input id="precioMaxInput" type="hidden" name="precioMax" th:value="${precioMax}">
+                <!-- Valores globales (desde BD) para inicializar el slider -->
+                <input id="precioGlobalMinInput" type="hidden" th:value="${precioMinGlobal}">
+                <input id="precioGlobalMaxInput" type="hidden" th:value="${precioMaxGlobal}">
+
+                <!-- Filtro de precio con diseño mejorado -->
+                <div class="mb-3 mt-2">
+                  <label class="form-label fw-semibold mb-2">Precio</label>
+                  <p class="small text-muted mb-3">Selecciona un rango de precio para filtrar tu búsqueda.</p>
+                  
+                  <!-- Labels de valores -->
+                  <div class="d-flex justify-content-between mb-2">
+                    <div>
+                      <div class="small text-muted">Mínimo</div>
+                      <div class="fw-bold text-primary">S/ <span id="precioMinDisplay" th:text="${precioMinGlobal}">0</span></div>
+                    </div>
+                    <div class="text-end">
+                      <div class="small text-muted">Máximo</div>
+                      <div class="fw-bold text-primary">S/ <span id="precioMaxDisplay" th:text="${precioMaxGlobal}">0</span></div>
+                    </div>
+                  </div>
+
+                  <!-- Contenedor del slider con estilos personalizados -->
+                  <div class="position-relative" style="padding: 20px 0;">
+          <input id="precioMinRange" type="range" th:attr="min=${precioMinGlobal},max=${precioMaxGlobal},value=${precioMinGlobal}" step="1"
+            class="form-range position-absolute w-100" 
+            style="pointer-events: none; z-index: 2;">
+          <input id="precioMaxRange" type="range" th:attr="min=${precioMinGlobal},max=${precioMaxGlobal},value=${precioMaxGlobal}" step="1"
+            class="form-range position-absolute w-100" 
+            style="pointer-events: auto; z-index: 3;">
+                  </div>
+
+                  <style>
+                    /* Estilo personalizado para los sliders */
+                    #precioMinRange, #precioMaxRange {
+                      -webkit-appearance: none;
+                      appearance: none;
+                      height: 4px;
+                      background: transparent;
+                      outline: none;
+                    }
+
+                    #precioMinRange::-webkit-slider-thumb,
+                    #precioMaxRange::-webkit-slider-thumb {
+                      -webkit-appearance: none;
+                      appearance: none;
+                      width: 20px;
+                      height: 20px;
+                      border-radius: 50%;
+                      background: #6c2e9c;
+                      cursor: pointer;
+                      border: 3px solid white;
+                      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                      pointer-events: auto;
+                    }
+
+                    #precioMinRange::-moz-range-thumb,
+                    #precioMaxRange::-moz-range-thumb {
+                      width: 20px;
+                      height: 20px;
+                      border-radius: 50%;
+                      background: #6c2e9c;
+                      cursor: pointer;
+                      border: 3px solid white;
+                      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                      pointer-events: auto;
+                    }
+
+                    #precioMinRange::-webkit-slider-runnable-track,
+                    #precioMaxRange::-webkit-slider-runnable-track {
+                      width: 100%;
+                      height: 4px;
+                      background: linear-gradient(to right, #ddd 0%, #6c2e9c 0%, #6c2e9c 100%, #ddd 100%);
+                      border-radius: 2px;
+                    }
+
+                    #precioMinRange::-moz-range-track,
+                    #precioMaxRange::-moz-range-track {
+                      width: 100%;
+                      height: 4px;
+                      background: #ddd;
+                      border-radius: 2px;
+                    }
+
+                    /* Reactivar pointer events solo en los thumbs */
+                    #precioMinRange {
+                      pointer-events: auto;
+                    }
+                  </style>
+                </div>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-dark btn-sm">Aplicar filtros</button>
+                </div>
+              </form>
             </div>
-            <button class="btn btn-dark w-100 btn-sm">Aplicar filtros</button>
-          </div>
         </div>
       </aside>
 
@@ -237,7 +332,7 @@
           <div th:each="p : ${productos}" class="col-6 col-md-4 col-lg-3">
             <div class="card product-card-final h-100 shadow-sm">
               <div class="position-relative p-3 text-center">
-                <img th:src="${p.imagenUrl}" th:alt="${p.nombre}" class="img-fluid product-img-final">
+              <img th:src="${(p.imagenUrl != null and p.imagenUrl != '') ? ( (#strings.startsWith(p.imagenUrl,'/') or #strings.startsWith(p.imagenUrl,'http') or #strings.startsWith(p.imagenUrl,'//')) ? p.imagenUrl : '/Imagenes/productos/' + p.imagenUrl ) : '/Imagenes/default.png'}" th:alt="${p.nombre}" class="img-fluid product-img-final">
                 <span class="badge bg-primary badge-categoria" th:text="${p.categoria}">Minecraft</span>
                 <span class="badge bg-danger badge-oferta" th:if="${p.precio > 400}">¡Oferta!</span>
               </div>
@@ -305,7 +400,7 @@
             <div th:each="producto, iterStat : ${productosCarrusel}" th:if="${iterStat.index < 4}" class="col-6 col-lg-3 col-md-6">
               <div class="card h-100 shadow-sm product-card-carousel">
                 <div class="position-relative overflow-hidden">
-                  <img th:src="${producto.imagenUrl}" th:alt="${producto.nombre}" class="card-img-top product-image-carousel">
+                  <img th:src="${(producto.imagenUrl != null and producto.imagenUrl != '') ? ( (#strings.startsWith(producto.imagenUrl,'/') or #strings.startsWith(producto.imagenUrl,'http') or #strings.startsWith(producto.imagenUrl,'//')) ? producto.imagenUrl : '/Imagenes/productos/' + producto.imagenUrl ) : '/Imagenes/default.png'}" th:alt="${producto.nombre}" class="card-img-top product-image-carousel">
                   <div class="overlay-hover">
                     <a th:href="@{/producto/{id}(id=${producto.id})}" class="btn btn-primary btn-sm">
                       <i class="fas fa-eye me-1"></i>Ver Detalles
@@ -337,7 +432,7 @@
             <div th:each="producto, iterStat : ${productosCarrusel}" th:if="${iterStat.index >= 4 and iterStat.index < 8}" class="col-6 col-lg-3 col-md-6">
               <div class="card h-100 shadow-sm product-card-carousel">
                 <div class="position-relative overflow-hidden">
-                  <img th:src="${producto.imagenUrl}" th:alt="${producto.nombre}" class="card-img-top product-image-carousel">
+                  <img th:src="${(producto.imagenUrl != null and producto.imagenUrl != '') ? ( (#strings.startsWith(producto.imagenUrl,'/') or #strings.startsWith(producto.imagenUrl,'http') or #strings.startsWith(producto.imagenUrl,'//')) ? producto.imagenUrl : '/Imagenes/productos/' + producto.imagenUrl ) : '/Imagenes/default.png'}" th:alt="${producto.nombre}" class="card-img-top product-image-carousel">
                   <div class="overlay-hover">
                     <a th:href="@{/producto/{id}(id=${producto.id})}" class="btn btn-primary btn-sm">
                       <i class="fas fa-eye me-1"></i>Ver Detalles
@@ -373,7 +468,7 @@
             <div th:each="producto, iterStat : ${productosCarrusel}" th:if="${iterStat.index >= 8 and iterStat.index < 12}" class="col-6 col-lg-3 col-md-6">
               <div class="card h-100 shadow-sm product-card-carousel">
                 <div class="position-relative overflow-hidden">
-                  <img th:src="${producto.imagenUrl}" th:alt="${producto.nombre}" class="card-img-top product-image-carousel">
+                  <img th:src="${(producto.imagenUrl != null and producto.imagenUrl != '') ? ( (#strings.startsWith(producto.imagenUrl,'/') or #strings.startsWith(producto.imagenUrl,'http') or #strings.startsWith(producto.imagenUrl,'//')) ? producto.imagenUrl : '/Imagenes/productos/' + producto.imagenUrl ) : '/Imagenes/default.png'}" th:alt="${producto.nombre}" class="card-img-top product-image-carousel">
                   <div class="overlay-hover">
                     <a th:href="@{/producto/{id}(id=${producto.id})}" class="btn btn-primary btn-sm">
                       <i class="fas fa-eye me-1"></i>Ver Detalles
@@ -497,6 +592,154 @@
     </div>
   </footer>
 
+ <script>
+  // Filtro de precio: sincronizar sliders con inputs ocultos y formatear valores
+   (function(){
+     const minRange = document.getElementById('precioMinRange');
+     const maxRange = document.getElementById('precioMaxRange');
+     const minDisplay = document.getElementById('precioMinDisplay');
+     const maxDisplay = document.getElementById('precioMaxDisplay');
+     const minInput = document.getElementById('precioMinInput');
+     const maxInput = document.getElementById('precioMaxInput');
+
+     // Formatear número con comas decimales (ejemplo: 2754.24)
+     function formatPrice(val) {
+       return val.toLocaleString('es-PE', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+     }
+
+     // Obtener valores globales (desde el servidor) para inicializar el slider
+     const globalMinInput = document.getElementById('precioGlobalMinInput');
+     const globalMaxInput = document.getElementById('precioGlobalMaxInput');
+     const globalMin = globalMinInput ? parseInt(globalMinInput.value) : (minRange ? parseInt(minRange.min) : 0);
+     const globalMax = globalMaxInput ? parseInt(globalMaxInput.value) : (maxRange ? parseInt(maxRange.max) : 0);
+
+     // Inicializar valores de los sliders desde los inputs ocultos (si el usuario ya filtró),
+     // si no, usar los valores globales obtenidos del servidor
+     if (minInput && minInput.value) {
+       const val = parseInt(minInput.value) || globalMin || 0;
+       if (minRange) minRange.value = val;
+       if (minDisplay) minDisplay.textContent = formatPrice(val);
+     } else {
+       if (minRange) minRange.value = globalMin || 0;
+       if (minDisplay) minDisplay.textContent = formatPrice(globalMin || 0);
+     }
+     
+     if (maxInput && maxInput.value) {
+       const val = parseInt(maxInput.value) || globalMax || 0;
+       if (maxRange) maxRange.value = val;
+       if (maxDisplay) maxDisplay.textContent = formatPrice(val);
+     } else {
+       if (maxRange) maxRange.value = globalMax || 0;
+       if (maxDisplay) maxDisplay.textContent = formatPrice(globalMax || 0);
+     }
+
+     function updatePriceFilters(){
+       let minVal = parseInt(minRange.value);
+       let maxVal = parseInt(maxRange.value);
+       
+       // Garantizar que min <= max
+       if (minVal > maxVal) {
+         const temp = minVal;
+         minVal = maxVal;
+         maxVal = temp;
+         minRange.value = minVal;
+         maxRange.value = maxVal;
+       }
+       
+       minDisplay.textContent = formatPrice(minVal);
+       maxDisplay.textContent = formatPrice(maxVal);
+       minInput.value = minVal;
+       maxInput.value = maxVal;
+       
+       // Actualizar color de la barra (opcional: crear efecto visual de rango seleccionado)
+       updateTrackColor(minVal, maxVal);
+     }
+
+     function updateTrackColor(min, max) {
+       // calcular porcentajes relativos usando el rango global (obtenido del servidor o atributos del input)
+       const gMin = globalMin || (minRange ? parseInt(minRange.min) : 0);
+       const gMax = globalMax || (maxRange ? parseInt(maxRange.max) : 0);
+       const span = (gMax - gMin) || 1;
+       const minPercent = ((min - gMin) / span) * 100;
+       const maxPercent = ((max - gMin) / span) * 100;
+
+       if (minRange) {
+         minRange.style.background = `linear-gradient(to right, #ddd ${minPercent}%, #6c2e9c ${minPercent}%, #6c2e9c ${maxPercent}%, #ddd ${maxPercent}%)`;
+       }
+     }
+
+     if (minRange) {
+       minRange.addEventListener('input', updatePriceFilters);
+       // Inicializar color
+       updateTrackColor(parseInt(minRange.value), parseInt(maxRange.value));
+     }
+     if (maxRange) {
+       maxRange.addEventListener('input', updatePriceFilters);
+     }
+
+    // Asegurar que justo antes de enviar el formulario los inputs ocultos contienen los valores actuales
+    const filterForm = document.getElementById('filterForm');
+    if (filterForm) {
+      filterForm.addEventListener('submit', function(e){
+        if (minInput && minRange) minInput.value = parseInt(minRange.value);
+        if (maxInput && maxRange) maxInput.value = parseInt(maxRange.value);
+      });
+    }
+   })();
+
+   // Ordenamiento local de productos en el grid
+   (function(){
+     const ordenSelect = document.getElementById('ordenSelect');
+     if (!ordenSelect) return;
+
+     ordenSelect.addEventListener('change', function(){
+       const orden = this.value;
+       const grid = document.querySelector('.row.g-4');
+       if (!grid) return;
+       const cards = Array.from(grid.querySelectorAll('.col-6.col-md-4.col-lg-3'));
+       
+       cards.sort((a, b) => {
+         const aCard = a.querySelector('.card');
+         const bCard = b.querySelector('.card');
+         if (!aCard || !bCard) return 0;
+
+         // Extraer precio
+         const getPrecio = (card) => {
+           const txt = card.querySelector('.precio-final span');
+           if (!txt) return 0;
+           return parseFloat(txt.textContent.replace(/,/g,'')) || 0;
+         };
+         // Extraer rating (contar estrellas llenas)
+         const getRating = (card) => {
+           const stars = card.querySelectorAll('.rating-final .bi-star-fill');
+           return stars ? stars.length : 0;
+         };
+         // Extraer nombre
+         const getNombre = (card) => {
+           const h6 = card.querySelector('h6.fw-bold');
+           return h6 ? h6.textContent.trim().toLowerCase() : '';
+         };
+
+         if (orden === 'precioAsc') {
+           return getPrecio(aCard) - getPrecio(bCard);
+         } else if (orden === 'precioDesc') {
+           return getPrecio(bCard) - getPrecio(aCard);
+         } else if (orden === 'nombreAsc') {
+           return getNombre(aCard).localeCompare(getNombre(bCard));
+         } else if (orden === 'nombreDesc') {
+           return getNombre(bCard).localeCompare(getNombre(aCard));
+         } else if (orden === 'reco') {
+           // Ordenar por rating (estrellas) descendente
+           return getRating(bCard) - getRating(aCard);
+         }
+         return 0;
+       });
+
+       // Re-insertar las tarjetas ordenadas
+       cards.forEach(card => grid.appendChild(card));
+     });
+   })();
+ </script>
  <script src="js/productos.js"></script>
  <script src="js/carrito.js"></script>
   </body>

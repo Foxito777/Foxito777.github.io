@@ -8,12 +8,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import com.proyectoweb.Juledtoys.servicios.UsuarioService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class AuthController {
 
   @Autowired
   private ClienteService clienteService;
+
+  @Autowired
+  private AuthenticationConfiguration authenticationConfiguration;
+
+  @Autowired
+  private UsuarioService usuarioService;
 
   @GetMapping("/login")
   public String loginPage() {
@@ -34,7 +48,8 @@ public class AuthController {
       @RequestParam("confirmPassword") String confirmPassword,
       @RequestParam(value = "telefono", required = false) String telefono,
       @RequestParam(value = "direccion", required = false) String direccion,
-      RedirectAttributes redirectAttributes
+      RedirectAttributes redirectAttributes,
+      HttpServletRequest request
   ) {
     try {
       // Validaciones básicas del lado servidor
@@ -93,6 +108,10 @@ public class AuthController {
 
       clienteService.registrar(nuevo);
 
+      // Guardar en sesión el username para realizar un login diferido cuando el usuario pulse "Volver al inicio"
+      HttpSession session = request.getSession(true);
+      session.setAttribute("postRegisterUsername", candidate);
+
       redirectAttributes.addFlashAttribute("successMessage", "¡Cuenta creada exitosamente! Tu nombre de usuario es: " + candidate);
       return "redirect:/register?success";
     } catch (IllegalArgumentException e) {
@@ -104,4 +123,25 @@ public class AuthController {
     }
   }
   
+  @GetMapping("/post-register")
+  public String postRegisterLogin(HttpServletRequest request) {
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      String username = (String) session.getAttribute("postRegisterUsername");
+      if (username != null) {
+        try {
+          var userDetails = usuarioService.loadUserByUsername(username);
+          UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+          SecurityContextHolder.getContext().setAuthentication(auth);
+          // Persistir el SecurityContext en la sesión para que Spring Security lo reconozca en siguientes requests
+          session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+          // limpiar atributo de sesión
+          session.removeAttribute("postRegisterUsername");
+        } catch (Exception e) {
+          // ignore and continue to redirect to home
+        }
+      }
+    }
+    return "redirect:/";
+  }
 }
