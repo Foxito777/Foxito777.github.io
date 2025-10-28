@@ -2,6 +2,10 @@
 
 Este repositorio contiene la aplicación Spring Boot "Juledtoys".
 
+Problematica :
+Juled TOYS SRL enfrenta problemas operativos debido a la gestión manual y fragmentada de inventarios y ventas mediante registros físicos no integrados. Esto genera inconsistencias de datos, duplicidad de registros, errores de stock y pérdidas de productos. El proceso de atención al cliente es lento y propenso a errores, causando demoras en consultas de disponibilidad y registro de ventas. Estas deficiencias limitan la eficiencia operativa y la capacidad de crecimiento de la empresa en el mercado local de Ayacucho
+
+
 Contenido y objetivo
 - Código fuente (carpeta `src/`).
 - El artefacto compilado (`target/Juledtoys-0.0.1-SNAPSHOT.jar`) no está versionado por defecto.
