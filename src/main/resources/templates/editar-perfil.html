@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Perfil - Juled TOYS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    .profile-header {
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      color: white;
+      padding: 2.5rem 0;
+      margin-bottom: 2rem;
+    }
+    .edit-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    }
+    .form-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.5rem;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #ffc107;
+      box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+    }
+    .btn-warning {
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      border: none;
+      color: #212529;
+      font-weight: 600;
+      padding: 0.75rem 2rem;
+      border-radius: 50px;
+      transition: all 0.3s;
+    }
+    .btn-warning:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 193, 7, 0.4);
+      color: #212529;
+    }
+    .section-title {
+      color: #ffc107;
+      border-left: 4px solid #ffc107;
+      padding-left: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .avatar-upload {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      color: white;
+      margin: 0 auto 2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .avatar-upload:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(255, 193, 7, 0.3);
+    }
+    .avatar-upload .upload-overlay {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: #ff9800;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid white;
+    }
+    .password-strength {
+      height: 5px;
+      border-radius: 3px;
+      margin-top: 0.5rem;
+      background: #e9ecef;
+    }
+    .password-strength.weak { background: #dc3545; width: 33%; }
+    .password-strength.medium { background: #ffc107; width: 66%; }
+    .password-strength.strong { background: #28a745; width: 100%; }
+  </style>
+</head>
+<body class="bg-light">
+  <!-- Header con menú de usuario -->
+  <header class="bg-dark py-2">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="/mi-cuenta" class="text-white text-decoration-none">
+        <i class="fas fa-arrow-left me-2"></i>Volver a mi perfil
+      </a>
+      <ul class="navbar-nav ms-auto align-items-center user-menu" th:replace="fragments/security :: userMenu"></ul>
+    </div>
+  </header>
+
+  <!-- Encabezado -->
+  <div class="profile-header">
+    <div class="container text-center">
+      <h1 class="mb-2"><i class="fas fa-user-edit me-3"></i>Editar Mi Perfil</h1>
+      <p class="mb-0 opacity-75">Actualiza tu información personal</p>
+    </div>
+  </div>
+
+  <div class="container mb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card edit-card">
+          <div class="card-body p-4">
+            <!-- Avatar -->
+            <div class="text-center mb-4">
+              <div class="avatar-upload" onclick="alert('Función de subir foto próximamente')">
+                <i class="fas fa-user"></i>
+                <div class="upload-overlay">
+                  <i class="fas fa-camera text-white"></i>
+                </div>
+              </div>
+              <small class="text-muted">Click para cambiar foto de perfil</small>
+            </div>
+
+            <!-- Formulario -->
+            <form action="/actualizar-perfil" method="post">
+              <!-- Sección: Información Personal -->
+              <h4 class="section-title">
+                <i class="fas fa-user me-2"></i>Información Personal
+              </h4>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="nombreCompleto" class="form-label">
+                    <i class="fas fa-signature text-warning me-2"></i>Nombre Completo
+                  </label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="nombreCompleto" 
+                    name="nombreCompleto"
+                    th:value="${cliente?.nombreCompleto}"
+                    placeholder="Tu nombre completo"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="username" class="form-label">
+                    <i class="fas fa-at text-warning me-2"></i>Usuario
+                  </label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="username" 
+                    name="username"
+                    th:value="${cliente?.username}"
+                    placeholder="tu_usuario"
+                    readonly
+                    disabled
+                  />
+                  <small class="text-muted">El usuario no se puede modificar</small>
+                </div>
+              </div>
+
+              <!-- Sección: Contacto -->
+              <h4 class="section-title mt-4">
+                <i class="fas fa-address-book me-2"></i>Información de Contacto
+              </h4>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="email" class="form-label">
+                    <i class="fas fa-envelope text-warning me-2"></i>Correo Electrónico
+                  </label>
+                  <input 
+                    type="email" 
+                    class="form-control" 
+                    id="email" 
+                    name="email"
+                    th:value="${cliente?.email}"
+                    placeholder="tu@email.com"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="telefono" class="form-label">
+                    <i class="fas fa-phone text-warning me-2"></i>Teléfono
+                  </label>
+                  <input 
+                    type="tel" 
+                    class="form-control" 
+                    id="telefono" 
+                    name="telefono"
+                    th:value="${cliente?.telefono}"
+                    placeholder="+51 999 999 999"
+                    pattern="[0-9+\s-]*"
+                  />
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="direccion" class="form-label">
+                  <i class="fas fa-map-marker-alt text-warning me-2"></i>Dirección
+                </label>
+                <textarea 
+                  class="form-control" 
+                  id="direccion" 
+                  name="direccion"
+                  rows="3"
+                  placeholder="Tu dirección completa"
+                  th:text="${cliente?.direccion}"
+                ></textarea>
+              </div>
+
+              <!-- Sección: Cambiar Contraseña -->
+              <h4 class="section-title mt-4">
+                <i class="fas fa-lock me-2"></i>Cambiar Contraseña
+              </h4>
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Déjalo en blanco si no deseas cambiar tu contraseña
+              </div>
+
+              <div class="mb-3">
+                <label for="passwordActual" class="form-label">
+                  <i class="fas fa-key text-warning me-2"></i>Contraseña Actual
+                </label>
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  id="passwordActual" 
+                  name="passwordActual"
+                  placeholder="Tu contraseña actual"
+                />
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="passwordNueva" class="form-label">
+                    <i class="fas fa-lock text-warning me-2"></i>Nueva Contraseña
+                  </label>
+                  <input 
+                    type="password" 
+                    class="form-control" 
+                    id="passwordNueva" 
+                    name="passwordNueva"
+                    placeholder="Mínimo 6 caracteres"
+                    oninput="checkPasswordStrength(this.value)"
+                  />
+                  <div id="passwordStrength"></div>
+                </div>
+                <div class="col-md-6">
+                  <label for="passwordConfirmar" class="form-label">
+                    <i class="fas fa-lock text-warning me-2"></i>Confirmar Contraseña
+                  </label>
+                  <input 
+                    type="password" 
+                    class="form-control" 
+                    id="passwordConfirmar" 
+                    name="passwordConfirmar"
+                    placeholder="Repite la contraseña"
+                  />
+                </div>
+              </div>
+
+              <!-- Botones -->
+              <hr class="my-4" />
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="/mi-cuenta" class="btn btn-outline-secondary">
+                  <i class="fas fa-times me-2"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-warning">
+                  <i class="fas fa-save me-2"></i>Guardar Cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="card edit-card mt-3">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-shield-alt text-warning fa-2x me-3"></i>
+              <div>
+                <h6 class="mb-1">Tu información está segura</h6>
+                <small class="text-muted">
+                  Todos tus datos están protegidos y encriptados. Nunca compartiremos tu información con terceros.
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function checkPasswordStrength(password) {
+      const strengthDiv = document.getElementById('passwordStrength');
+      if (!password) {
+        strengthDiv.innerHTML = '';
+        return;
+      }
+      
+      let strength = 'weak';
+      let label = 'Débil';
+      let color = 'danger';
+      
+      if (password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
+        strength = 'strong';
+        label = 'Fuerte';
+        color = 'success';
+      } else if (password.length >= 6) {
+        strength = 'medium';
+        label = 'Media';
+        color = 'warning';
+      }
+      
+      strengthDiv.innerHTML = `
+        <div class="d-flex align-items-center mt-2">
+          <div class="password-strength ${strength}"></div>
+          <small class="ms-2 text-${color}">Seguridad: ${label}</small>
+        </div>
+      `;
+    }
+
+    // Validar que las contraseñas coincidan
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const nueva = document.getElementById('passwordNueva').value;
+      const confirmar = document.getElementById('passwordConfirmar').value;
+      
+      if (nueva && nueva !== confirmar) {
+        e.preventDefault();
+        alert('Las contraseñas no coinciden. Por favor, verifica e intenta nuevamente.');
+        return false;
+      }
+    });
+  </script>
+</body>
+</html>

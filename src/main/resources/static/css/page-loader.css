@@ -1,0 +1,242 @@
+/* ============================================
+   PAGE LOADER - Juled TOYS
+   ============================================ */
+
+/* Overlay que cubre toda la pantalla */
+#page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Cuando termina de cargar */
+#page-loader.loaded {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Contenedor del loader */
+.loader-content {
+    text-align: center;
+}
+
+/* Logo de la empresa */
+.loader-logo {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 30px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.loader-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(255, 193, 7, 0.3));
+}
+
+/* Spinner circular giratorio */
+.loader-spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+}
+
+/* Círculo exterior (naranja) */
+.spinner-circle {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 4px solid rgba(255, 193, 7, 0.2);
+    border-top-color: #ffc107;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Círculo interior (más pequeño, amarillo) */
+.spinner-circle-inner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    border: 3px solid rgba(255, 152, 0, 0.2);
+    border-top-color: #ff9800;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite reverse;
+}
+
+/* Texto de carga */
+.loader-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ff9800;
+    margin-top: 10px;
+    animation: fade 1.5s ease-in-out infinite;
+}
+
+.loader-dots {
+    display: inline-block;
+    width: 20px;
+    text-align: left;
+}
+
+/* ============================================
+   ANIMACIONES
+   ============================================ */
+
+/* Rotación del spinner */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Pulso del logo */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Fade in/out del texto */
+@keyframes fade {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Animación de puntos suspensivos */
+@keyframes dots {
+    0%, 20% {
+        content: '.';
+    }
+    40% {
+        content: '..';
+    }
+    60%, 100% {
+        content: '...';
+    }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .loader-logo {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 25px;
+    }
+    
+    .loader-spinner {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .loader-text {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .loader-logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+    }
+    
+    .loader-spinner {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .loader-text {
+        font-size: 14px;
+    }
+}
+
+/* ============================================
+   VARIANTE: Loader con barras (alternativa)
+   ============================================ */
+
+.loader-bars {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.loader-bar {
+    width: 6px;
+    height: 40px;
+    background: linear-gradient(180deg, #ffc107 0%, #ff9800 100%);
+    border-radius: 3px;
+    animation: bar-bounce 1.2s ease-in-out infinite;
+}
+
+.loader-bar:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.loader-bar:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.loader-bar:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.loader-bar:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bar-bounce {
+    0%, 40%, 100% {
+        transform: scaleY(0.4);
+    }
+    20% {
+        transform: scaleY(1);
+    }
+}
+
+/* ============================================
+   SMOOTH TRANSITIONS
+   ============================================ */
+
+/* Fade in de la nueva página */
+body {
+    animation: fadeInPage 0.3s ease-in;
+}
+
+@keyframes fadeInPage {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

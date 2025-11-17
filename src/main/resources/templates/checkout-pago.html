@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesando Pago - Juledtoys</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Izipay JS Client -->
+    <script src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"
+            kr-public-key="35500760:testpublickey_GetyHN7S8aHOuixOgQxvCMyQ3y4ri66GB1x9s6yYiiOQb">
+    </script>
+    
+    <link rel="stylesheet" href="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.css">
+    
+    <style>
+        .payment-container {
+            max-width: 800px;
+            margin: 100px auto 50px;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .payment-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .payment-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .order-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .order-summary h3 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .order-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .order-info span {
+            color: #666;
+        }
+        
+        .order-info .amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .loading-message {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading-message i {
+            font-size: 48px;
+            color: #007bff;
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-message p {
+            margin-top: 20px;
+            color: #666;
+            font-size: 16px;
+        }
+        
+        #kr-embedded {
+            margin: 30px 0;
+            min-height: 400px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        /* Forzar visibilidad de los elementos de Izipay */
+        #kr-embedded * {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        #kr-embedded iframe {
+            min-height: 400px;
+            width: 100% !important;
+        }
+        
+        .payment-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .secure-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #e8f5e9;
+            border-radius: 20px;
+            color: #2e7d32;
+            margin-top: 20px;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1><i class="fas fa-credit-card"></i> Procesar Pago</h1>
+            <div class="secure-badge">
+                <i class="fas fa-lock"></i>
+                <span>Pago 100% seguro con Izipay</span>
+            </div>
+        </div>
+        
+        <div class="order-summary">
+            <h3><i class="fas fa-receipt"></i> Resumen del Pedido</h3>
+            <div class="order-info">
+                <span>Número de Pedido:</span>
+                <strong th:text="${numeroPedido}">PED-001</strong>
+            </div>
+            <div class="order-info">
+                <span>Email:</span>
+                <strong th:text="${emailCliente}">cliente@email.com</strong>
+            </div>
+            <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+            <div class="order-info">
+                <span style="font-size: 18px;">Total a Pagar:</span>
+                <span class="amount" th:text="'S/ ' + ${#numbers.formatDecimal(totalPedido, 1, 2)}">S/ 0.00</span>
+            </div>
+        </div>
+        
+        <div id="loading" class="loading-message">
+            <i class="fas fa-spinner"></i>
+            <p>Cargando formulario de pago...</p>
+        </div>
+        
+        <div id="error-container" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p id="error-text">Error al cargar el formulario de pago</p>
+        </div>
+        
+        <!-- Botón para abrir el formulario de pago -->
+        <div id="payment-button-container" style="display: none; text-align: center; margin: 30px 0;">
+            <button id="open-payment-btn" style="background: #28a745; color: white; border: none; padding: 15px 40px; font-size: 18px; border-radius: 5px; cursor: pointer;">
+                <i class="fas fa-credit-card"></i> Pagar con Tarjeta
+            </button>
+        </div>
+        
+        <!-- Contenedor del formulario de pago de Izipay (se renderizará aquí) -->
+        <div class="kr-embedded" kr-popin></div>
+        
+        <div class="payment-footer">
+            <p><i class="fas fa-shield-alt"></i> Tus datos están protegidos con encriptación de 256 bits</p>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const pedidoId = /*[[${pedidoId}]]*/ null;
+        const totalPedido = /*[[${totalPedido}]]*/ 0;
+        const emailCliente = /*[[${emailCliente}]]*/ '';
+        const numeroPedido = /*[[${numeroPedido}]]*/ '';
+        
+        // Función para inicializar el pago
+        async function initPayment() {
+            try {
+                console.log('🔄 Iniciando proceso de pago para pedido:', numeroPedido);
+                
+                // Verificar que KR esté disponible
+                if (typeof KR === 'undefined') {
+                    throw new Error('La librería de Izipay (KR) no está cargada');
+                }
+                
+                // Crear el formulario de pago
+                const response = await fetch('/izipay/create-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        pedidoId: pedidoId,
+                        amount: totalPedido,
+                        currency: 'PEN',
+                        orderId: numeroPedido,
+                        customerEmail: emailCliente
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al crear el formulario de pago');
+                }
+                
+                console.log('✅ FormToken obtenido:', data.formToken);
+                
+                // Configurar Izipay con el formToken
+                await KR.setFormConfig({
+                    formToken: data.formToken,
+                    'kr-language': 'es-ES'
+                });
+                
+                // Manejar el resultado del pago
+                KR.onSubmit(function(paymentData) {
+                    console.log('💳 Pago procesado:', paymentData);
+                    
+                    const krAnswer = paymentData.clientAnswer;
+                    const krHash = paymentData.hash;
+                    const krHashAlgorithm = paymentData.hashAlgorithm;
+                    
+                    window.location.href = `/izipay/return?kr-answer=${encodeURIComponent(krAnswer)}&kr-hash=${encodeURIComponent(krHash)}&kr-hash-algorithm=${encodeURIComponent(krHashAlgorithm)}`;
+                    
+                    return false;
+                });
+                
+                // Manejar errores
+                KR.onError(function(error) {
+                    console.error('❌ Error en el formulario de pago:', error);
+                    document.getElementById('error-container').style.display = 'block';
+                    document.getElementById('error-text').textContent = 'Error al procesar el pago. Por favor, intenta nuevamente.';
+                });
+                
+                // Ocultar loading y mostrar botón de pago
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('payment-button-container').style.display = 'block';
+                
+                console.log('✅ Botón de pago listo');
+                
+                // Configurar el botón para abrir el popup de pago
+                document.getElementById('open-payment-btn').addEventListener('click', async function() {
+                    try {
+                        console.log('💳 Abriendo formulario de pago...');
+                        await KR.openPopin();
+                    } catch (error) {
+                        console.error('❌ Error al abrir formulario:', error);
+                        alert('Error al abrir el formulario de pago. Por favor, intenta nuevamente.');
+                    }
+                });
+                
+            } catch (error) {
+                console.error('❌ Error al inicializar el pago:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error-container').style.display = 'block';
+                document.getElementById('error-text').textContent = error.message || 'Error al cargar el formulario de pago';
+            }
+        }
+        
+        // Inicializar cuando la página cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!pedidoId) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error-container').style.display = 'block';
+                document.getElementById('error-text').textContent = 'No se encontró información del pedido';
+                return;
+            }
+            
+            initPayment();
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

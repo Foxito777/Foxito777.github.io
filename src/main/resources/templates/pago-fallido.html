@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Fallido - Juledtoys</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        .result-container {
+            max-width: 600px;
+            margin: 100px auto 50px;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .error-icon {
+            font-size: 80px;
+            color: #dc3545;
+            margin-bottom: 20px;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .result-container h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        
+        .result-container p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+        
+        .help-info {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        .help-info h3 {
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .help-info ul {
+            text-align: left;
+            max-width: 400px;
+            margin: 0 auto;
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        .help-info li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <i class="fas fa-times-circle error-icon"></i>
+        <h1>Pago No Procesado</h1>
+        
+        <div class="error-message" th:if="${mensaje}">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span th:text="${mensaje}">El pago no pudo ser procesado</span>
+        </div>
+        
+        <p>
+            Lo sentimos, tu pago no pudo ser procesado en este momento. 
+            No se ha realizado ningún cargo a tu tarjeta.
+        </p>
+        
+        <div class="actions">
+            <a th:href="@{/checkout}" class="btn btn-primary">
+                <i class="fas fa-redo"></i>
+                Intentar Nuevamente
+            </a>
+            <a th:href="@{/mis-compras}" class="btn btn-secondary">
+                <i class="fas fa-shopping-bag"></i>
+                Ver Mis Compras
+            </a>
+        </div>
+        
+        <div class="help-info">
+            <h3><i class="fas fa-question-circle"></i> Posibles Causas</h3>
+            <ul>
+                <li><i class="fas fa-chevron-right"></i> Fondos insuficientes</li>
+                <li><i class="fas fa-chevron-right"></i> Datos de tarjeta incorrectos</li>
+                <li><i class="fas fa-chevron-right"></i> Tarjeta no habilitada para compras en línea</li>
+                <li><i class="fas fa-chevron-right"></i> Problemas de conexión</li>
+            </ul>
+            
+            <p style="margin-top: 20px;">
+                <i class="fas fa-headset"></i> 
+                Si el problema persiste, contáctanos: 
+                <a href="mailto:soporte@juledtoys.com" style="color: #007bff;">soporte@juledtoys.com</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

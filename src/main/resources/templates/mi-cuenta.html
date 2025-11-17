@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil - Juled TOYS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    .profile-header {
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      color: white;
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+    }
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #ff9800;
+      border: 5px solid rgba(255,255,255,0.3);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+    .info-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    }
+    .info-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .recent-orders-card {
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    }
+    .order-item {
+      border-left: 4px solid #ffc107;
+      transition: all 0.3s;
+    }
+    .order-item:hover {
+      background-color: #fffbf0;
+      border-left-width: 6px;
+    }
+    .btn-warning-custom {
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      border: none;
+      color: #212529;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn-warning-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 193, 7, 0.4);
+      color: #212529;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <!-- Header con menú de usuario -->
+  <header class="bg-dark py-2">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="/" class="text-white text-decoration-none">
+        <i class="fas fa-arrow-left me-2"></i>Volver al inicio
+      </a>
+      <ul class="navbar-nav ms-auto align-items-center user-menu" th:replace="fragments/security :: userMenu"></ul>
+    </div>
+  </header>
+
+  <!-- Encabezado del perfil -->
+  <div class="profile-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+        <div class="col">
+          <h2 class="mb-1" th:text="${cliente?.nombreCompleto ?: cliente?.username}">Nombre del Usuario</h2>
+          <p class="mb-0 opacity-75">
+            <i class="fas fa-envelope me-2"></i><span th:text="${cliente?.email}">correo@ejemplo.com</span>
+          </p>
+          <p class="mb-0 opacity-75 mt-1">
+            <i class="fas fa-calendar-alt me-2"></i>Miembro desde 
+            <span th:text="${#temporals.format(cliente?.fechaRegistro, 'MMMM yyyy')}">Enero 2025</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mb-5">
+    <div class="row g-4">
+      <!-- Tarjetas de información -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card info-card">
+          <div class="card-body text-center">
+            <div class="info-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+              <i class="fas fa-shopping-bag"></i>
+            </div>
+            <h3 class="mb-1" th:text="${pedidos != null ? #lists.size(pedidos) : 0}">0</h3>
+            <p class="text-muted mb-0">Compras totales</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card info-card">
+          <div class="card-body text-center">
+            <div class="info-icon bg-success bg-opacity-10 text-success mx-auto mb-3">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="mb-1">
+              <span th:text="${pedidos != null ? #lists.size(pedidos.?[estado.name() == 'ENTREGADO']) : 0}">0</span>
+            </h3>
+            <p class="text-muted mb-0">Pedidos entregados</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card info-card">
+          <div class="card-body text-center">
+            <div class="info-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+              <i class="fas fa-clock"></i>
+            </div>
+            <h3 class="mb-1">
+              <span th:text="${pedidos != null ? #lists.size(pedidos.?[estado.name() == 'PENDIENTE' || estado.name() == 'CONFIRMADO' || estado.name() == 'EN_PREPARACION' || estado.name() == 'EN_CAMINO']) : 0}">0</span>
+            </h3>
+            <p class="text-muted mb-0">Pedidos activos</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card info-card">
+          <div class="card-body text-center">
+            <div class="info-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <h3 class="mb-1" th:text="${cliente?.direcciones != null ? #lists.size(cliente.direcciones) : 0}">0</h3>
+            <p class="text-muted mb-0">Direcciones</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información del perfil y pedidos recientes -->
+    <div class="row g-4 mt-2">
+      <!-- Información personal -->
+      <div class="col-lg-4">
+        <div class="card info-card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h5 class="mb-0"><i class="fas fa-user-circle me-2 text-warning"></i>Información Personal</h5>
+              <a href="/editar-perfil" class="btn btn-sm btn-warning-custom rounded-pill">
+                <i class="fas fa-edit"></i> Editar
+              </a>
+            </div>
+            
+            <div class="mb-3">
+              <label class="text-muted small mb-1">Nombre completo</label>
+              <p class="fw-semibold mb-0" th:text="${cliente?.nombreCompleto ?: 'No especificado'}">-</p>
+            </div>
+            
+            <div class="mb-3">
+              <label class="text-muted small mb-1">Usuario</label>
+              <p class="fw-semibold mb-0" th:text="${cliente?.username}">-</p>
+            </div>
+            
+            <div class="mb-3">
+              <label class="text-muted small mb-1">Email</label>
+              <p class="fw-semibold mb-0" th:text="${cliente?.email}">-</p>
+            </div>
+            
+            <div class="mb-3">
+              <label class="text-muted small mb-1">Teléfono</label>
+              <p class="fw-semibold mb-0" th:text="${cliente?.telefono ?: 'No especificado'}">-</p>
+            </div>
+            
+            <div class="mb-0">
+              <label class="text-muted small mb-1">Dirección principal</label>
+              <p class="fw-semibold mb-0" th:text="${cliente?.direccion ?: 'No especificada'}">-</p>
+            </div>
+
+            <hr class="my-3" />
+            
+            <div class="d-grid gap-2">
+              <a href="/mis-compras" class="btn btn-warning-custom">
+                <i class="fas fa-shopping-bag me-2"></i>Ver mis compras
+              </a>
+              <a href="/productos" class="btn btn-outline-warning">
+                <i class="fas fa-store me-2"></i>Ir a la tienda
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pedidos recientes -->
+      <div class="col-lg-8">
+        <div class="card recent-orders-card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h5 class="mb-0"><i class="fas fa-box me-2 text-warning"></i>Pedidos Recientes</h5>
+              <a href="/mis-compras" class="btn btn-sm btn-warning-custom rounded-pill">
+                Ver todos <i class="fas fa-arrow-right ms-1"></i>
+              </a>
+            </div>
+
+            <div th:if="${pedidos == null or #lists.isEmpty(pedidos)}" class="text-center py-5">
+              <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+              <h5 class="text-muted">Aún no tienes pedidos</h5>
+              <p class="text-muted">¡Comienza a explorar nuestra tienda!</p>
+              <a href="/productos" class="btn btn-warning-custom mt-3">
+                <i class="fas fa-shopping-cart me-2"></i>Ir de compras
+              </a>
+            </div>
+
+            <div th:if="${pedidos != null and !#lists.isEmpty(pedidos)}">
+              <div th:each="pedido, iterStat : ${pedidos}" th:if="${iterStat.index < 5}" 
+                   class="order-item p-3 mb-3 bg-white rounded shadow-sm">
+                <div class="row align-items-center">
+                  <div class="col-md-3">
+                    <small class="text-muted d-block">Número de pedido</small>
+                    <strong th:text="${pedido.numeroPedido}">PED-001</strong>
+                  </div>
+                  <div class="col-md-3">
+                    <small class="text-muted d-block">Fecha</small>
+                    <span th:text="${#temporals.format(pedido.fechaPedido, 'dd/MM/yyyy')}">01/01/2025</span>
+                  </div>
+                  <div class="col-md-3">
+                    <small class="text-muted d-block">Estado</small>
+                    <span class="badge rounded-pill" 
+                          th:classappend="${'bg-' + pedido.estado.badgeClass}"
+                          th:text="${pedido.estado.descripcion}">Pendiente</span>
+                  </div>
+                  <div class="col-md-3 text-end">
+                    <small class="text-muted d-block">Total</small>
+                    <strong class="text-warning fs-5">
+                      S/. <span th:text="${#numbers.formatDecimal(pedido.total, 0, 2)}">0.00</span>
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

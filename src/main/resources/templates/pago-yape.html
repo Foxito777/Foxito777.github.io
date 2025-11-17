@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago con Yape - Juledtoys</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .payment-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .payment-header {
+            background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .payment-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .payment-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .payment-body {
+            padding: 40px;
+        }
+        .qr-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        .qr-section img {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            border: 5px solid #00d4aa;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .qr-section h3 {
+            color: #00d4aa;
+            margin-bottom: 15px;
+        }
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        .instructions h4 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        .instructions ol {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        .form-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+        }
+        .form-section h4 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-control:focus {
+            border-color: #00d4aa;
+            box-shadow: 0 0 0 0.2rem rgba(0, 212, 170, 0.25);
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 170, 0.4);
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .timer {
+            background: #dc3545;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .order-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        .order-info p {
+            margin: 5px 0;
+            color: #1565c0;
+        }
+        .order-info strong {
+            color: #0d47a1;
+        }
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        .file-upload-input {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+        }
+        .file-upload-label {
+            display: block;
+            padding: 15px;
+            background: white;
+            border: 2px dashed #00d4aa;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .file-upload-label:hover {
+            background: #f0fdf9;
+            border-color: #00b894;
+        }
+        .file-upload-label i {
+            font-size: 40px;
+            color: #00d4aa;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .file-name {
+            margin-top: 10px;
+            color: #00b894;
+            font-weight: bold;
+        }
+        .alert {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-card">
+            <!-- Header -->
+            <div class="payment-header">
+                <h1><i class="fas fa-mobile-alt"></i> Pago con Yape</h1>
+                <p>Escanea el código QR y completa el formulario</p>
+            </div>
+
+            <!-- Body -->
+            <div class="payment-body">
+                <!-- Alerta de error si existe -->
+                <div th:if="${mensaje}" th:classappend="${tipoMensaje == 'error' ? 'alert-danger' : 'alert-success'}" 
+                     class="alert alert-dismissible fade show" role="alert">
+                    <i th:class="${tipoMensaje == 'error' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle'}"></i>
+                    <span th:text="${mensaje}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Información del pedido -->
+                <div class="order-info">
+                    <p><strong>Pedido:</strong> <span th:text="${numeroPedido}">PED-20250115-0001</span></p>
+                    <p><strong>Total a pagar:</strong> S/ <span th:text="${#numbers.formatDecimal(totalPedido, 1, 2)}">149.99</span></p>
+                    <p><strong>Email:</strong> <span th:text="${emailCliente}">cliente@email.com</span></p>
+                </div>
+
+                <!-- Timer de 3 minutos -->
+                <div class="timer" id="timer">
+                    <i class="fas fa-clock"></i> Tiempo restante: <span id="countdown">3:00</span>
+                </div>
+
+                <!-- Instrucciones -->
+                <div class="instructions">
+                    <h4><i class="fas fa-list-ol"></i> Instrucciones:</h4>
+                    <ol>
+                        <li>Abre tu aplicación <strong>Yape</strong></li>
+                        <li>Escanea el código QR que aparece abajo</li>
+                        <li>Completa el pago por el monto indicado</li>
+                        <li>Toma una captura del comprobante</li>
+                        <li>Sube el comprobante y completa el formulario</li>
+                    </ol>
+                </div>
+
+                <!-- QR Code Section -->
+                <div class="qr-section">
+                    <h3><i class="fas fa-qrcode"></i> Escanea este código QR</h3>
+                    <img th:src="@{/Imagenes/QR.jpeg}" alt="Código QR Yape" class="img-fluid">
+                    <p class="text-muted mt-3">
+                        <small>Escanea con tu app Yape para realizar el pago</small>
+                    </p>
+                </div>
+
+                <!-- Formulario de comprobante -->
+                <div class="form-section">
+                    <h4><i class="fas fa-file-upload"></i> Sube tu comprobante</h4>
+                    
+                    <form th:action="@{/yape/enviar-comprobante}" 
+                          method="post" 
+                          enctype="multipart/form-data"
+                          id="comprobanteForm"
+                          th:object="${comprobanteDTO}">
+                        
+                        <!-- Número de pedido (hidden) -->
+                        <input type="hidden" name="numeroPedido" th:value="${numeroPedido}">
+
+                        <!-- Código de operación -->
+                        <div class="mb-4">
+                            <label for="codigoOperacion" class="form-label">
+                                <i class="fas fa-hashtag"></i> Código de Operación *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="codigoOperacion" 
+                                   name="codigoOperacion"
+                                   placeholder="Ej: 123456789"
+                                   required
+                                   maxlength="20">
+                            <small class="text-muted">El código que aparece en tu comprobante Yape</small>
+                        </div>
+
+                        <!-- Número de teléfono -->
+                        <div class="mb-4">
+                            <label for="numeroTelefono" class="form-label">
+                                <i class="fas fa-phone"></i> Número de Teléfono *
+                            </label>
+                            <input type="tel" 
+                                   class="form-control" 
+                                   id="numeroTelefono" 
+                                   name="numeroTelefono"
+                                   placeholder="Ej: 987654321"
+                                   required
+                                   pattern="[0-9]{9}"
+                                   maxlength="9">
+                            <small class="text-muted">Número desde el que realizaste el pago</small>
+                        </div>
+
+                        <!-- Subir comprobante -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-image"></i> Comprobante de Pago *
+                            </label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" 
+                                       class="file-upload-input" 
+                                       id="comprobante" 
+                                       name="comprobante"
+                                       accept="image/*,application/pdf"
+                                       required
+                                       onchange="updateFileName(this)">
+                                <label for="comprobante" class="file-upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <div>Haz clic para subir tu comprobante</div>
+                                    <small class="text-muted">Imagen o PDF (máx. 5MB)</small>
+                                </label>
+                            </div>
+                            <div class="file-name" id="fileName"></div>
+                        </div>
+
+                        <!-- Botón de envío -->
+                        <button type="submit" class="btn btn-submit" id="submitBtn">
+                            <i class="fas fa-paper-plane"></i> Enviar Comprobante
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Timer de 3 minutos
+        let timeLeft = 180; // 3 minutos en segundos
+        const countdownEl = document.getElementById('countdown');
+        const timerEl = document.getElementById('timer');
+        const submitBtn = document.getElementById('submitBtn');
+
+        const timerInterval = setInterval(() => {
+            timeLeft--;
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Cambiar color cuando quede menos de 1 minuto
+            if (timeLeft <= 60) {
+                timerEl.style.background = '#ff6b6b';
+                timerEl.style.animation = 'pulse 1s infinite';
+            }
+
+            // Cuando se acabe el tiempo
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerEl.textContent = '⏰ Tiempo agotado';
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-clock"></i> Tiempo expirado';
+            }
+        }, 1000);
+
+        // Actualizar nombre del archivo
+        function updateFileName(input) {
+            const fileNameEl = document.getElementById('fileName');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
+                fileNameEl.innerHTML = `<i class="fas fa-check-circle"></i> ${file.name} (${fileSize} MB)`;
+            }
+        }
+
+        // Validación del formulario
+        document.getElementById('comprobanteForm').addEventListener('submit', function(e) {
+            const codigoOperacion = document.getElementById('codigoOperacion').value.trim();
+            const numeroTelefono = document.getElementById('numeroTelefono').value.trim();
+            const comprobante = document.getElementById('comprobante').files[0];
+
+            if (!codigoOperacion || !numeroTelefono || !comprobante) {
+                e.preventDefault();
+                alert('Por favor completa todos los campos');
+                return false;
+            }
+
+            if (!/^[0-9]{9}$/.test(numeroTelefono)) {
+                e.preventDefault();
+                alert('El número de teléfono debe tener 9 dígitos');
+                return false;
+            }
+
+            if (comprobante.size > 5 * 1024 * 1024) {
+                e.preventDefault();
+                alert('El archivo es muy grande (máximo 5MB)');
+                return false;
+            }
+
+            // Deshabilitar botón y mostrar loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        });
+
+        // Animación de pulso para el timer
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.02); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

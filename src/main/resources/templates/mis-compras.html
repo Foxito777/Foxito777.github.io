@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis Compras - Juled TOYS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    .orders-header {
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      color: white;
+      padding: 2.5rem 0;
+      margin-bottom: 2rem;
+    }
+    .order-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+      transition: all 0.3s;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .order-card:hover {
+      box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+      transform: translateY(-3px);
+    }
+    .order-header {
+      background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 1.25rem;
+      border-bottom: 2px solid #dee2e6;
+    }
+    .timeline {
+      position: relative;
+      padding: 2rem 0;
+    }
+    .timeline-item {
+      position: relative;
+      padding-left: 3rem;
+      padding-bottom: 2rem;
+    }
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 0.75rem;
+      top: 0;
+      bottom: -2rem;
+      width: 2px;
+      background: #dee2e6;
+    }
+    .timeline-item:last-child::before {
+      display: none;
+    }
+    .timeline-icon {
+      position: absolute;
+      left: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      z-index: 1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .timeline-icon.active {
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      color: white;
+    }
+    .timeline-icon.completed {
+      background: #28a745;
+      color: white;
+    }
+    .timeline-icon.pending {
+      background: #e9ecef;
+      color: #6c757d;
+    }
+    .filter-tabs {
+      border-bottom: 2px solid #dee2e6;
+      margin-bottom: 2rem;
+    }
+    .filter-tab {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: #6c757d;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .filter-tab:hover {
+      color: #ff9800;
+    }
+    .filter-tab.active {
+      color: #ff9800;
+    }
+    .filter-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ffc107 0%, #ff9800 100%);
+    }
+    .btn-warning-custom {
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      border: none;
+      color: #212529;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn-warning-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 193, 7, 0.4);
+      color: #212529;
+    }
+    .empty-state {
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <!-- Header con menú de usuario -->
+  <header class="bg-dark py-2">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="/mi-cuenta" class="text-white text-decoration-none">
+        <i class="fas fa-arrow-left me-2"></i>Volver a mi perfil
+      </a>
+      <ul class="navbar-nav ms-auto align-items-center user-menu" th:replace="fragments/security :: userMenu"></ul>
+    </div>
+  </header>
+
+  <!-- Encabezado de la página -->
+  <div class="orders-header">
+    <div class="container">
+      <h1 class="mb-2"><i class="fas fa-shopping-bag me-3"></i>Mis Compras</h1>
+      <p class="mb-0 opacity-75">Historial completo y seguimiento de tus pedidos</p>
+    </div>
+  </div>
+
+  <div class="container mb-5">
+    <!-- Filtros de estado -->
+    <div class="filter-tabs d-flex flex-wrap">
+      <button class="filter-tab active" onclick="filterOrders('all')">
+        <i class="fas fa-list me-2"></i>Todos
+      </button>
+      <button class="filter-tab" onclick="filterOrders('RECIBIDO')">
+        <i class="fas fa-receipt me-2"></i>Pago recibido
+      </button>
+      <button class="filter-tab" onclick="filterOrders('CONFIRMADO')">
+        <i class="fas fa-check me-2"></i>Confirmados
+      </button>
+      <button class="filter-tab" onclick="filterOrders('EN_PREPARACION')">
+        <i class="fas fa-box me-2"></i>En preparación
+      </button>
+      <button class="filter-tab" onclick="filterOrders('EN_CAMINO')">
+        <i class="fas fa-truck me-2"></i>En camino
+      </button>
+      <button class="filter-tab" onclick="filterOrders('ENTREGADO')">
+        <i class="fas fa-check-circle me-2"></i>Entregados
+      </button>
+      <button class="filter-tab" onclick="filterOrders('CANCELADO')">
+        <i class="fas fa-times-circle me-2"></i>Cancelados
+      </button>
+    </div>
+
+    <!-- Estado vacío -->
+    <div th:if="${pedidos == null or #lists.isEmpty(pedidos)}" class="empty-state">
+      <div class="card order-card">
+        <div class="card-body">
+          <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+          <h3 class="text-muted">No tienes compras registradas</h3>
+          <p class="text-muted mb-4">¡Explora nuestra tienda y encuentra productos increíbles!</p>
+          <a href="/productos" class="btn btn-warning-custom btn-lg rounded-pill px-5">
+            <i class="fas fa-store me-2"></i>Ir a la tienda
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de pedidos -->
+    <div th:if="${pedidos != null and !#lists.isEmpty(pedidos)}" id="ordersContainer">
+      <div th:each="pedido : ${pedidos}" 
+           class="order-card" 
+           th:attr="data-estado=${pedido.estado.name()}">
+        
+        <!-- Encabezado del pedido -->
+        <div class="order-header">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h5 class="mb-1">
+                <i class="fas fa-hashtag me-2 text-primary"></i>
+                <span th:text="${pedido.numeroPedido}">PED-001</span>
+              </h5>
+              <small class="text-muted">
+                <i class="far fa-calendar me-2"></i>
+                <span th:text="${#temporals.format(pedido.fechaPedido, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:30</span>
+              </small>
+            </div>
+            <div class="col-md-4 text-md-end mt-2 mt-md-0">
+              <span class="status-badge" 
+                    th:classappend="${'bg-' + pedido.estado.badgeClass + ' text-white'}"
+                    th:text="${pedido.estado.titulo}">
+                Pendiente
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenido del pedido -->
+        <div class="card-body">
+          <div class="row">
+            <!-- Detalles del pedido -->
+            <div class="col-lg-7">
+              <h6 class="text-muted mb-3">
+                <i class="fas fa-info-circle me-2"></i>Detalles del pedido
+              </h6>
+              
+              <div class="row g-3 mb-4">
+                <div class="col-12">
+                  <div class="p-3 bg-warning bg-opacity-10 rounded border border-warning">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <strong class="text-warning">Total del pedido (IGV incluido)</strong>
+                      <h4 class="mb-0 text-warning">
+                        S/. <span th:text="${#numbers.formatDecimal(pedido.total, 0, 2)}">0.00</span>
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Información adicional -->
+              <div class="mb-3">
+                <small class="text-muted d-block mb-1">
+                  <i class="fas fa-map-marker-alt me-2"></i>Dirección de envío
+                </small>
+                <p class="mb-0" th:text="${pedido.direccionEnvio}">Dirección del cliente</p>
+              </div>
+
+              <div class="mb-3" th:if="${pedido.telefonoContacto}">
+                <small class="text-muted d-block mb-1">
+                  <i class="fas fa-phone me-2"></i>Teléfono de contacto
+                </small>
+                <p class="mb-0" th:text="${pedido.telefonoContacto}">999999999</p>
+              </div>
+
+              <div class="mb-3" th:if="${pedido.metodoPago}">
+                <small class="text-muted d-block mb-1">
+                  <i class="fas fa-credit-card me-2"></i>Método de pago
+                </small>
+                <p class="mb-0" th:text="${pedido.metodoPago}">Yape/Plin</p>
+              </div>
+
+              <div th:if="${pedido.observaciones}">
+                <small class="text-muted d-block mb-1">
+                  <i class="fas fa-sticky-note me-2"></i>Observaciones
+                </small>
+                <p class="mb-0" th:text="${pedido.observaciones}">Ninguna</p>
+              </div>
+            </div>
+
+            <!-- Seguimiento del estado -->
+            <div class="col-lg-5">
+              <h6 class="text-muted mb-3">
+                <i class="fas fa-route me-2"></i>Seguimiento del pedido
+              </h6>
+              
+              <div class="timeline">
+                <!-- RECIBIDO -->
+                <div class="timeline-item">
+                  <div class="timeline-icon" 
+                       th:classappend="${pedido.estado.name() == 'RECIBIDO' ? 'active' : 
+                                       (pedido.estado.name() == 'CONFIRMADO' || pedido.estado.name() == 'EN_PREPARACION' || 
+                                        pedido.estado.name() == 'EN_CAMINO' || pedido.estado.name() == 'ENTREGADO') ? 'completed' : 'pending'}">
+                    <i class="fas fa-receipt"></i>
+                  </div>
+                  <div>
+                    <strong>Pago Recibido</strong>
+                    <p class="text-muted small mb-0">Tu compra está siendo validada</p>
+                    <small class="text-muted" th:if="${pedido.estado.name() != 'CANCELADO'}">
+                      <span th:text="${#temporals.format(pedido.fechaPedido, 'dd/MM/yyyy HH:mm')}"></span>
+                    </small>
+                  </div>
+                </div>
+
+                <!-- CONFIRMADO -->
+                <div class="timeline-item">
+                  <div class="timeline-icon" 
+                       th:classappend="${pedido.estado.name() == 'CONFIRMADO' ? 'active' : 
+                                       (pedido.estado.name() == 'EN_PREPARACION' || pedido.estado.name() == 'EN_CAMINO' || 
+                                        pedido.estado.name() == 'ENTREGADO') ? 'completed' : 'pending'}">
+                    <i class="fas fa-check"></i>
+                  </div>
+                  <div>
+                    <strong>Pago aprobado</strong>
+                    <p class="text-muted small mb-0">Tu orden fue confirmada</p>
+                  </div>
+                </div>
+
+                <!-- EN_PREPARACION -->
+                <div class="timeline-item">
+                  <div class="timeline-icon" 
+                       th:classappend="${pedido.estado.name() == 'EN_PREPARACION' ? 'active' : 
+                                       (pedido.estado.name() == 'EN_CAMINO' || pedido.estado.name() == 'ENTREGADO') ? 'completed' : 'pending'}">
+                    <i class="fas fa-box"></i>
+                  </div>
+                  <div>
+                    <strong>En preparación</strong>
+                    <p class="text-muted small mb-0">El comercio está preparando tu pedido</p>
+                  </div>
+                </div>
+
+                <!-- EN_CAMINO -->
+                <div class="timeline-item">
+                  <div class="timeline-icon" 
+                       th:classappend="${pedido.estado.name() == 'EN_CAMINO' ? 'active' : 
+                                       pedido.estado.name() == 'ENTREGADO' ? 'completed' : 'pending'}">
+                    <i class="fas fa-truck"></i>
+                  </div>
+                  <div>
+                    <strong>En camino</strong>
+                    <p class="text-muted small mb-0">Tu pedido está rumbo a la dirección registrada para la entrega</p>
+                    <small class="text-muted" th:if="${pedido.fechaEntregaEstimada}">
+                      <i class="far fa-calendar me-1"></i>
+                      Entrega estimada: <span th:text="${#temporals.format(pedido.fechaEntregaEstimada, 'dd/MM/yyyy')}"></span>
+                    </small>
+                  </div>
+                </div>
+
+                <!-- ENTREGADO -->
+                <div class="timeline-item">
+                  <div class="timeline-icon" 
+                       th:classappend="${pedido.estado.name() == 'ENTREGADO' ? 'completed' : 'pending'}">
+                    <i class="fas fa-check-circle"></i>
+                  </div>
+                  <div>
+                    <strong>Entregado</strong>
+                    <p class="text-muted small mb-0">El pedido ya se dejó en la dirección indicada</p>
+                    <small class="text-muted" th:if="${pedido.fechaEntregaReal}">
+                      <span th:text="${#temporals.format(pedido.fechaEntregaReal, 'dd/MM/yyyy HH:mm')}"></span>
+                    </small>
+                  </div>
+                </div>
+
+                <!-- CANCELADO (si aplica) -->
+                <div class="timeline-item" th:if="${pedido.estado.name() == 'CANCELADO'}">
+                  <div class="timeline-icon" style="background: #dc3545; color: white;">
+                    <i class="fas fa-times"></i>
+                  </div>
+                  <div>
+                    <strong class="text-danger">Cancelado</strong>
+                    <p class="text-muted small mb-0">Si el comercio lo canceló, nos comunicaremos para solucionarlo</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-grid gap-2 mt-4">
+                <a th:if="${pedido.estado.name() == 'ENTREGADO'}" 
+                   th:href="@{'/calificar-pedido/' + ${pedido.id}}"
+                   class="btn btn-warning-custom">
+                  <i class="fas fa-star me-2"></i>Calificar pedido
+                </a>
+                <a href="/contacto" class="btn btn-outline-warning">
+                  <i class="fas fa-headset me-2"></i>Contactar soporte
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function filterOrders(estado) {
+      // Actualizar tabs activos
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.closest('.filter-tab').classList.add('active');
+
+      // Filtrar pedidos
+      const orders = document.querySelectorAll('.order-card');
+      orders.forEach(order => {
+        if (estado === 'all') {
+          order.style.display = 'block';
+        } else {
+          const orderEstado = order.getAttribute('data-estado');
+          order.style.display = orderEstado === estado ? 'block' : 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
